@@ -50,6 +50,8 @@ Contract-sensitive surfaces include, where applicable:
 
 Repository-local architecture and compatibility documents define additional contracts.
 
+A pre-1.0 version number is not blanket permission to remove a public surface. A repository may explicitly define some pre-1.0 APIs as unstable and allow breaking changes; when such a versioning policy exists, those surfaces may be treated as review-required rather than product-stable. Without that explicit policy, public surfaces remain contract-sensitive.
+
 ## 3. Repository search is evidence, not proof of no consumers
 
 `rg`, compiler warnings, dead-code tools, dependency analyzers, and similar scanners are candidate generators.
@@ -168,6 +170,7 @@ These may be implemented in a focused simplification change after normal verific
 Typical examples:
 
 - crate-visible or shared internal APIs;
+- an explicitly unstable pre-1.0 public surface when the repository's accepted versioning policy permits breaking changes;
 - lifecycle consolidation in concurrent/stateful code;
 - dependency replacement;
 - cross-repository surfaces with verified consumers that must migrate together;
@@ -179,7 +182,7 @@ Require explicit review of the evidence and migration scope before acceptance.
 
 Typical examples:
 
-- public published APIs;
+- public published APIs unless an accepted repository versioning policy explicitly classifies the surface as unstable;
 - stable CLI or protocol behavior;
 - persisted or migration-sensitive formats;
 - declared compatibility surfaces;
@@ -236,4 +239,4 @@ Prefer audit first, then approve and implement a small number of high-confidence
 
 ## Upstream inspiration
 
-This policy is independently written for WrightKit. Its evidence-first approach is informed by the simplification practices documented in DeepSeek Harness and by the generalized `reclaim-code-entropy` agent skill. Their guidance is useful input, but WrightKit's repository, compatibility, testing, Rust, licensing, and role constraints take precedence.
+This policy is independently written for WrightKit. Its evidence-first approach is informed by [DeepSeek Harness's simplification practice](https://github.com/deepseek-ai/deepseek-harness/blob/master/.agents/skills/dsh-find-simplifications/SKILL.md) and the generalized [`reclaim-code-entropy`](https://github.com/Yevanchen/reclaim-code-entropy) agent skill. Their guidance is useful input, but WrightKit's repository, compatibility, testing, Rust, licensing, and role constraints take precedence.
