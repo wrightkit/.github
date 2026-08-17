@@ -2,9 +2,22 @@
 
 This document defines organization-wide testing principles for WrightKit repositories.
 
-The policy exists to make tests independent correctness constraints rather than snapshots of the implementation that happens to exist today. This is especially important in AI-assisted development, where the same agent may write both production code and tests and may otherwise optimize for a green test suite instead of preserving the intended semantic contract.
+The policy exists to make tests independent correctness constraints rather than snapshots of the implementation that happens to exist today. This is especially important in AI-assisted development, where production code and tests may be authored together and a green test suite can otherwise drift away from the intended semantic contract.
 
 Repository-local guidance may add stricter or domain-specific requirements, but it must not weaken this policy.
+
+## Applicability
+
+This policy applies to changes involving:
+
+- tests and test infrastructure;
+- fixtures, snapshots, and corpora;
+- expected results and compatibility baselines;
+- regression and conformance evidence;
+- fuzzing, property testing, and robustness testing;
+- changes that add, remove, weaken, quarantine, or reclassify test coverage or support states.
+
+Workspace and repository guidance should route agents and contributors to this policy when these concerns are affected. It does not need to be loaded for work that does not affect them.
 
 ## 1. Evidence before expectations
 
@@ -19,6 +32,8 @@ Acceptable evidence includes, as appropriate:
 - a deliberately specified invariant or property.
 
 Changing production behavior and changing its correctness expectation in the same change is not sufficient evidence by itself. When an expected result changes, the change must identify what external evidence or accepted contract changed.
+
+Changing a case between match, gap, expected failure, unsupported, inconclusive, or an equivalent support state is also a correctness expectation change and requires the same independent evidence.
 
 Fixed expected values are valid when they encode independently established observable behavior. They are not valid merely because they match the current implementation.
 
@@ -143,13 +158,15 @@ For high-risk code, maintainers should consider mutation-style checks or equival
 
 Mutation testing does not need to be a per-PR mandatory gate in every repository. It is a QA technique for evaluating whether important tests are capable of detecting meaningful faults.
 
-## 9. AI-assisted development requires independent QA
+## 9. Independent verification
 
 AI-generated tests are subject to the same evidence requirements as human-written tests.
 
-An implementation agent may add the local tests necessary to develop a change, but acceptance should not rely solely on tests authored to fit that implementation.
+For material semantic, compatibility, compiler, parser, source-edit, or protocol changes, acceptance should include an independent attempt to falsify the implementation rather than relying only on tests authored alongside it.
 
-For material semantic, compatibility, compiler, parser, source-edit, or protocol changes, QA should independently attempt to falsify the implementation. Appropriate review work includes:
+Independent verification may be performed by a separate reviewer, QA agent, review pass, or another repository-appropriate mechanism. The testing policy defines the required verification property, not a specific agent-team topology.
+
+Appropriate verification work includes:
 
 - checking expectations against the original evidence source;
 - adding missing negative and boundary cases;
@@ -158,9 +175,9 @@ For material semantic, compatibility, compiler, parser, source-edit, or protocol
 - checking that known gaps remain explicit;
 - considering whether a simple incorrect mutation would escape the suite.
 
-Independent QA is not satisfied by rerunning the existing test command and observing that it is green.
+Independent verification is not satisfied by only rerunning the existing test command and observing that it is green.
 
-When a new class of agent-produced failure escapes existing tests, add a regression that makes that failure mode observable where practical.
+When a new class of development failure escapes existing tests, add a regression that makes that failure mode observable where practical.
 
 ## 10. Compatibility tests preserve the contract, not the implementation
 
@@ -203,7 +220,7 @@ When applicable, the PR should identify:
 - the regression or capability being protected;
 - relevant positive and negative coverage;
 - known limitations or gaps that remain;
-- why any changed expected result is correct.
+- why any changed expected result or support classification is correct.
 
 Tests must not be weakened, removed, broadly ignored, or reclassified solely to obtain a green CI result.
 
@@ -224,6 +241,6 @@ Cross-repository tests must respect these ownership boundaries rather than dupli
 
 ## Non-goals
 
-This policy does not mandate a single Rust test framework, fixture schema, fuzzing library, mutation-testing tool, coverage percentage, or CI topology for every repository.
+This policy does not mandate a single Rust test framework, fixture schema, fuzzing library, mutation-testing tool, coverage percentage, agent topology, or CI topology for every repository.
 
 It also does not require maximum testcase quantity. The objective is stronger evidence, meaningful failure detection, and durable semantic protection.
