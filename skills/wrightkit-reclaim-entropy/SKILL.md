@@ -1,13 +1,13 @@
 ---
 name: wrightkit-reclaim-entropy
-description: Audit or safely simplify WrightKit repositories by finding accidental maintenance surface, proving real consumers and contracts, ranking deletion/consolidation candidates, and applying only evidence-backed cuts. Use for entropy reclamation, code simplification, dead or redundant abstractions, duplicate state/APIs, obsolete fallbacks, compatibility residue, or post-milestone cleanup across WrightKit repositories. Treat public crates, CLI/protocol behavior, persisted formats, OPY/DEL/OSTW/raw Workshop compatibility, security boundaries, and licensing boundaries as protected contract surfaces unless explicitly approved for change.
+description: Audit or safely simplify WrightKit repositories by finding accidental maintenance surface, proving real consumers and contracts, ranking deletion/consolidation candidates, and applying only evidence-backed cuts. Use for entropy reclamation, code simplification, dead or redundant abstractions, duplicate state/APIs, obsolete fallbacks, compatibility residue, or post-milestone cleanup across WrightKit repositories. Treat public crates, CLI/protocol behavior, persisted formats, OPY/DEL/OSTW/raw Workshop compatibility, security boundaries, and licensing boundaries as protected contract surfaces unless an accepted WrightKit versioning or architecture decision explicitly permits the change.
 ---
 
 # WrightKit Reclaim Entropy
 
 Use this skill to reduce maintenance obligations without treating line count as the objective.
 
-The authoritative WrightKit rules are in the organization-wide Code Entropy Policy and Testing Policy. Repository-local `AGENTS.md`, architecture documents, ADRs/specs, compatibility documents, and contribution rules may add stricter constraints. They take precedence over generic simplification heuristics.
+The authoritative WrightKit rules are the [Code Entropy Policy](../../docs/entropy-policy.md) and [Testing Policy](../../docs/testing-policy.md). Repository-local `AGENTS.md`, architecture documents, ADRs/specs, compatibility documents, and contribution rules may add stricter constraints. They take precedence over generic simplification heuristics.
 
 Core rule: scanners create candidates; consumer, contract, ownership, history, and verification evidence justify a cut.
 
@@ -48,7 +48,7 @@ Treat the following as contract-sensitive by default:
 - repository/license boundaries that intentionally isolate implementations;
 - security, authorization, trust-boundary validation, data-integrity, failure-observability, and resource-quiescence behavior.
 
-Removing or changing these is Risk C unless the user or owning architecture/product decision has already explicitly approved the change.
+Removing or changing these is Risk C unless the user or owning architecture/product decision has explicitly approved the change. A pre-1.0 version number alone is not permission to delete a public surface; an accepted repository versioning policy must explicitly classify that surface as unstable before it can be downgraded to Risk B. It is never Risk A merely because the crate is pre-1.0.
 
 ## Survey for entropy
 
@@ -112,6 +112,7 @@ May be implemented in Apply mode with normal verification.
 Examples:
 
 - shared internal or crate-visible APIs;
+- an explicitly unstable pre-1.0 public surface when the repository's accepted versioning policy permits breaking changes;
 - concurrent/lifecycle consolidation;
 - dependency replacement;
 - cross-repository migration with identified consumers;
@@ -123,7 +124,7 @@ Implementation is allowed only when the task already authorizes it; make the evi
 
 Examples:
 
-- public published APIs;
+- public published APIs unless an accepted versioning policy explicitly classifies the surface as unstable;
 - stable CLI/protocol/tool contracts;
 - persisted or migration-sensitive formats;
 - declared OPY, DEL/OSTW, raw Workshop, locale, or other compatibility surfaces;
