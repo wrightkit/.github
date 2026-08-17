@@ -91,7 +91,7 @@ The first `main` run recorded `No cache found` in both jobs, so it proves a succ
 - whether target caching reduced meaningful build work;
 - the resulting cache-family and writer count.
 
-Until that evidence exists, retain existing repository-local workflows and do not replace `actions-rust-lang/setup-rust-toolchain` in `wright`, `opy-rs`, `del-rs`, or `workshop-rs` merely for consistency.
+The requested repo-local migrations are now prepared in `language-provider-protocol`, `wright`, `opy-rs`, `del-rs`, and `workshop-rs` branches. They use the explicit composition above while preserving each repository's existing gates and release behavior. The migrations remain rollout candidates until remote CI records a later cache restore; this evidence gate must be satisfied before treating the pattern as an accepted reference or migrating additional repositories merely for consistency.
 
 ## References
 
