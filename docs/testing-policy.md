@@ -239,6 +239,52 @@ In particular:
 
 Cross-repository tests must respect these ownership boundaries rather than duplicating authoritative semantic data for convenience.
 
+## 14. Verification evidence lifecycle and repository admission
+
+Not all evidence produced during development belongs in the repository. AI agents in particular frequently create ad-hoc files — baseline captures, CLI transcripts, benchmark dumps, one-off verification reports, temporary repro scripts, issue-specific fixtures, and debug logs — to prove that a single change worked. This section defines when such artifacts may enter the repository.
+
+### Evidence classes
+
+Every artifact produced during development or verification belongs to exactly one lifecycle class:
+
+**Ephemeral verification evidence** — artifacts useful only for the current task. Examples: baseline and treatment command output, stderr captures, benchmark dumps, one-off verification Markdown, screenshots used only to demonstrate a PR, temporary shell or Python harnesses, and debugging logs. These must stay outside the repository by default: in `$TMPDIR`, a local work directory, or CI artifact storage. They are not commit-worthy merely because they were useful during verification.
+
+**Durable regression assets** — minimized, deterministic tests or fixtures that protect a surviving observable contract or known failure class independently from the current PR. These may enter the repository only after passing the admission criteria below. They belong in an existing canonical test location with established provenance.
+
+**Canonical evidence corpora** — provenance- and ownership-managed compatibility, conformance, locale/catalog, or real-project evidence with long-lived value beyond any single task. Ownership is defined by repository-local guidance. Changes require the same independent evidence as any other correctness expectation.
+
+### Repository admission criteria
+
+A temporary artifact may be promoted into the repository only when it satisfies all of the following:
+
+- a durable observable contract, invariant, or known regression class is protected;
+- a plausible incorrect implementation would be detected;
+- value survives the current PR or task and benefits future maintainers;
+- the artifact is minimal and deterministic;
+- an existing canonical test or corpus location in the repository can own it;
+- it does not duplicate equivalent coverage already in the suite;
+- external or real-world inputs retain required provenance and licensing information.
+
+If any criterion fails, the artifact stays ephemeral and must not be committed.
+
+### Ad-hoc evidence directories
+
+Unless a repository explicitly defines a canonical location for a category of evidence, agents must not create committed directories or files solely for verification purposes.
+
+Directories such as `evidence/`, `verification/`, `reports/`, `debug/`, `tmp-tests/`, or task-specific subtrees are not canonical locations. Creating them to hold a single-task proof that has no durable successor is not a valid reason to commit the directory.
+
+If no canonical location exists and the artifact would meet all admission criteria, the appropriate action is to report it as a promotion candidate and let the owning maintainer or QA role decide whether and how to integrate it into the existing test structure.
+
+### Promotion candidates
+
+When verification reveals an artifact that appears to meet admission criteria, report it explicitly as a promotion candidate without committing it. The report should describe:
+
+- what durable contract or regression class the artifact protects;
+- where in the existing test structure it would integrate;
+- which admission criteria it satisfies and which require maintainer judgment.
+
+The owning maintainer or QA role authorizes the final integration. An agent that implemented the change being verified must not self-authorize the promotion.
+
 ## Non-goals
 
 This policy does not mandate a single Rust test framework, fixture schema, fuzzing library, mutation-testing tool, coverage percentage, agent topology, or CI topology for every repository.
