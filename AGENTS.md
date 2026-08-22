@@ -26,7 +26,7 @@ Before substantial work, identify the affected repository and read its `AGENTS.m
 | Provider process/data protocol | `language-provider-protocol` |
 | User-facing tooling, orchestration, integration, analysis, and agent surfaces | `wright` |
 | Product website | `wrightkit.dev` |
-| Installation and distribution infrastructure | `installer` |
+| Distribution, packaging, and release-artifact ownership | `wright` (`dist/`, `.github/workflows/release.yml`) for build/package/publish; `homebrew-tap` for the published Homebrew formula only |
 | Organization-wide shared policy, CI patterns, and reusable skills | `wrightkit/.github` |
 
 Confirm current reality before making architectural assumptions. Repository ownership may evolve.
@@ -46,6 +46,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Task concern | Load |
 | --- | --- |
 | Tests, fixtures, corpora, snapshots, expected results, compatibility evidence, fuzzing, verification artifacts | [`docs/testing-policy.md`](docs/testing-policy.md) |
+| A CI job failed and the owning surface is unclear (Rust quality vs. LPP integration vs. differential/compatibility vs. dist/release) | Classify by job before fixing: `rust-quality`/local gates → fix in place; cross-repo integration (`lpp-client-integration`) → identify whether the failure is in `wright` or the pinned `language-provider-protocol` commit before changing either; differential/compatibility jobs → treat a new failure as a compatibility regression under `docs/testing-policy.md`, not a flaky test, unless proven otherwise |
 | Dead-code, redundancy, over-engineering, post-migration simplification | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
 | Rust CI toolchain, caching, and job composition | [`docs/rust-ci.md`](docs/rust-ci.md) |
 | Release engineering, tagging, and artifact publication | [`docs/release-engineering.md`](docs/release-engineering.md) |
