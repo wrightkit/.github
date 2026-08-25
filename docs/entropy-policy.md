@@ -34,6 +34,11 @@ Durable documentation must classify numeric claims before changing them:
   files, entries, or supported items. When a catalog, registry, manifest,
   dataset, or adjacent list already owns that state, do not hand-maintain its
   cardinality in prose. Name or link the owning surface instead.
+- A cardinality tied to an immutable provenance snapshot or historical revision
+  is not automatically a mutable current-inventory claim. Retain it when it
+  materially establishes the evidence scope or completeness of that snapshot;
+  otherwise prefer the provenance reference without adding another inventory
+  summary. Test, fixture, and corpus counts remain governed by #11.
 - **Generated derived displays** may retain a useful count when it is clearly
   identified as derived and produced and validated by the same deterministic
   path that owns the underlying data. A manually copied number is not made
