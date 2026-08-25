@@ -18,6 +18,38 @@ Use this policy when work includes any of the following:
 
 Do not load or run an entropy audit for every ordinary feature change. Prefer deliberate audits at useful boundaries such as the end of a milestone or minor-version cycle, after a migration or large refactor, or when duplicated state and compatibility layers are visibly accumulating.
 
+## Derived numeric inventory claims
+
+Durable documentation must classify numeric claims before changing them:
+
+- **Contractual numbers** are part of an observable contract, such as protocol
+  versions, exit codes, resource limits, schema cardinality constraints,
+  algorithmic costs, pinned revisions, or semantic constants. Preserve them
+  unless the owning contract is intentionally changed.
+- **Illustrative numbers** make an example concrete, such as a sample payload,
+  source value, or configuration snippet. Preserve them when they are not
+  presented as current inventory.
+- **Derived inventory/status counts** summarize mutable repository state, such
+  as current actions, values, enum members, heroes, rules, commands, tools,
+  files, entries, or supported items. When a catalog, registry, manifest,
+  dataset, or adjacent list already owns that state, do not hand-maintain its
+  cardinality in prose. Name or link the owning surface instead.
+- **Generated derived displays** may retain a useful count when it is clearly
+  identified as derived and produced and validated by the same deterministic
+  path that owns the underlying data. A manually copied number is not made
+  authoritative by describing it as generated.
+
+When a list is immediately enumerated below a preface, question whether a
+phrase such as “two flags” adds information beyond the list. Normally remove
+the redundant cardinality while preserving the semantic description. This is
+a maintainability concern, not a correctness failure or a blanket ban on
+numbers.
+
+This rule covers non-test inventory and status claims. Test, fixture, snapshot,
+corpus, and testcase cardinality policy remains scoped to
+[`wrightkit/.github#11`](https://github.com/wrightkit/.github/issues/11) and is
+not replaced or broadened by this guidance.
+
 ## 1. Simplification removes obligations, not merely lines
 
 A simplification is valuable when it reduces the number of concepts, states, contracts, dependencies, or representations that contributors and agents must keep coherent.
