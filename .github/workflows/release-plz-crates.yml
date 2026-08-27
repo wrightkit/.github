@@ -45,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     concurrency:
       group: wrightkit-release-plz-pr-${{ github.ref }}
-      cancel-in-progress: true
+      cancel-in-progress: false
     permissions:
       contents: write
       pull-requests: write

@@ -94,6 +94,7 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           shared-key: ${{ inputs.cache-shared-key }}
+          workspaces: ${{ inputs.working-directory }} -> target
           cache-targets: ${{ inputs.cache-targets }}
           cache-all-crates: false
           cache-workspace-crates: false
