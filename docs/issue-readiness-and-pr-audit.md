@@ -136,17 +136,17 @@ repository's normal authorization rules.
 This document coordinates review; it does not duplicate specialist policy.
 Invoke a route only when its trigger is present:
 
-- Route material test-quality or agent-generated-test questions to [#15 test
-  design review](https://github.com/wrightkit/.github/issues/15) and the
-  canonical testing policy. Do not add tests merely because code changed.
+- Route material test-quality or agent-generated-test questions to
+  `.agents/skills/wrightkit-test-design-review/SKILL.md` and the canonical
+  testing policy. Do not add tests merely because code changed.
 - Route high-risk Rust ownership, API, error, async/concurrency, or structural
-  questions to [#16 Rust engineering review](https://github.com/wrightkit/.github/issues/16).
+  questions to `.agents/skills/wrightkit-rust-engineering-review/SKILL.md`.
 - Route substantial simplification, deletion, duplication, or abstraction-cost
-  questions to [`docs/entropy-policy.md`](entropy-policy.md) and the
-  [`wrightkit-reclaim-entropy` skill](../skills/wrightkit-reclaim-entropy/SKILL.md).
+  questions to [`docs/entropy-policy.md`](entropy-policy.md) and
+  `.agents/skills/wrightkit-reclaim-entropy/SKILL.md`.
 - Route material changes requiring a falsifiable independent verification to
-  [#9's verification workflow](https://github.com/wrightkit/.github/issues/9)
-  and the [`wrightkit-verify-change` skill](../skills/wrightkit-verify-change/SKILL.md).
+  `.agents/skills/wrightkit-verify-change/SKILL.md` and the canonical testing
+  policy.
 
 Do not load every specialist route for a trivial change. The issue contract and
 the nearest repository guidance remain the starting point; specialist review
