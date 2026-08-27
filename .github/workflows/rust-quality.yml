@@ -71,7 +71,7 @@ on:
 
 jobs:
   rust-quality:
-    name: Rust quality / v1
+    name: Quality
     runs-on: ${{ inputs.runs-on }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
     permissions:
