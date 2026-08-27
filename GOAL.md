@@ -1,67 +1,67 @@
-# GOAL — what WrightKit is for
+# GOAL: what WrightKit is for
 
 Context: for humans and agents working anywhere in WrightKit. Read this before `AGENTS.md`.
 
-This document is **what we want**. `AGENTS.md` explains **how work is routed and governed**. Architecture documents and ADRs define technical contracts; Issues and PRs define current work. When multiple reasonable choices compete, come back here and ask which option better serves the goal.
+This document states what WrightKit is for. `AGENTS.md` covers workflow routing and repository policy. Architecture documents and ADRs define technical contracts; issues and pull requests track active work. When competing technical choices come up, use these goals to decide.
 
-## The one sentence
+## Summary
 
-**WrightKit is a modern, tooling-first development toolchain for Overwatch Workshop: it helps developers and coding agents understand, check, analyze, safely modify, and maintain real Workshop projects across raw Workshop and its established source languages.**
+WrightKit is a tooling-first development toolchain for the Overwatch Workshop. It helps developers and coding agents inspect, analyze, safely edit, and maintain real Workshop projects across raw Workshop script and its established source languages.
 
-## What that means, unpacked
+## Core principles
 
-1. **Wright is the user product.** `wright` is the flagship user-facing product; `workshop-rs`, `opy-rs`, and `deltin-rs` are necessary independently usable implementations with clear semantic ownership. Users should not need to understand WrightKit's repository layout, IRs, or provider architecture to use the toolchain. Fix missing semantics in the implementation that owns them rather than hiding gaps in Wright.
+1. **Wright is the primary user product.** Developers interact with `wright`; `workshop-rs`, `opy-rs`, and `deltin-rs` are independently usable language and semantic engines. Users should not need to understand the repository layout, intermediate representations, or provider protocols to use the toolchain. Missing semantics belong in their owning implementation, not papered over inside `wright`.
 
-2. **Tooling is the product; compilation enables it.** Diagnostics, lint/static analysis, semantic inspection, validated source edits, agent tooling, editor/CI integration, and Workshop cost/stability analysis are the center of the product. Compilation, conversion, and reconstruction matter because they enable those workflows and language independence; WrightKit must not become a collection whose primary value is transpilation.
+2. **Tooling comes first; compilation supports it.** The primary value of WrightKit lies in diagnostics, static analysis, semantic navigation, validated edits, editor and CI integrations, and cost analysis. Compilation, conversion, and reconstruction exist to enable those workflows across languages, not to turn the project into a transpiler collection.
 
-3. **Real projects matter more than symmetric feature matrices.** Prefer making real development workflows reliable over maximizing feature counts, test counts, or parity between languages. Different languages may receive different investment when their real usage differs. Corpora and compatibility work exist to expose failures that matter to users and tooling, not to make an inventory reach 100% for its own sake.
+3. **Real workflows take priority over symmetric feature matrices.** Reliability in actual projects matters more than nominal parity between languages, raw feature counts, or test totals. Different languages can receive different levels of effort depending on real-world adoption. Compatibility suites and corpora exist to expose failures that affect users and tooling, not to check off inventory lists.
 
-4. **Humans come first; coding agents are a first-class outcome.** Human-facing CLI and editor workflows should stay understandable and useful. At the same time, coding agents should get structured, deterministic access to the same semantic understanding, diagnostics, queries, edits, and validation without scraping human output or reimplementing Workshop/OPY/DEL semantics. WrightKit provides professional Workshop tooling to coding agents; it does not become a generic or full coding-agent framework.
+4. **Human developers and coding agents share the same core tooling.** Human-facing CLI and editor workflows must stay clear and usable. Coding agents also need structured, deterministic access to semantic analysis, diagnostics, AST queries, and validated edits without scraping terminal output or reimplementing language parsers. WrightKit gives coding agents Workshop-specific tooling; it does not try to be a generic agent framework.
 
-5. **The long-term agent outcome is development from intent.** A capable coding agent should increasingly be able to take a natural-language requirement for a real project, use WrightKit to understand the relevant source and relationships, make targeted edits, run diagnostics and analysis, inspect resource/stability risks, compile or validate the result, repair justified problems, and report what remains outside static proof. The user should be able to focus increasingly on requirements and outcomes rather than language mechanics.
+5. **Enable intent-driven development for agents.** Over time, an agent should be able to take a high-level requirement for a project, use WrightKit to inspect the code and its dependencies, apply targeted edits, check diagnostics, evaluate server-load risks, and flag what it cannot statically verify. Developers can then focus on design requirements rather than Workshop syntax details.
 
-6. **Workshop is the canonical semantic and conversion hub.** Canonical Workshop semantics and reviewed technical facts belong in `workshop-rs`; source-language implementations own their language semantics; Wright owns the cross-language product/tooling layer. OPY↔DEL conversion should normally pass through Workshop rather than creating a second direct semantic mapping. Workshop-to-source reconstruction should aim for useful, idiomatic, maintainable source and preserve information that survives the Workshop representation where practical.
+6. **Workshop is the semantic and conversion hub.** `workshop-rs` owns canonical Workshop semantics and validated engine facts. Individual language crates own their respective syntax and semantics, and `wright` integrates them into cross-language tooling. Conversions between languages like OPY and DEL route through Workshop representation instead of bespoke direct bridges. When reconstructing source code from Workshop rules, the output should be idiomatic and maintainable while retaining any structure preserved by the Workshop format.
 
-7. **Compatibility is semantic, not textual.** Supported constructs should preserve source-language behavior and the contracts required for trustworthy diagnostics, analysis, provenance, reconstruction, and safe editing. Formatting, temporary variables, helper shape, optimizer decisions, or compiler-output identity are not correctness requirements unless they change those outcomes. Real upstream quirks may be preserved when projects depend on them, without treating upstream bugs as ideal language design. WrightKit does not promise that a generated program is guaranteed to run correctly on a live Overwatch server.
+7. **Compatibility means matching semantics, not exact text.** Supported language constructs must preserve execution behavior, diagnostic contracts, and safe editing boundaries. Identical formatting, matching temporary variable names, optimizer choices, and byte-for-byte compiler output are not correctness criteria unless they alter behavior. Known upstream quirks can be preserved when projects depend on them, but upstream bugs should not be treated as intended language design. WrightKit cannot guarantee that generated code will execute without issues on a live game server.
 
-8. **WrightKit follows Workshop evolution independently.** New Workshop heroes, maps, actions, values, settings, and other canonical content should not wait for OPY/DEL upstream updates. While a source language remains maintained, follow its language definition rather than inventing a WrightKit-only dialect. If an upstream implementation is abandoned, WrightKit should be capable of continuing backward-compatible maintenance and normal language evolution when real users still justify it.
+8. **Support Workshop updates independently.** Official Workshop additions like new heroes, maps, actions, and settings should land without waiting on upstream OPY or OSTW releases. While an upstream language remains active, WrightKit follows its specification rather than inventing custom dialects. If an upstream compiler is abandoned, WrightKit will maintain compatibility and evolve the language when real user demand justifies it.
 
-9. **Workshop knowledge serves development tooling.** WrightKit should maintain strong-evidence technical facts needed for Workshop development, including catalog/game facts, resource costs, and statically reasoned stability risks. Report risk and reasoning rather than claiming runtime certainty. The boundary is technical development tooling: WrightKit does not decide whether gameplay is balanced, fun, or well designed.
+9. **Game knowledge supports tooling, not game design judgments.** WrightKit tracks verified technical facts about the Workshop environment: element catalogs, script resource limits, and static stability hazards. The toolchain reports risks and explains its static reasoning without claiming to guarantee runtime behavior. Its scope ends at technical tooling; WrightKit does not evaluate gameplay balance, fun, or game design quality.
 
-10. **Keep the trustworthy core small and the ecosystem open.** Built-in lint should favor high-confidence rules with low false-positive cost; optional official and community rule collections can cover broader needs. Stable integration contracts may allow third-party tooling and language providers where real demand exists, but WrightKit should not pre-design a generic compiler framework for hypothetical consumers. Convention should beat configuration for common workflows, and platform-specific investment should follow real user evidence.
+10. **Keep the core small and predictable.** Built-in lints focus on high-confidence rules with minimal false positives; broader checks belong in optional or community rule sets. Stable integration points allow third-party tools and language providers to connect when needed, but the project does not build abstractions for hypothetical consumers. Default conventions handle standard workflows; platform-specific work requires backing evidence from real users.
 
-## How to choose when good options compete
+## Decision priorities
 
-Prefer the choice that, in order:
+When competing technical approaches are on the table, prefer in this order:
 
-1. unblocks a real Workshop development workflow;
-2. improves semantic correctness, diagnostics, analysis, or trustworthy project understanding;
-3. strengthens agent-driven development without degrading human developer experience;
-4. enables safe, localized source modification;
-5. fixes the missing capability in the repository that owns that semantics;
-6. improves Workshop technical analysis, interoperability, compilation, or reconstruction in service of the above;
-7. keeps the solution small, local, and evidence-backed.
+1. Unblock a real Workshop development workflow.
+2. Improve semantic correctness, diagnostic accuracy, or static analysis.
+3. Strengthen coding-agent workflows without degrading the human developer experience.
+4. Enable safe, localized source edits.
+5. Fix the issue in the repository that owns the underlying semantics.
+6. Advance Workshop analysis, interoperability, compilation, or reconstruction in service of the priorities above.
+7. Keep the implementation small, focused, and backed by concrete evidence.
 
-Do not trade these outcomes for support-matrix symmetry, compiler-output identity, roadmap bookkeeping, architecture polish, or speculative extensibility.
+Never trade these outcomes for feature-matrix symmetry, identical compiler output, roadmap checklists, architectural purism, or speculative extensibility.
 
-## How we know we are succeeding
+## Measuring success
 
-For existing developers, Wright should replace more manual searching and guesswork with normal development-tooling workflows: actionable diagnostics, semantic inspection, relationship analysis, resource-cost visibility, static stability-risk analysis, and safe fixes where the evidence is strong enough.
+For human developers, Wright replaces manual guesswork with standard tooling: accurate diagnostics, dependency analysis, resource-cost estimates, static stability warnings, and automated safe fixes.
 
-For AI-driven development, a capable coding agent should increasingly be able to take a real Workshop requirement, use WrightKit to understand and modify the project, validate the result, and clearly identify what the toolchain cannot prove.
+For agent-driven workflows, an agent can take a project requirement, use WrightKit to inspect and edit the codebase, validate changes, and clearly report any behavior the compiler cannot prove statically.
 
-Those outcomes matter more than any fixed count of languages, rules, corpus files, commands, or passing feature cells.
+These outcomes matter far more than reaching arbitrary targets for supported languages, lint rules, corpus size, or test matrix completion.
 
-## What we deliberately do not optimize for
+## Non-goals
 
-WrightKit is not trying to become:
+WrightKit is not intended to be:
 
-- a generic compiler framework;
-- a full IDE or heavy UI product;
-- Workshop project hosting or a GitHub replacement;
-- a generic AI coding-agent framework;
-- a game runtime simulator;
-- a pure transpiler collection;
-- a platform that judges gameplay balance or game-design quality.
+- a generic compiler framework
+- a full IDE or heavy UI product
+- Workshop project hosting or a GitHub replacement
+- a generic AI coding-agent framework
+- a game runtime simulator
+- a pure transpiler collection
+- a platform that judges gameplay balance or game-design quality
 
-Detailed engineering, testing, ownership, compatibility, and execution rules belong in `AGENTS.md`, routed organization policy, repository documentation, and ADRs rather than being repeated here.
+Detailed engineering, testing, repository ownership, compatibility standards, and workflows are defined in `AGENTS.md`, organization policies, repository guides, and ADRs rather than repeated here.
