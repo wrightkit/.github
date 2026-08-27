@@ -2,15 +2,16 @@
 
 This file is the workspace-level agent routing entry point for the WrightKit organization.
 
-Its job is to route agents and contributors to the right authoritative source for each concern. It is not a technical manual.
+Read [`GOAL.md`](GOAL.md) first for durable product intent. This file explains how work is routed and governed; it is not a technical manual or a second copy of the product goal.
 
 Repository-local `AGENTS.md` files specialize contracts for their own repository. They must not duplicate shared policy, but they may add stricter or domain-specific requirements that take precedence locally.
 
 To apply this routing from a local workspace:
 
-1. Read this file.
-2. Read the nearest repository-local `AGENTS.md`.
-3. Load routed policy or skills only when the task touches their concern.
+1. Read [`GOAL.md`](GOAL.md).
+2. Read this file.
+3. Read the nearest repository-local `AGENTS.md`.
+4. Load routed policy or skills only when the task touches their concern.
 
 No proprietary include syntax is required.
 
@@ -63,6 +64,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 
 These rules always apply regardless of repository:
 
+- Use [`GOAL.md`](GOAL.md) to resolve product-direction tradeoffs; do not duplicate or silently redefine its intent in repository-local guidance.
 - Respect repository ownership boundaries. Modify authoritative contracts in their owning repository.
 - Integrate cross-repository changes separately in consumers.
 - Do not bypass ownership boundaries for implementation convenience.
@@ -92,9 +94,3 @@ Verification evidence that is useful for a single task is not automatically repo
 Before committing any test, fixture, report, log, benchmark output, screenshot, or other proof artifact to a repository, load [`docs/testing-policy.md`](docs/testing-policy.md) and apply its evidence admission criteria.
 
 For focused change verification, use `.agents/skills/wrightkit-verify-change/SKILL.md`.
-
-## Product direction
-
-WrightKit is tooling-first. Prioritize capabilities that improve understanding, checking, analysis, modification, automation, interoperability, or reliability for real Workshop projects.
-
-Compatibility targets observable semantics and declared contracts, not byte-identical output, temporary variables, optimizer behavior, formatting, or internal IR.
