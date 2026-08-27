@@ -1,6 +1,8 @@
 # WrightKit shared GitHub guidance
 
-This repository contains organization-wide engineering guidance and reusable agent skills.
+This repository contains organization-wide engineering policy, CI/release standards, and workspace agent routing.
+
+Reusable WrightKit agent skills are owned by the sibling [`wrightkit/.agents`](https://github.com/wrightkit/.agents) repository and are expected at `.agents/skills` in the WrightKit workspace.
 
 ## Agent routing
 
@@ -13,8 +15,3 @@ This repository contains organization-wide engineering guidance and reusable age
 - [Testing policy](docs/testing-policy.md)
 - [Code entropy policy](docs/entropy-policy.md)
 - [Release engineering](docs/release-engineering.md)
-
-## Agent skills
-
-- [`wrightkit-reclaim-entropy`](skills/wrightkit-reclaim-entropy/SKILL.md) — evidence-first simplification and entropy reclamation for WrightKit repositories.
-- [`wrightkit-verify-change`](skills/wrightkit-verify-change/SKILL.md) — falsifiable claim verification with baseline/treatment comparison and evidence lifecycle classification.
