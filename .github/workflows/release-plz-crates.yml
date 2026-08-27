@@ -1,0 +1,65 @@
+name: WrightKit Crate Release / v1
+
+on:
+  workflow_call:
+    secrets:
+      github-token:
+        description: Token used by release-plz for repository operations
+        required: true
+      cargo-registry-token:
+        description: crates.io token used by release-plz release
+        required: true
+
+jobs:
+  release:
+    name: Publish crates and create release tag
+    if: github.repository_owner == 'wrightkit'
+    runs-on: ubuntu-latest
+    environment: release
+    concurrency:
+      group: wrightkit-release-plz-publication
+      cancel-in-progress: false
+      queue: max
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          token: ${{ secrets.github-token }}
+
+      - name: Publish unpublished crates
+        uses: release-plz/action@v0.5
+        with:
+          command: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.github-token }}
+          CARGO_REGISTRY_TOKEN: ${{ secrets.cargo-registry-token }}
+
+  release-pr:
+    name: Maintain release PR
+    if: github.repository_owner == 'wrightkit'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: wrightkit-release-plz-pr-${{ github.ref }}
+      cancel-in-progress: true
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          token: ${{ secrets.github-token }}
+
+      - name: Update release PR
+        uses: release-plz/action@v0.5
+        with:
+          command: release-pr
+        env:
+          GITHUB_TOKEN: ${{ secrets.github-token }}
