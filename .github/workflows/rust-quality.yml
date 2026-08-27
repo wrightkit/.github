@@ -1,4 +1,4 @@
-name: WrightKit Rust Quality / v1
+name: Rust Quality
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: WrightKit Crate Release / v1
+name: Crate Release
 
 on:
   workflow_call:
