@@ -210,7 +210,42 @@ Repositories should use the smallest useful combination of test layers for their
 
 A large corpus does not replace focused diagnostics. Hundreds of unit tests do not replace real-project evidence. A full-feature census does not replace malformed-input and failure-path testing.
 
-## 12. Pull request expectations
+## 12. Test-design review: protect the right surface
+
+Durable tests should be selected by the behavior they protect, not generated mechanically from a code diff. The preferred hierarchy is:
+
+1. regression tests for real failure classes;
+2. public contract tests;
+3. integration tests from representative user-facing entry points;
+4. property or invariant tests;
+5. unit tests for isolated stable logic where they add distinct value.
+
+Use the smallest useful combination of layers, starting with existing coverage. A lower-level test remains valuable when it detects a distinct failure mode, such as a parser diagnostic or an invariant that a higher-level test cannot isolate. Otherwise, prefer one test at the highest layer that makes the contract observable.
+
+Code changing does not, by itself, require a new test. Add a test only when it protects a meaningful observable behavior, regression class, public contract, or stable invariant that existing coverage does not already protect. Fewer tests, including consolidating or deleting a proposed test, is a valid outcome.
+
+### Stable invariants versus dynamic facts
+
+A stable invariant is a deliberately accepted property that should survive a correct internal rewrite, such as semantic round-trip preservation, atomic validated edits, or structured error propagation. A dynamic fact is mutable state of an upstream source or current inventory, such as today's corpus/test count, membership or names in an upstream registry, or current enum/domain cardinality. Dynamic facts should not become durable expectations merely because they are easy to enumerate. Validate them from their source of truth when their change is itself the contract; otherwise do not lock them in a test.
+
+Tests should normally not exist primarily to lock:
+
+- dynamic corpus or test counts;
+- current upstream membership or name lists;
+- documentation prose or incidental formatting;
+- private implementation structure or helper call counts;
+- current enum or domain cardinality; or
+- behavior already fully covered at a higher layer without a distinct failure mode.
+
+Snapshots, fixtures, and numeric assertions are not categorically forbidden. They are appropriate when they encode a stable, independently justified contract and a plausible incorrect implementation would fail. If a correct internal rewrite would make a test fail while preserving the public contract, reconsider whether the test targets the right surface.
+
+### Avoid production pollution
+
+Tests should not normally require new `pub` or `pub(crate)` APIs, test-only hooks, configuration surfaces, visibility changes, or architectural indirection solely to observe internals. Prefer testing an existing public or integration boundary. If a proposed test needs production structure only for test access, first look for an existing contract or rewrite the test; a test convenience is not by itself a reason to expand the production design.
+
+Prefer minimal representative inputs inline. Add a fixture file only when it is shared, large, provenance-relevant, or owned by an established canonical corpus location. A new ad-hoc fixture, report, or verification file must also satisfy the evidence-admission rules in Section 15.
+
+## 13. Pull request expectations
 
 A PR that changes observable behavior should make the evidence for that behavior reviewable.
 
@@ -226,7 +261,7 @@ Tests must not be weakened, removed, broadly ignored, or reclassified solely to 
 
 Temporary quarantines or expected-failure classifications are acceptable only when the gap remains visible, the intended behavior remains preserved, and the owning repository has a clear way to track the limitation.
 
-## 13. Repository responsibilities
+## 14. Repository responsibilities
 
 This policy defines WrightKit-wide testing governance. Each repository remains responsible for documenting and implementing its own evidence sources, fixture layouts, validation commands, and CI gates.
 
@@ -239,7 +274,7 @@ In particular:
 
 Cross-repository tests must respect these ownership boundaries rather than duplicating authoritative semantic data for convenience.
 
-## 14. Verification evidence lifecycle and repository admission
+## 15. Verification evidence lifecycle and repository admission
 
 Not all evidence produced during development belongs in the repository. AI agents in particular frequently create ad-hoc files — baseline captures, CLI transcripts, benchmark dumps, one-off verification reports, temporary repro scripts, issue-specific fixtures, and debug logs — to prove that a single change worked. This section defines when such artifacts may enter the repository.
 
