@@ -85,7 +85,7 @@ Formatting differences, temporary variables, generated helper shape, optimizer d
 
 Real upstream quirks that existing projects depend on may need compatibility behavior. Preserve such behavior when evidence requires it, but do not confuse an upstream bug or implementation accident with ideal language semantics.
 
-WrightKit does not promise that any generated Workshop program is guaranteed to run correctly on a live Overwatch server. The upstream compilers cannot make that guarantee either. WrightKit's responsibility is correct static understanding, transformation, validation, and clearly bounded analysis; server state and other external runtime failures are outside that guarantee.
+WrightKit does not promise that any generated Workshop program is guaranteed to run correctly on a live Overwatch server. WrightKit's responsibility is correct static understanding, transformation, validation, and clearly bounded analysis; server state and other external runtime failures are outside that guarantee.
 
 ### 8. WrightKit follows Workshop evolution independently
 
@@ -97,7 +97,7 @@ Historical project compatibility should be preserved where practical, but future
 
 ### 9. Workshop knowledge exists to improve development tooling
 
-WrightKit should maintain the canonical technical knowledge required to make Workshop development effective: language/catalog facts, settings, hero and ability facts where useful, element/resource costs, documented runtime semantics, and other evidence-backed properties that tools can reason about.
+WrightKit should maintain the canonical technical knowledge required to make Workshop development effective: language/catalog facts, settings, hero and ability facts where useful, element/resource costs, documented Workshop execution semantics, and other evidence-backed properties that tools can reason about.
 
 The boundary is development tooling, not game design. WrightKit should not decide whether a hero is balanced, whether a mechanic is fun, or what a project ought to design.
 
