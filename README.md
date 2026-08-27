@@ -8,6 +8,7 @@ This repository contains organization-wide engineering guidance and reusable age
 
 ## Policies and standards
 
+- [Engineering quality policy](docs/engineering-quality.md)
 - [Rust CI standard](docs/rust-ci.md)
 - [Testing policy](docs/testing-policy.md)
 - [Code entropy policy](docs/entropy-policy.md)
