@@ -27,7 +27,8 @@ Before substantial work, identify the affected repository and read its `AGENTS.m
 | User-facing tooling, orchestration, integration, analysis, and agent surfaces | `wright` |
 | Product website | `wrightkit.dev` |
 | Distribution, packaging, and release-artifact ownership | `wright` (`dist/`, `.github/workflows/release.yml`) for build/package/publish; `homebrew-tap` for the published Homebrew formula only |
-| Organization-wide shared policy, CI patterns, and reusable skills | `wrightkit/.github` |
+| Organization-wide shared policy, CI patterns, and GitHub governance | `wrightkit/.github` |
+| WrightKit-wide reusable agent skills and procedures | `wrightkit/.agents` |
 
 Confirm current reality before making architectural assumptions. Repository ownership may evolve.
 
@@ -53,8 +54,10 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Dead-code, redundancy, over-engineering, post-migration simplification | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
 | Rust CI toolchain, caching, and job composition | [`docs/rust-ci.md`](docs/rust-ci.md) |
 | Release engineering, tagging, and artifact publication | [`docs/release-engineering.md`](docs/release-engineering.md) |
-| Entropy reclamation workflow | [`skills/wrightkit-reclaim-entropy/SKILL.md`](skills/wrightkit-reclaim-entropy/SKILL.md) |
-| Evidence-first change verification | [`skills/wrightkit-verify-change/SKILL.md`](skills/wrightkit-verify-change/SKILL.md) |
+| Entropy reclamation workflow | `.agents/skills/wrightkit-reclaim-entropy/SKILL.md` |
+| Rust architecture/API/concurrency review | `.agents/skills/wrightkit-rust-engineering-review/SKILL.md` |
+| Test necessity/stability/duplication review | `.agents/skills/wrightkit-test-design-review/SKILL.md` |
+| Evidence-first change verification | `.agents/skills/wrightkit-verify-change/SKILL.md` |
 
 ## Global invariants
 
@@ -88,7 +91,7 @@ Verification evidence that is useful for a single task is not automatically repo
 
 Before committing any test, fixture, report, log, benchmark output, screenshot, or other proof artifact to a repository, load [`docs/testing-policy.md`](docs/testing-policy.md) and apply its evidence admission criteria.
 
-For focused change verification, use the [`wrightkit-verify-change`](skills/wrightkit-verify-change/SKILL.md) skill.
+For focused change verification, use `.agents/skills/wrightkit-verify-change/SKILL.md`.
 
 ## Product direction
 
