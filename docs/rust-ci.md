@@ -1,8 +1,13 @@
 # WrightKit Rust CI standard
 
-This document defines the preferred Rust CI composition for WrightKit repositories. It keeps toolchain provisioning and Cargo cache ownership as separate, visible workflow responsibilities.
+This document defines the Rust CI composition behind WrightKit's versioned
+`rust-quality.yml` reusable workflow. It keeps toolchain provisioning and Cargo
+cache ownership as separate, visible workflow responsibilities.
 
-Repository-local workflows own their commands, evidence, and release behavior. This document is a pattern, not a shared workflow or a requirement to migrate every repository immediately.
+The reusable workflow owns the fundamental quality contract. Repository-local
+workflows own triggers, caller matrices, domain-specific commands and evidence,
+and release behavior. Callers may configure the declared Cargo topology, but do
+not bypass the contract with arbitrary command hooks.
 
 ## Responsibilities
 
@@ -91,7 +96,12 @@ The first `main` run recorded `No cache found` in both jobs, so it proves a succ
 - whether target caching reduced meaningful build work;
 - the resulting cache-family and writer count.
 
-The requested repo-local migrations are now prepared in `language-provider-protocol`, `wright`, `opy-rs`, `del-rs`, and `workshop-rs` branches. They use the explicit composition above while preserving each repository's existing gates and release behavior. The migrations remain rollout candidates until remote CI records a later cache restore; this evidence gate must be satisfied before treating the pattern as an accepted reference or migrating additional repositories merely for consistency.
+The v1 reusable-workflow rollout uses the explicit composition above while
+preserving each repository's existing gates and release behavior. A local or
+PR pass does not prove the rollout: after the pinned workflow revision is
+available remotely, each migrated repository needs a real post-migration main
+or PR run showing the intended gate ordering and cache behavior. The cache
+pilot's seed and later restore remain separate evidence requirements.
 
 ## References
 

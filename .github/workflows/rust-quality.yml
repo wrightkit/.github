@@ -1,0 +1,188 @@
+name: Rust Quality
+
+on:
+  workflow_call:
+    inputs:
+      runs-on:
+        description: Runner label for this invocation
+        required: false
+        type: string
+        default: ubuntu-latest
+      toolchain:
+        description: Rust toolchain for this invocation
+        required: false
+        type: string
+        default: stable
+      working-directory:
+        description: Directory containing the Cargo project
+        required: false
+        type: string
+        default: .
+      workspace:
+        description: Pass --workspace to Cargo quality commands
+        required: false
+        type: boolean
+        default: true
+      all-targets:
+        description: Pass --all-targets to Clippy and tests
+        required: false
+        type: boolean
+        default: true
+      all-features:
+        description: Pass --all-features to Clippy and tests
+        required: false
+        type: boolean
+        default: false
+      features:
+        description: Explicit Cargo feature list, when needed
+        required: false
+        type: string
+        default: ''
+      no-default-features:
+        description: Pass --no-default-features to Clippy and tests
+        required: false
+        type: boolean
+        default: false
+      cargo-check:
+        description: Run a separate cargo check stage
+        required: false
+        type: boolean
+        default: false
+      timeout-minutes:
+        description: Maximum duration of the quality job
+        required: false
+        type: number
+        default: 30
+      targets:
+        description: Additional Rust targets to install, comma separated
+        required: false
+        type: string
+        default: ''
+      cache-shared-key:
+        description: Stable logical cache family for compatible jobs
+        required: false
+        type: string
+        default: linux-ci
+      cache-targets:
+        description: Cache compiled target artifacts when justified by the caller
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  rust-quality:
+    name: Rust quality / v1
+    runs-on: ${{ inputs.runs-on }}
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+    permissions:
+      contents: read
+    defaults:
+      run:
+        working-directory: ${{ inputs.working-directory }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ inputs.toolchain }}
+          components: clippy, rustfmt
+          targets: ${{ inputs.targets }}
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: ${{ inputs.cache-shared-key }}
+          workspaces: ${{ inputs.working-directory }} -> target
+          cache-targets: ${{ inputs.cache-targets }}
+          cache-all-crates: false
+          cache-workspace-crates: false
+          cache-bin: false
+          save-if: ${{ github.ref == 'refs/heads/main' }}
+          cache-on-failure: false
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Run cargo check
+        if: inputs.cargo-check
+        shell: bash
+        env:
+          WORKSPACE_FLAG: ${{ inputs.workspace && '--workspace' || '' }}
+          TARGETS_FLAG: ${{ inputs.all-targets && '--all-targets' || '' }}
+          FEATURES_FLAG: ${{ inputs.all-features && '--all-features' || '' }}
+          EXPLICIT_FEATURES: ${{ inputs.features }}
+          NO_DEFAULT_FLAG: ${{ inputs.no-default-features && '--no-default-features' || '' }}
+        run: |
+          set -euo pipefail
+          cargo_args=()
+          if [[ "${WORKSPACE_FLAG}" == '--workspace' ]]; then
+            cargo_args+=(--workspace)
+          fi
+          if [[ "${NO_DEFAULT_FLAG}" == '--no-default-features' ]]; then
+            cargo_args+=(--no-default-features)
+          fi
+          if [[ "${FEATURES_FLAG}" == '--all-features' ]]; then
+            cargo_args+=(--all-features)
+          fi
+          if [[ -n "${EXPLICIT_FEATURES}" ]]; then
+            cargo_args+=("--features=${EXPLICIT_FEATURES}")
+          fi
+          cargo check --locked "${cargo_args[@]}"
+
+      - name: Run Clippy
+        shell: bash
+        env:
+          WORKSPACE_FLAG: ${{ inputs.workspace && '--workspace' || '' }}
+          TARGETS_FLAG: ${{ inputs.all-targets && '--all-targets' || '' }}
+          FEATURES_FLAG: ${{ inputs.all-features && '--all-features' || '' }}
+          EXPLICIT_FEATURES: ${{ inputs.features }}
+          NO_DEFAULT_FLAG: ${{ inputs.no-default-features && '--no-default-features' || '' }}
+        run: |
+          set -euo pipefail
+          cargo_args=()
+          if [[ "${WORKSPACE_FLAG}" == '--workspace' ]]; then
+            cargo_args+=(--workspace)
+          fi
+          if [[ "${TARGETS_FLAG}" == '--all-targets' ]]; then
+            cargo_args+=(--all-targets)
+          fi
+          if [[ "${NO_DEFAULT_FLAG}" == '--no-default-features' ]]; then
+            cargo_args+=(--no-default-features)
+          fi
+          if [[ "${FEATURES_FLAG}" == '--all-features' ]]; then
+            cargo_args+=(--all-features)
+          fi
+          if [[ -n "${EXPLICIT_FEATURES}" ]]; then
+            cargo_args+=("--features=${EXPLICIT_FEATURES}")
+          fi
+          cargo clippy --locked "${cargo_args[@]}" -- -D warnings
+
+      - name: Run tests
+        shell: bash
+        env:
+          WORKSPACE_FLAG: ${{ inputs.workspace && '--workspace' || '' }}
+          TARGETS_FLAG: ${{ inputs.all-targets && '--all-targets' || '' }}
+          FEATURES_FLAG: ${{ inputs.all-features && '--all-features' || '' }}
+          EXPLICIT_FEATURES: ${{ inputs.features }}
+          NO_DEFAULT_FLAG: ${{ inputs.no-default-features && '--no-default-features' || '' }}
+        run: |
+          set -euo pipefail
+          cargo_args=()
+          if [[ "${WORKSPACE_FLAG}" == '--workspace' ]]; then
+            cargo_args+=(--workspace)
+          fi
+          if [[ "${TARGETS_FLAG}" == '--all-targets' ]]; then
+            cargo_args+=(--all-targets)
+          fi
+          if [[ "${NO_DEFAULT_FLAG}" == '--no-default-features' ]]; then
+            cargo_args+=(--no-default-features)
+          fi
+          if [[ "${FEATURES_FLAG}" == '--all-features' ]]; then
+            cargo_args+=(--all-features)
+          fi
+          if [[ -n "${EXPLICIT_FEATURES}" ]]; then
+            cargo_args+=("--features=${EXPLICIT_FEATURES}")
+          fi
+          cargo test --locked "${cargo_args[@]}"
