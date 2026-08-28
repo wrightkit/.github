@@ -6,8 +6,8 @@ Reusable WrightKit agent skills are owned by the sibling [`wrightkit/.agents`](h
 
 ## Organization guidance
 
-- [WrightKit goal](GOAL.md) — durable product intent, priorities, success outcomes, and deliberate non-goals. Read this first when a product or implementation tradeoff is unclear.
-- [Workspace agent routing](AGENTS.md) — organization-level routing entry point; routes agents to the right policy, skill, or repository-local guidance.
+- [WrightKit goal](GOAL.md): durable product intent, priorities, success outcomes, and deliberate non-goals. Read this first when a product or implementation tradeoff is unclear.
+- [Workspace agent routing](AGENTS.md): organization-level routing entry point; routes agents to the right policy, skill, or repository-local guidance.
 
 ## Policies and standards
 
