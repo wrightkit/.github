@@ -32,9 +32,10 @@ jobs:
           token: ${{ secrets.github-token }}
 
       - name: Publish unpublished crates
-        uses: release-plz/action@v0.5
+        uses: release-plz/action@2eb1d8bcb770b4c48ccfaad919734b38b51958c9
         with:
           command: release
+          version: "0.3.160"
         env:
           GITHUB_TOKEN: ${{ secrets.github-token }}
           CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN || secrets.cargo-registry-token }}
@@ -58,8 +59,9 @@ jobs:
           token: ${{ secrets.github-token }}
 
       - name: Update release PR
-        uses: release-plz/action@v0.5
+        uses: release-plz/action@2eb1d8bcb770b4c48ccfaad919734b38b51958c9
         with:
           command: release-pr
+          version: "0.3.160"
         env:
           GITHUB_TOKEN: ${{ secrets.github-token }}
