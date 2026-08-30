@@ -47,7 +47,8 @@ Load policy documents only when their concern is relevant. Do not preload all of
 
 | Task concern | Load |
 | --- | --- |
-| Implementation design, scope discipline, demonstrated abstractions, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
+| Writing or revising durable agent guidance, AGENTS content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
+| Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
 | Issue readiness and one-pass implementation/PR review workflow | [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md) |
 | Tests, fixtures, corpora, snapshots, expected results, compatibility evidence, fuzzing, verification artifacts | [`docs/testing-policy.md`](docs/testing-policy.md) |
 | Durable documentation that summarizes mutable inventories or status | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
