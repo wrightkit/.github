@@ -95,3 +95,11 @@ Verification evidence that is useful for a single task is not automatically repo
 Before committing any test, fixture, report, log, benchmark output, screenshot, or other proof artifact to a repository, load [`docs/testing-policy.md`](docs/testing-policy.md) and apply its evidence admission criteria.
 
 For focused change verification, use `.agents/skills/wrightkit-verify-change/SKILL.md`.
+
+## Independent ablation
+
+After completing design or implementation work, do not declare it complete until an independent agent/reviewer who did not author it has run an ablation pass.
+
+- For design, remove, defer, or replace each new abstraction, dependency, state mechanism, public API, protocol boundary, or cross-repository contract. Keep it only when its absence demonstrably breaks an approved requirement, invariant, ownership boundary, acceptance criterion, or known real workflow. Hypothetical future flexibility is not enough.
+- For implementation, use a temporary patch/worktree to remove, disable, or simplify the key new behavior and rerun independent regression, contract, corpus/fixture, or real-project evidence. Evidence claimed to validate the change should fail again under the relevant ablation; otherwise investigate ineffective code or insufficient evidence.
+- Ablation is not merely rerunning the normal test suite or mechanically mutation-testing every line. Do not add production APIs or permanent scaffolding solely for ablation. Keep ablation artifacts temporary unless they independently deserve durable regression/contract status.
