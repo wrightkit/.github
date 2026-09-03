@@ -36,6 +36,14 @@ cancelled while running and pending publication runs are retained in the
 platform queue. GitHub permits up to 100 pending runs per concurrency group;
 runs beyond that limit are cancelled.
 
+The `release-plz-crates.yml` workflow exposes `releases_created` and `releases`
+from its `release` job to callers. `releases_created` is the string `true` or
+`false`; `releases` is the JSON release metadata emitted by release-plz. A
+caller can gate a repository-owned follow-up job with
+`needs.<release-job>.outputs.releases_created == 'true'` and pass the matching
+`needs.<release-job>.outputs.releases` value without rediscovering the tag or
+release.
+
 Rust quality cache policy follows `docs/rust-ci.md`: compatible jobs restore one
 stable family, only successful `main` quality runs save it, failed jobs do not
 save it, and release/tag workflows do not use the quality cache.
