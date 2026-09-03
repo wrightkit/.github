@@ -2,6 +2,13 @@ name: Crate Release
 
 on:
   workflow_call:
+    outputs:
+      releases:
+        description: JSON metadata for releases created by release-plz
+        value: ${{ jobs.release.outputs.releases }}
+      releases_created:
+        description: Whether release-plz created any release
+        value: ${{ jobs.release.outputs.releases_created }}
     secrets:
       github-token:
         description: Token used by release-plz for repository operations
@@ -14,6 +21,9 @@ jobs:
   release:
     name: Publish crates and create release tag
     if: github.repository_owner == 'wrightkit'
+    outputs:
+      releases: ${{ steps.release-plz.outputs.releases }}
+      releases_created: ${{ steps.release-plz.outputs.releases_created }}
     runs-on: ubuntu-latest
     environment: release
     concurrency:
@@ -32,6 +42,7 @@ jobs:
           token: ${{ secrets.github-token }}
 
       - name: Publish unpublished crates
+        id: release-plz
         uses: release-plz/action@2eb1d8bcb770b4c48ccfaad919734b38b51958c9
         with:
           command: release
