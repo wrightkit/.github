@@ -224,6 +224,14 @@ Use the smallest useful combination of layers, starting with existing coverage. 
 
 Code changing does not, by itself, require a new test. Add a test only when it protects a meaningful observable behavior, regression class, public contract, or stable invariant that existing coverage does not already protect. Fewer tests, including consolidating or deleting a proposed test, is a valid outcome.
 
+### Feature ownership, not issue taxonomy
+
+Every durable test must belong to a stable feature. Within that feature, a test may protect a public contract, invariant, regression, failure mode, or other observable behavior. Test files, modules, suites, case names, and fixture placement must be organized around the owning feature and behavior.
+
+Issue, pull-request, and task identifiers are provenance, not test taxonomy. They must not define a test file, module, suite, case name, or committed test directory. A narrowly scoped defect belongs to the feature it regressed. A broad issue that spans multiple capabilities distributes its tests to the corresponding feature-owned suites rather than creating one issue-owned suite. If no stable feature can own a proposed test, keep the proof ephemeral until that ownership is established.
+
+Real-project regressions should preserve project, immutable revision, source path, and related issue or PR identifiers where useful, but that provenance belongs in comments or fixture metadata. It does not replace feature ownership or determine test naming and placement.
+
 ### Stable invariants versus dynamic facts
 
 A stable invariant is a deliberately accepted property that should survive a correct internal rewrite, such as semantic round-trip preservation, atomic validated edits, or structured error propagation. A dynamic fact is mutable state of an upstream source or current inventory, such as today's corpus/test count, membership or names in an upstream registry, or current enum/domain cardinality. Dynamic facts should not become durable expectations merely because they are easy to enumerate. Validate them from their source of truth when their change is itself the contract; otherwise do not lock them in a test.
