@@ -226,9 +226,9 @@ Code changing does not, by itself, require a new test. Add a test only when it p
 
 ### Feature ownership, not issue taxonomy
 
-Every durable test must belong to a stable feature, public contract, invariant, or regression class. Test files, modules, suites, case names, and fixture placement must be organized around that owning behavior.
+Every durable test must belong to a stable feature. Within that feature, a test may protect a public contract, invariant, regression, failure mode, or other observable behavior. Test files, modules, suites, case names, and fixture placement must be organized around the owning feature and behavior.
 
-Issue, pull-request, and task identifiers are provenance, not test taxonomy. They must not define a test file, module, suite, case name, or committed test directory. A narrowly scoped defect belongs to the feature it regressed. A broad issue that spans multiple capabilities distributes its tests to the corresponding feature-owned suites rather than creating one issue-owned suite. If no stable feature or contract can own a proposed test, keep the proof ephemeral until the ownership is established.
+Issue, pull-request, and task identifiers are provenance, not test taxonomy. They must not define a test file, module, suite, case name, or committed test directory. A narrowly scoped defect belongs to the feature it regressed. A broad issue that spans multiple capabilities distributes its tests to the corresponding feature-owned suites rather than creating one issue-owned suite. If no stable feature can own a proposed test, keep the proof ephemeral until that ownership is established.
 
 Real-project regressions should preserve project, immutable revision, source path, and related issue or PR identifiers where useful, but that provenance belongs in comments or fixture metadata. It does not replace feature ownership or determine test naming and placement.
 
