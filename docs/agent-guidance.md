@@ -40,6 +40,16 @@ Skills should link to canonical policy rather than copying it. Repository guidan
 
 Why: duplicate instructions drift, consume context, and can disagree about which copy is authoritative.
 
+## Design skill metadata for discovery
+
+Treat a skill's discovery metadata as an activation surface, not merely a summary of what the full skill contains. Before the skill body is loaded, the agent should be able to recognize relevant task shapes, changed artifacts, and failure signals from the metadata alone.
+
+Front-load the concepts that should trigger the skill, including important indirect contexts. A task can materially touch testing, architecture, compatibility, verification, or cleanup even when its headline is a dependency bump, refactor, CI fix, or migration. Prefer semantic trigger vocabulary that generalizes to new cases rather than exhaustive keyword lists or duplicated routing rules.
+
+When a skill is added or its activation surface changes, check its description against representative trigger and non-trigger prompts. A normal relevant prompt should discover the skill without explicit naming, while routine unrelated work should not activate it unnecessarily.
+
+Why: policy and procedures are ineffective when discovery depends on the agent first classifying the task using the same missing concept the skill was meant to supply.
+
 ## Keep durable guidance stable
 
 Do not encode current issue state, release versions, counts, temporary gaps, current priorities, or other mutable reality into durable agent guidance unless the fact itself is a stable contract.
