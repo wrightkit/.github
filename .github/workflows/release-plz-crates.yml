@@ -18,9 +18,29 @@ on:
         required: false
 
 jobs:
+  package-preflight:
+    name: Verify publishable package artifacts
+    if: github.repository_owner == 'wrightkit'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+
+      - name: Verify publishable packages
+        run: cargo publish --workspace --locked --dry-run
+
   release:
     name: Publish crates and create release tag
     if: github.repository_owner == 'wrightkit'
+    needs: package-preflight
     outputs:
       releases: ${{ steps.release-plz.outputs.releases }}
       releases_created: ${{ steps.release-plz.outputs.releases_created }}
