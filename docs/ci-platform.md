@@ -30,7 +30,10 @@ integration/distribution behavior.
 Release ownership is similarly split: release-plz maintains Release PRs,
 publishes crates, and creates canonical tags; each repository retains its own
 tag-triggered binary, checksum, catalog, GitHub Release, and package-manager
-workflow. The shared publication job uses one stable group and
+workflow. Before the publication job starts, the reusable workflow runs
+`cargo publish --workspace --locked --dry-run` so every publishable package is
+packaged and verified from its artifact while grouped workspace versions are
+checked together. The shared publication job uses one stable group and
 `cancel-in-progress: false` with `queue: max`, so publication is never
 cancelled while running and pending publication runs are retained in the
 platform queue. GitHub permits up to 100 pending runs per concurrency group;
