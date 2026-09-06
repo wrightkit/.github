@@ -40,11 +40,19 @@ Skills should link to canonical policy rather than copying it. Repository guidan
 
 Why: duplicate instructions drift, consume context, and can disagree about which copy is authoritative.
 
+## Make context acquisition a routing responsibility
+
+Normal implementation prompts should be able to remain short, for example `implement #123` or `fix #123`. Durable guidance should make the agent responsible for resolving the smallest relevant context: Issue, owning repository, repository guidance, current architecture/contract, current implementation reality, and specialized policy or skills when their risk surface applies.
+
+Do not require users or Issue bodies to repeat every relevant document path, architecture summary, or skill invocation. Instead, provide stable routing from always-read guidance to the current owner-side contract. When no trustworthy current contract can be resolved, or when the Issue, documented contract, and implementation disagree materially, guidance should make the stop condition explicit rather than inviting an Engineer to infer a new design.
+
+Why: context routing is part of the project harness. If correct implementation depends on a user remembering which documents an agent should read, or on an agent first recognizing a missing concept before it can discover the guidance for that concept, the routing layer is not doing its job.
+
 ## Design skill metadata for discovery
 
 Treat a skill's discovery metadata as an activation surface, not merely a summary of what the full skill contains. Before the skill body is loaded, the agent should be able to recognize relevant task shapes, changed artifacts, and failure signals from the metadata alone.
 
-Front-load the concepts that should trigger the skill, including important indirect contexts. A task can materially touch testing, architecture, compatibility, verification, or cleanup even when its headline is a dependency bump, refactor, CI fix, or migration. Prefer semantic trigger vocabulary that generalizes to new cases rather than exhaustive keyword lists or duplicated routing rules.
+Front-load the concepts that should trigger the skill, including important indirect contexts. A task can materially touch testing, architecture, compatibility, verification, cleanup, semantic placement, or responsibility growth even when its headline is a dependency bump, parser feature, lowering change, refactor, CI fix, or migration. Prefer semantic trigger vocabulary that generalizes to new cases rather than exhaustive keyword lists or duplicated routing rules.
 
 When a skill is added or its activation surface changes, check its description against representative trigger and non-trigger prompts. A normal relevant prompt should discover the skill without explicit naming, while routine unrelated work should not activate it unnecessarily.
 

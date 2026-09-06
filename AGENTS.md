@@ -41,6 +41,22 @@ For cross-repository work:
 4. Implement consumer integration separately.
 5. Verify the cross-repository contract explicitly.
 
+## Implementation context preflight
+
+A short request such as `implement #123` or `fix #123` is sufficient instruction for normal implementation work. The agent is responsible for resolving the relevant project context before editing code; the user should not have to repeat repository guidance, architecture links, or skill names in every prompt.
+
+Before substantive implementation:
+
+1. Read the linked Issue and nearest repository `AGENTS.md`.
+2. Identify the affected domain and owning repository before choosing an implementation location.
+3. Resolve the current architecture or contract relevant to that domain through repository guidance and durable documentation. An ADR records a decision and rationale; its existence alone does not prove that current code implements that decision or that the decision remains the active contract.
+4. Inspect the current implementation, affected consumers, tests/evidence, and dependency boundaries far enough to establish current reality.
+5. Compare the Issue contract, current architecture/contract, and current code reality. `ready-for-implementation` does not waive this consistency check.
+6. If they are materially inconsistent, stop as Engineer and report the mismatch to the appropriate Architect/owner instead of choosing a new architecture by implementation convenience.
+7. If they are aligned, load the specialized policy or skills indicated by the actual risk surface and implement the smallest complete coherent change.
+
+Do not preload every architecture document or specialist skill. The preflight exists to find the smallest relevant context, not to turn each implementation into a repository-wide audit.
+
 ## Policy routing
 
 Load policy documents only when their concern is relevant. Do not preload all of them.
@@ -48,7 +64,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Task concern | Load |
 | --- | --- |
 | Writing or revising durable agent guidance, AGENTS content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
-| Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
+| Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
 | Issue readiness and one-pass implementation/PR review workflow | [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md) |
 | Tests, fixtures, corpora, snapshots, expected results, compatibility evidence, fuzzing, verification artifacts | [`docs/testing-policy.md`](docs/testing-policy.md) |
 | Durable documentation that summarizes mutable inventories or status | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
@@ -57,7 +73,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Rust CI toolchain, caching, and job composition | [`docs/rust-ci.md`](docs/rust-ci.md) |
 | Release engineering, tagging, and artifact publication | [`docs/release-engineering.md`](docs/release-engineering.md) |
 | Entropy reclamation workflow | `.agents/skills/wrightkit-reclaim-entropy/SKILL.md` |
-| Rust architecture/API/concurrency review | `.agents/skills/wrightkit-rust-engineering-review/SKILL.md` |
+| Rust architecture/API/concurrency/responsibility review | `.agents/skills/wrightkit-rust-engineering-review/SKILL.md` |
 | Test necessity/stability/duplication review | `.agents/skills/wrightkit-test-design-review/SKILL.md` |
 | Evidence-first change verification | `.agents/skills/wrightkit-verify-change/SKILL.md` |
 
