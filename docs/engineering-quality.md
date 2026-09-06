@@ -1,6 +1,6 @@
 # WrightKit Engineering Quality Policy
 
-This policy defines organization-wide defaults for agent-assisted engineering work. Implementation decisions must remain grounded in correctness, existing architecture, locality, and low maintenance cost.
+This policy defines organization-wide defaults for agent-assisted engineering work. Implementation decisions must remain grounded in correctness, existing architecture, coherent responsibility, locality, and low maintenance cost.
 
 Repository-local guidance may add stricter requirements, but it must not weaken this policy or replace repository-specific architecture and compatibility contracts.
 
@@ -10,13 +10,25 @@ When choosing between valid implementations, follow these priorities in order:
 
 1. Correctness against the explicit issue or public contract
 2. Existing architecture, ownership, and dependency boundaries
-3. The simplest complete change that satisfies the contract
+3. The simplest complete change that satisfies the contract while keeping the changed behavior in a coherent responsibility
 4. Locality of the change and ease of review
 5. Clear, readable code and documentation
 6. DRY, when a demonstrated abstraction reduces total maintenance cost
 7. Speculative extensibility, only when current evidence justifies it
 
-The default is the smallest complete change that satisfies the issue and existing architecture. Complexity needs a current reason.
+The default is the smallest complete coherent change that satisfies the issue and existing architecture. Complexity needs a current reason. Existing placement is not evidence that new behavior belongs there.
+
+## Preserve domain locality and responsibility
+
+Organize implementation so a maintainer can find the behavior through the domain responsibility it implements rather than reconstructing unrelated compiler phases, registries, or framework machinery first.
+
+When a parser, lowerer, compiler, checker, registry, catalog, service, or other implementation unit already carries several unrelated responsibilities, do not use adjacency alone to justify putting another behavior there. Ask which domain contract owns the behavior and whether the proposed placement makes that ownership easier or harder to discover.
+
+A local structural extraction needed to keep the changed behavior cohesive is part of the feature change, not unrelated cleanup. Keep that extraction bounded to the responsibility the issue actually touches; do not turn a feature into a repository-wide reorganization or speculative architecture rewrite.
+
+Prefer typed code for behavior, invariants, context-sensitive semantics, and control flow. Large mechanical inventories such as names, aliases, localization, enum membership, or other genuinely declarative facts may remain validated or generated data. If generic code interprets metadata fields to decide program semantics, treat that as a semantic abstraction that needs a concrete current justification rather than assuming a data-driven representation is automatically simpler.
+
+Why: repeated locally minimal additions can make every individual PR easy to review while steadily increasing navigation distance, mixed responsibility, and the number of concepts required to understand one feature. WrightKit optimizes total maintenance cost, not only the size of the current diff.
 
 ## Prefer demonstrated abstractions
 
@@ -38,9 +50,9 @@ This is not a ban on advanced Rust. A complex ownership model, trait boundary, a
 
 ## Keep issue work focused
 
-An issue implementation should touch only what the issue owns and what is clearly necessary to fulfill its contract. Keep unrelated cleanup, renaming, refactoring, and formatting separate unless the issue explicitly includes them or correctness requires them.
+An issue implementation should touch only what the issue owns and what is clearly necessary to fulfill its contract. Keep unrelated cleanup, renaming, refactoring, and formatting separate unless the issue explicitly includes them, correctness requires them, or a bounded structural extraction is needed to keep the changed behavior in its coherent owning responsibility.
 
-Why: a focused change is easier to reason about, verify, review, and revert. It also prevents an implementation agent from turning a local task into an unauthorized architecture change.
+Why: a focused change is easier to reason about, verify, review, and revert. It also prevents an implementation agent from turning a local task into an unauthorized architecture change. Focus does not mean preserving a bad placement merely because it minimizes the diff.
 
 When removing behavior, remove obsolete code paths with it unless a compatibility contract requires a transition. Do not preserve fallback layers merely because deletion feels risky; establish whether a real consumer or contract still requires them.
 
