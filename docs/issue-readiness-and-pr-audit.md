@@ -15,7 +15,7 @@ Use the following semantic states:
 - **`blocked`** — the contract is sufficiently decided, but an external dependency, owner, access requirement, or prerequisite prevents the work. Record the dependency and the condition that will unblock it.
 - **`ready-for-implementation`** — the issue contains enough settled scope and contract information for an Engineer to implement it without inventing a product or architecture decision. Implementation details may remain open.
 
-An issue can move back from `ready-for-implementation` when new evidence or a scope change reopens a design, product, or dependency question. Do not hide an unresolved decision inside an apparently ready issue; name the decision and route it to its owner first.
+An issue can move back from `ready-for-implementation` when new evidence, architecture drift, current-code reality, or a scope change reopens a design, product, or dependency question. `ready-for-implementation` is not a permanent assertion that the Issue still matches the repository when implementation begins. Do not hide an unresolved decision inside an apparently ready issue; name the decision and route it to its owner first.
 
 ## Minimum implementation contract
 
@@ -32,23 +32,27 @@ This is a discoverability contract, not an implementation specification. An issu
 
 If a section is not applicable, do not manufacture content for it. If material information is unknown, the issue is not ready and should identify whether it needs design, a product decision, or an external dependency.
 
-## Engineer defaults
+## Engineer preflight and defaults
 
-For implementation work, an Engineer should:
+A short request such as `implement #123` or `fix #123` is sufficient. Before changing code, the Engineer is responsible for resolving the relevant current context rather than expecting the prompt to repeat repository documents or skill names.
 
-1. Read the linked issue and nearest repository guidance before changing code. Load specialized policy or skills only when the change touches their concern.
-2. Check that the issue is `ready-for-implementation` in substance. Do not self-authorize an unresolved design or product decision.
-3. Inspect the existing implementation, tests, consumers, and ownership boundaries before adding a new path or abstraction.
-4. Make the smallest complete change that satisfies the issue and existing architecture.
-5. Keep unrelated cleanup, refactoring, renaming, and speculative extensibility out of the change.
-6. Verify the behavior at the narrowest decisive surface first, then run the broader gates required by the repository or risk surface.
-7. Report material assumptions, limitations, and remaining gaps against the acceptance criteria. A green build does not resolve an undecided contract.
+For substantive implementation work, an Engineer should:
+
+1. Read the linked Issue and nearest repository guidance.
+2. Identify the affected domain and owning repository before choosing the implementation location.
+3. Resolve the current architecture or contract relevant to that domain through repository guidance and durable documentation. Treat ADRs as decision records; verify current implementation reality separately.
+4. Inspect the current implementation, affected consumers, tests/evidence, and dependency boundaries far enough to establish current reality.
+5. Compare the Issue contract, current architecture/contract, and current code reality. If they are materially inconsistent, stop and report the mismatch to the appropriate Architect/owner; do not self-authorize a replacement design.
+6. If they are aligned, load specialized policy or skills for the actual risk surface and make the smallest complete coherent change that satisfies the issue and current architecture.
+7. Keep unrelated cleanup, renaming, broad refactoring, and speculative extensibility out of the change. A bounded structural extraction needed to keep the changed behavior in its coherent owning responsibility is part of the implementation scope, not unrelated cleanup.
+8. Verify the behavior at the narrowest decisive surface first, then run the broader gates required by the repository or risk surface.
+9. Report material assumptions, limitations, and remaining gaps against the acceptance criteria. A green build does not resolve an undecided or inconsistent contract.
 
 These defaults complement [`docs/engineering-quality.md`](engineering-quality.md) and do not replace repository-local architecture or contribution guidance.
 
 ## PR review is verification, not design
 
-A reviewer verifies whether the PR correctly and completely implements its approved issue, architecture, and contracts. Review is not an opportunity to redesign the system, revisit accepted architecture preferences, or expand the issue into cleanup and future work.
+A reviewer verifies whether the PR correctly and completely implements its approved issue, current architecture, and contracts. Review is not an opportunity to redesign the system, revisit accepted architecture preferences, or expand the issue into cleanup and future work.
 
 Why: architecture and product decisions have their own owners and decision process. Reopening them during PR review creates scope drift and repeated implementation cycles without new evidence.
 
@@ -58,11 +62,11 @@ Review, as applicable:
 
 - the linked issue scope, non-goals, and acceptance criteria;
 - correctness, regressions, failure and unsupported paths;
-- compliance with already-approved architecture, ownership, dependency, compatibility, API/protocol, and security contracts;
+- compliance with the current approved architecture, ownership, dependency, compatibility, API/protocol, and security contracts;
 - test coverage when it is materially relevant to a current failure mode or contract;
 - changes outside the approved scope that affect correctness or maintenance obligations.
 
-Architecture is a compliance boundary during review. Do not propose an alternative architecture when the PR follows the approved one. If new evidence shows the approved contract itself is wrong, identify the decision mismatch and route it to the appropriate owner rather than asking the Engineer to redesign it inside the PR.
+Architecture is a compliance boundary during review. Do not propose an alternative architecture when the PR follows the current approved one. If new evidence shows that the Issue, documented contract, and current implementation disagree materially, identify the decision mismatch and route it to the appropriate owner rather than asking the Engineer to redesign it inside the PR.
 
 ## Findings and output
 
@@ -96,7 +100,7 @@ Why: follow-up review verifies the correction. Re-running a fresh architectural 
 Specialist policy and skills are demand-driven, not mandatory review stages:
 
 - Route material test-quality or agent-generated-test questions to `.agents/skills/wrightkit-test-design-review/SKILL.md` and the canonical testing policy.
-- Route genuinely material Rust ownership, API, error, async/concurrency, or structural risk to `.agents/skills/wrightkit-rust-engineering-review/SKILL.md`.
+- Route material Rust ownership, API, error, async/concurrency, abstraction, semantic-placement, responsibility-growth, feature-locality, or metadata-driven behavior risk to `.agents/skills/wrightkit-rust-engineering-review/SKILL.md`.
 - Route substantial simplification, deletion, duplication, or post-migration entropy work to [`docs/entropy-policy.md`](entropy-policy.md) and `.agents/skills/wrightkit-reclaim-entropy/SKILL.md` when that work is inside the approved scope.
 - Route material changes requiring independent falsification to `.agents/skills/wrightkit-verify-change/SKILL.md` and the canonical testing policy.
 
