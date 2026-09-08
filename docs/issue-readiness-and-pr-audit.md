@@ -45,8 +45,9 @@ For substantive implementation work, an Engineer should:
 5. Compare the Issue contract, current architecture/contract, and current code reality. If they are materially inconsistent, stop and report the mismatch to the appropriate Architect/owner; do not self-authorize a replacement design.
 6. If they are aligned, load specialized policy or skills for the actual risk surface and make the smallest complete coherent change that satisfies the issue and current architecture.
 7. Keep unrelated cleanup, renaming, broad refactoring, and speculative extensibility out of the change. A bounded structural extraction needed to keep the changed behavior in its coherent owning responsibility is part of the implementation scope, not unrelated cleanup.
-8. Verify the behavior at the narrowest decisive surface first, then run the broader gates required by the repository or risk surface.
-9. Report material assumptions, limitations, and remaining gaps against the acceptance criteria. A green build does not resolve an undecided or inconsistent contract.
+8. For newly added explanatory comments, temporarily remove the prose and read the changed implementation as code. If the behavior, responsibility, or control flow becomes unclear, improve names, types, decomposition, APIs, or feature locality first. Restore only comments whose removal loses durable information that cannot be expressed clearly in code.
+9. Verify the behavior at the narrowest decisive surface first, then run the broader gates required by the repository or risk surface.
+10. Report material assumptions, limitations, and remaining gaps against the acceptance criteria. A green build does not resolve an undecided or inconsistent contract.
 
 These defaults complement [`docs/engineering-quality.md`](engineering-quality.md) and do not replace repository-local architecture or contribution guidance.
 
@@ -64,9 +65,12 @@ Review, as applicable:
 - correctness, regressions, failure and unsupported paths;
 - compliance with the current approved architecture, ownership, dependency, compatibility, API/protocol, and security contracts;
 - test coverage when it is materially relevant to a current failure mode or contract;
+- newly added or materially affected explanatory comments when they narrate code, duplicate implementation structure, preserve transient state, or appear to compensate for unclear naming, decomposition, or responsibility locality;
 - changes outside the approved scope that affect correctness or maintenance obligations.
 
 Architecture is a compliance boundary during review. Do not propose an alternative architecture when the PR follows the current approved one. If new evidence shows that the Issue, documented contract, and current implementation disagree materially, identify the decision mismatch and route it to the appropriate owner rather than asking the Engineer to redesign it inside the PR.
+
+A comment is not independently authoritative evidence that a placement or behavior is intentional. When the changed code needs explanatory prose to be understandable, review the code structure first under [`docs/engineering-quality.md`](engineering-quality.md). Require comment removal when the prose merely restates implementation; require a bounded code correction when the prose is compensating for avoidable structural opacity.
 
 ## Findings and output
 
