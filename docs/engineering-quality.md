@@ -48,6 +48,25 @@ Why: WrightKit values correctness, reviewability, and maintainability over demon
 
 This is not a ban on advanced Rust. A complex ownership model, trait boundary, async design, or low-level optimization is appropriate when the domain or measured constraints require it and the implementation makes that reason discoverable.
 
+## Prefer code over commentary
+
+Code should express structure, behavior, ownership, and intent through names, types, modules, APIs, and control flow. Comments are exceptional: keep them only when they carry durable information that cannot be expressed clearly and reliably in code.
+
+Do not add comments that:
+
+- narrate implementation steps or restate names and obvious control flow;
+- duplicate module structure, ownership, or behavior that the code already makes discoverable;
+- preserve transient project state, migration progress, issue status, or speculative future work;
+- compensate for unclear naming, mixed responsibility, weak decomposition, or poor feature locality.
+
+When explanatory prose appears necessary to understand changed code, first improve the code itself: rename, narrow the API, expose the domain distinction through types, simplify control flow, or perform the bounded structural extraction needed to keep the behavior in its coherent owning responsibility.
+
+Comments remain appropriate for durable information that code cannot encode cleanly, including non-obvious invariants, compatibility constraints and quirks, correctness or safety rationale, provenance/evidence, and public API contracts that consumers need. Rustdoc should document real consumer-facing contracts; do not mechanically restate a symbol's name or type merely to increase documentation coverage.
+
+Source comments are not architecture contracts or independent evidence of current behavior. A comment that says a design is intentional does not waive the requirement to check the current architecture contract and implementation reality.
+
+Why: explanatory comments are an unvalidated natural-language cache. They can become stale while still looking authoritative to humans and coding agents. WrightKit therefore prefers making the implementation itself readable and admits prose only when removing it would lose durable information that cannot be recovered reliably from the code.
+
 ## Keep issue work focused
 
 An issue implementation should touch only what the issue owns and what is clearly necessary to fulfill its contract. Keep unrelated cleanup, renaming, refactoring, and formatting separate unless the issue explicitly includes them, correctness requires them, or a bounded structural extraction is needed to keep the changed behavior in its coherent owning responsibility.
