@@ -71,6 +71,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | A CI job failed and the owning surface is unclear (Rust quality vs. LPP integration vs. differential/compatibility vs. dist/release) | Classify by job before fixing: `rust-quality`/local gates → fix in place; cross-repo integration (`lpp-client-integration`) → identify whether the failure is in `wright` or the pinned `language-provider-protocol` commit before changing either; differential/compatibility jobs → treat a new failure as a compatibility regression under `docs/testing-policy.md`, not a flaky test, unless proven otherwise |
 | Dead-code, redundancy, over-engineering, post-migration simplification | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
 | Rust CI toolchain, caching, and job composition | [`docs/rust-ci.md`](docs/rust-ci.md) |
+| Rust build artifact growth, dev/test profile configuration, ephemeral worktree lifecycle, and local storage management | [`docs/rust-build-artifacts.md`](docs/rust-build-artifacts.md) |
 | Release engineering, tagging, and artifact publication | [`docs/release-engineering.md`](docs/release-engineering.md) |
 | Entropy reclamation workflow | `.agents/skills/wrightkit-reclaim-entropy/SKILL.md` |
 | Rust architecture/API/concurrency/responsibility review | `.agents/skills/wrightkit-rust-engineering-review/SKILL.md` |
