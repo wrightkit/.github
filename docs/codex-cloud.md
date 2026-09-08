@@ -12,11 +12,15 @@ The task repository itself is not modified by bootstrap.
 
 ## Codex Cloud setup
 
-Use a minimal environment setup command that executes the version-controlled bootstrap:
+Create a Codex Cloud secret named `WRIGHTKIT_GITHUB_TOKEN` with a GitHub fine-grained personal access token that has read-only Contents access to the private `wrightkit/.agents` repository. Expose that secret to both setup and maintenance commands; the bootstrap uses it only for GitHub fetches and does not persist it.
+
+Use this version-controlled bootstrap as both the environment setup command and the optional maintenance command:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/wrightkit/.github/main/scripts/codex-cloud-bootstrap.sh | bash
 ```
+
+Running the same command during maintenance refreshes `.github` and `.agents` before the agent phase when Codex Cloud restores a cached setup result. If the token is absent or cannot read `.agents`, bootstrap fails explicitly instead of starting with incomplete or stale shared guidance.
 
 Keep durable engineering rules, testing policy, skills, and repository ownership guidance in GitHub. Do not duplicate them in the Codex Cloud environment instructions.
 
@@ -36,5 +40,6 @@ The bootstrap accepts these environment variables for controlled testing or alte
 - `CODEX_HOME`: Codex home; defaults to `~/.codex`;
 - `WRIGHTKIT_GITHUB_REPO`: source URL for the shared `.github` repository;
 - `WRIGHTKIT_AGENTS_REPO`: source URL for the shared `.agents` repository.
+- `WRIGHTKIT_GITHUB_TOKEN`: GitHub token used for authenticated GitHub fetches; required when using the default private `.agents` source.
 
 Required shared guidance is fail-closed: if the workspace router, product goal, routed docs, or shared skills cannot be prepared, setup exits with an error rather than allowing a task to proceed with incomplete WrightKit policy.
