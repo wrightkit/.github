@@ -52,20 +52,25 @@ This is not a ban on advanced Rust. A complex ownership model, trait boundary, a
 
 Code should express structure, behavior, ownership, and intent through names, types, modules, APIs, and control flow. Comments are exceptional: keep them only when they carry durable information that cannot be expressed clearly and reliably in code.
 
+A feature, module, crate, or file is not considered readable merely because an explanatory header makes it understandable. A maintainer should normally be able to identify what it owns, how its major pieces relate, and where behavior lives from the path/module structure, names, types, public API, and implementation itself. Long `//!` or `//` preambles that explain why a file exists, enumerate its responsibilities, narrate a pipeline, describe which neighboring modules do what, or provide a prose walkthrough of the implementation are readability-failure signals even when factually accurate.
+
 Do not add comments that:
 
 - narrate implementation steps or restate names and obvious control flow;
 - duplicate module structure, ownership, or behavior that the code already makes discoverable;
+- act as a file/module/crate README for responsibilities or execution flow that should be evident from the implementation structure;
 - preserve transient project state, migration progress, issue status, or speculative future work;
-- compensate for unclear naming, mixed responsibility, weak decomposition, or poor feature locality.
+- compensate for unclear naming, mixed responsibility, weak decomposition, poor feature locality, or an implementation whose purpose is otherwise difficult to infer.
 
-When explanatory prose appears necessary to understand changed code, first improve the code itself: rename, narrow the API, expose the domain distinction through types, simplify control flow, or perform the bounded structural extraction needed to keep the behavior in its coherent owning responsibility.
+When explanatory prose appears necessary to understand changed code, first improve the code itself: rename, narrow the API, expose the domain distinction through types, simplify control flow, or perform the bounded structural extraction needed to keep the behavior in its coherent owning responsibility. If removing a file or module header leaves an experienced maintainer unable to determine why the unit exists or how to work on its feature, treat that as evidence to improve the implementation structure rather than evidence that the header should be retained.
 
-Comments remain appropriate for durable information that code cannot encode cleanly, including non-obvious invariants, compatibility constraints and quirks, correctness or safety rationale, provenance/evidence, and public API contracts that consumers need. Rustdoc should document real consumer-facing contracts; do not mechanically restate a symbol's name or type merely to increase documentation coverage.
+Comments remain appropriate for durable information that code cannot encode cleanly, including non-obvious invariants, external compatibility constraints and quirks, correctness or safety rationale, provenance/evidence, and public API contracts that consumers need. These exceptions must explain information outside the implementation's ordinary structural meaning; they do not justify a prose description of the implementation itself. Rustdoc should document real consumer-facing contracts; do not mechanically restate a symbol's name or type merely to increase documentation coverage.
+
+Comment ablation is therefore a readability test, not only a comment-retention test. For substantive code, temporarily remove explanatory file/module headers and local narration, then judge the source on its own. If responsibility, feature placement, or control flow becomes materially harder to understand, correct the names/types/modules/APIs/decomposition first. Restore only irreducible external constraints, invariants, rationale, provenance, or consumer contracts.
 
 Source comments are not architecture contracts or independent evidence of current behavior. A comment that says a design is intentional does not waive the requirement to check the current architecture contract and implementation reality.
 
-Why: explanatory comments are an unvalidated natural-language cache. They can become stale while still looking authoritative to humans and coding agents. WrightKit therefore prefers making the implementation itself readable and admits prose only when removing it would lose durable information that cannot be recovered reliably from the code.
+Why: explanatory comments are an unvalidated natural-language cache. They can become stale while still looking authoritative to humans and coding agents, and extensive explanatory prose can hide a codebase whose structure is not self-explanatory. WrightKit therefore treats the need for implementation-explaining prose as a maintenance signal and admits prose only when removing it would lose durable information that cannot be recovered reliably from the code.
 
 ## Keep issue work focused
 
