@@ -15,6 +15,7 @@ This policy applies to changes involving:
 - expected results and compatibility baselines;
 - regression and conformance evidence;
 - fuzzing, property testing, and robustness testing;
+- public or canonical boundary migrations that replace, hide, or retire an accepted contract;
 - changes that add, remove, weaken, quarantine, or reclassify test coverage or support states.
 
 Workspace and repository guidance should route agents and contributors to this policy when these concerns are affected. It does not need to be loaded for work that does not affect them.
@@ -246,6 +247,10 @@ Tests should normally not exist primarily to lock:
 - behavior already fully covered at a higher layer without a distinct failure mode.
 
 Snapshots, fixtures, and numeric assertions are not categorically forbidden. They are appropriate when they encode a stable, independently justified contract and a plausible incorrect implementation would fail. If a correct internal rewrite would make a test fail while preserving the public contract, reconsider whether the test targets the right surface.
+
+### Contract continuity across boundary replacement
+
+When replacing, hiding, or retiring a public or canonical boundary (such as an API, model, IR, or protocol), tests must verify surviving accepted contracts through the replacement boundary itself. Tests or evidence exercising only retired, private, or compatibility-only paths do not prove that the replacement boundary is complete (see [`docs/issue-readiness-and-pr-audit.md`](issue-readiness-and-pr-audit.md)).
 
 ### Avoid production pollution
 
