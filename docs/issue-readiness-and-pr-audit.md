@@ -32,6 +32,20 @@ This is a discoverability contract, not an implementation specification. An issu
 
 If a section is not applicable, do not manufacture content for it. If material information is unknown, the issue is not ready and should identify whether it needs design, a product decision, or an external dependency.
 
+## Contract continuity for boundary migrations
+
+When an issue or change replaces, hides, or retires a public or canonical boundary (such as a public API, semantic model, AST/IR, wire/provider protocol, or canonical engine representation), the change must verify the continuity of surviving accepted contracts through the replacement boundary itself.
+
+Every capability under the previous accepted contract must fall into one of three explicit categories:
+
+1. **Preserved contracts** — capabilities that remain supported must be verified directly against the replacement boundary.
+2. **Approved removals or changes** — intentional deprecations, breaking changes, or behavioral modifications must be backed by an approved architecture or contract decision; they must not be dropped silently as an implementation convenience or incidental side effect of the migration.
+3. **Ownership transfers** — capabilities moved to another layer, crate, or repository must explicitly declare the new authoritative owner and handoff boundary.
+
+Tests, fixtures, or evidence exercising only retired, private, hidden, or compatibility-only paths are insufficient to prove that a replacement boundary is complete. Passing legacy or compatibility suites does not compensate for missing capabilities on the claimed canonical contract.
+
+Why: migrating a boundary can leave legacy or compatibility adapters green while the new canonical entry point silently drops existing capabilities. Contract continuity ensures that replacements are verified at the surface where future consumers and tools will actually interact with the capability.
+
 ## Engineer preflight and defaults
 
 A short request such as `implement #123` or `fix #123` is sufficient. Before changing code, the Engineer is responsible for resolving the relevant current context rather than expecting the prompt to repeat repository documents or skill names.
@@ -42,11 +56,11 @@ For substantive implementation work, an Engineer should:
 2. Identify the affected domain and owning repository before choosing the implementation location.
 3. Resolve the current architecture or contract relevant to that domain through repository guidance and durable documentation. Treat ADRs as decision records; verify current implementation reality separately.
 4. Inspect the current implementation, affected consumers, tests/evidence, and dependency boundaries far enough to establish current reality.
-5. Compare the Issue contract, current architecture/contract, and current code reality. If they are materially inconsistent, stop and report the mismatch to the appropriate Architect/owner; do not self-authorize a replacement design.
+5. Compare the Issue contract, current architecture/contract, and current code reality. When replacing, hiding, or retiring a public or canonical boundary, verify that surviving accepted capabilities are accounted for on the replacement boundary, explicitly approved for removal/change, or transferred to another owner. If they are materially inconsistent, stop and report the mismatch to the appropriate Architect/owner; do not self-authorize a replacement design.
 6. If they are aligned, load specialized policy or skills for the actual risk surface and make the smallest complete coherent change that satisfies the issue and current architecture.
 7. Keep unrelated cleanup, renaming, broad refactoring, and speculative extensibility out of the change. A bounded structural extraction needed to keep the changed behavior in its coherent owning responsibility is part of the implementation scope, not unrelated cleanup.
 8. Temporarily remove newly added explanatory comments and file/module headers, then read the changed implementation as code. If an experienced maintainer can no longer determine the unit's responsibility, feature placement, major relationships, or control flow from names, types, modules, APIs, and implementation structure, treat that as a readability/maintainability defect and improve the code first. Restore only irreducible external contracts, invariants, compatibility/safety rationale, provenance, or consumer-facing API documentation.
-9. Verify the behavior at the narrowest decisive surface first, then run the broader gates required by the repository or risk surface.
+9. Verify the behavior at the narrowest decisive surface first, then run the broader gates required by the repository or risk surface. For boundary migrations, verify surviving contracts through the replacement boundary itself rather than relying only on legacy or compatibility paths.
 10. Report material assumptions, limitations, and remaining gaps against the acceptance criteria. A green build does not resolve an undecided or inconsistent contract.
 
 These defaults complement [`docs/engineering-quality.md`](engineering-quality.md) and do not replace repository-local architecture or contribution guidance.
@@ -64,6 +78,7 @@ Review, as applicable:
 - the linked issue scope, non-goals, and acceptance criteria;
 - correctness, regressions, failure and unsupported paths;
 - compliance with the current approved architecture, ownership, dependency, compatibility, API/protocol, and security contracts;
+- contract continuity when replacing, hiding, or retiring a public or canonical boundary: confirm that surviving accepted capabilities are verified through the replacement boundary itself, that removals/changes have explicit contract approval, that ownership transfers explicitly declare the new authoritative owner and handoff boundary, and that tests exercising only retired or compatibility paths are not treated as proving replacement completeness;
 - test coverage when it is materially relevant to a current failure mode or contract;
 - newly added or materially affected explanatory comments and file/module headers, including whether the prose is functioning as a README for code whose responsibility, ownership, pipeline, or internal relationships are otherwise not self-explanatory;
 - changes outside the approved scope that affect correctness or maintenance obligations.
@@ -106,6 +121,6 @@ Specialist policy and skills are demand-driven, not mandatory review stages:
 - Route material test-quality or agent-generated-test questions to `.agents/skills/wrightkit-test-design-review/SKILL.md` and the canonical testing policy.
 - Route material Rust ownership, API, error, async/concurrency, abstraction, semantic-placement, responsibility-growth, feature-locality, or metadata-driven behavior risk to `.agents/skills/wrightkit-rust-engineering-review/SKILL.md`.
 - Route substantial simplification, deletion, duplication, or post-migration entropy work to [`docs/entropy-policy.md`](entropy-policy.md) and `.agents/skills/wrightkit-reclaim-entropy/SKILL.md` when that work is inside the approved scope.
-- Route material changes requiring independent falsification to `.agents/skills/wrightkit-verify-change/SKILL.md` and the canonical testing policy.
+- Route material changes requiring independent falsification or public boundary contract continuity verification to `.agents/skills/wrightkit-verify-change/SKILL.md` and the canonical testing policy.
 
 Do not load every specialist route because a PR contains Rust, tests, or abstractions. The linked issue and the actual risk surface determine what is applicable.

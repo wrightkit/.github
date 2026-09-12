@@ -51,7 +51,7 @@ Before substantive implementation:
 2. Identify the affected domain and owning repository before choosing an implementation location.
 3. Resolve the current architecture or contract relevant to that domain through repository guidance and durable documentation. An ADR records a decision and rationale; its existence alone does not prove that current code implements that decision or that the decision remains the active contract.
 4. Inspect the current implementation, affected consumers, tests/evidence, and dependency boundaries far enough to establish current reality.
-5. Compare the Issue contract, current architecture/contract, and current code reality. `ready-for-implementation` does not waive this consistency check.
+5. Compare the Issue contract, current architecture/contract, and current code reality. When replacing, hiding, or retiring a public or canonical boundary, verify that surviving accepted capabilities are accounted for on the replacement boundary, explicitly approved for removal/change, or transferred to another owner. `ready-for-implementation` does not waive this consistency check.
 6. If they are materially inconsistent, stop as Engineer and report the mismatch to the appropriate Architect/owner instead of choosing a new architecture by implementation convenience.
 7. If they are aligned, load the specialized policy or skills indicated by the actual risk surface and implement the smallest complete coherent change.
 
@@ -65,7 +65,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | --- | --- |
 | Writing or revising durable agent guidance, AGENTS content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
 | Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
-| Issue readiness and one-pass implementation/PR review workflow | [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md) |
+| Public or canonical boundary migrations (API, model, IR, protocol), contract continuity, issue readiness, and one-pass implementation/PR review workflow | [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md) |
 | Tests, fixtures, corpora, snapshots, expected results, compatibility evidence, fuzzing, verification artifacts | [`docs/testing-policy.md`](docs/testing-policy.md) |
 | Durable documentation that summarizes mutable inventories or status | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
 | A CI job failed and the owning surface is unclear (Rust quality vs. LPP integration vs. differential/compatibility vs. dist/release) | Classify by job before fixing: `rust-quality`/local gates → fix in place; cross-repo integration (`lpp-client-integration`) → identify whether the failure is in `wright` or the pinned `language-provider-protocol` commit before changing either; differential/compatibility jobs → treat a new failure as a compatibility regression under `docs/testing-policy.md`, not a flaky test, unless proven otherwise |
@@ -89,6 +89,7 @@ These rules always apply regardless of repository:
 - Do not introduce complex abstractions only for hypothetical future needs.
 - Preserve provenance for semantic, compatibility, and regression evidence.
 - Do not silently weaken diagnostics, tests, compatibility expectations, validation, or error handling to make CI pass.
+- When replacing, hiding, or retiring a public or canonical boundary (API, model, IR, or protocol), verify continuity of surviving accepted contracts through the replacement boundary itself. Tests or evidence exercising only retired, private, or compatibility-only paths do not prove replacement completeness.
 - Do not treat upstream bugs or implementation details as ideal WrightKit semantics without evidence.
 - Do not invent WrightKit-only OPY or OSTW syntax unless explicitly approved as a language-level design.
 
