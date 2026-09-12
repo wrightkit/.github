@@ -44,7 +44,7 @@ Every capability under the previous accepted contract must fall into one of thre
 
 Tests, fixtures, or evidence exercising only retired, private, hidden, or compatibility-only paths are insufficient to prove that a replacement boundary is complete. Passing legacy or compatibility suites does not compensate for missing capabilities on the claimed canonical contract.
 
-Why: migrating a boundary often leaves legacy or compatibility adapters green while the new canonical entry point silently drops existing capabilities (as occurred in `workshop-rs#187`). Contract continuity ensures that replacements are verified at the surface where future consumers and tools will actually interact with the capability.
+Why: migrating a boundary can leave legacy or compatibility adapters green while the new canonical entry point silently drops existing capabilities. Contract continuity ensures that replacements are verified at the surface where future consumers and tools will actually interact with the capability.
 
 ## Engineer preflight and defaults
 
