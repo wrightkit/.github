@@ -74,6 +74,7 @@ jobs:
   release-pr:
     name: Maintain release PR
     if: github.repository_owner == 'wrightkit'
+    needs: release
     runs-on: ubuntu-latest
     concurrency:
       group: wrightkit-release-plz-pr-${{ github.ref }}
