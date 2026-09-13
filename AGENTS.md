@@ -57,6 +57,18 @@ Before substantive implementation:
 
 Do not preload every architecture document or specialist skill. The preflight exists to find the smallest relevant context, not to turn each implementation into a repository-wide audit.
 
+## Delivery is part of completion
+
+For repository work, a locally correct implementation is not delivered until the remote review surface reflects it.
+
+- For `implement #123`, `fix #123`, or equivalent implementation requests, complete verification, commit the change on a non-default branch, push that branch, and open a PR unless an appropriate PR already exists. If one already exists, update it instead of creating a duplicate.
+- For requests to address PR review findings, commit the corrections and push them to the existing PR head branch. Do not stop after editing, verification, or a local commit while the PR still points at the old code.
+- Never push implementation commits directly to the default branch unless the user explicitly authorizes that exception.
+- Stop before push/PR only when the user explicitly requested local-only work or a real blocker prevents delivery, such as missing write permission, authentication failure, unavailable remote, or an unresolved branch conflict. Report the blocker and the exact local branch/commit state.
+- A final report for implementation work should identify the PR that now contains the delivered change, or the concrete blocker that prevented creating/updating it.
+
+Why: the PR, not an agent worktree, is the shared review and integration surface. Leaving verified changes only in local state makes implementation and review-fix tasks appear complete while the repository still contains the previous code.
+
 ## Policy routing
 
 Load policy documents only when their concern is relevant. Do not preload all of them.
