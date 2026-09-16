@@ -12,6 +12,7 @@ Reusable WrightKit agent skills are owned by the sibling [`wrightkit/.agents`](h
 ## Policies and standards
 
 - [Engineering quality policy](docs/engineering-quality.md)
+- [Issue readiness and PR audit](docs/issue-readiness-and-pr-audit.md)
 - [Rust CI standard](docs/rust-ci.md)
 - [Testing policy](docs/testing-policy.md)
 - [Code entropy policy](docs/entropy-policy.md)

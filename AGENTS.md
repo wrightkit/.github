@@ -62,12 +62,19 @@ Do not preload every architecture document or specialist skill. The preflight ex
 For repository work, a locally correct implementation is not delivered until the remote review surface reflects it.
 
 - For `implement #123`, `fix #123`, or equivalent implementation requests, complete verification, commit the change on a non-default branch, push that branch, and open a PR unless an appropriate PR already exists. If one already exists, update it instead of creating a duplicate.
-- For requests to address PR review findings, commit the corrections and push them to the existing PR head branch. Do not stop after editing, verification, or a local commit while the PR still points at the old code.
+- For requests to address PR review findings:
+  - addressing review findings is verification and correction work; it does not authorize unrelated cleanup, redesign, or scope expansion;
+  - commit verified corrections and push them to the existing PR head branch; do not stop after editing, verification, or a local commit while the PR still points at the old code;
+  - a review-fix task is not complete solely because fixes are committed and pushed; the agent must hand the updated PR back to follow-up review:
+    - handle affected review threads when GitHub exposes reply/resolve operations: reply to confirm addressed findings (citing the fixing commit or explanation) and resolve threads where supported, but never resolve or clear threads to hide unresolved, contested, or deferred findings;
+    - re-request follow-up review from the applicable reviewer when GitHub supports that reviewer identity and review-request mechanism;
+    - when the reviewer cannot be re-requested directly (such as bot/app limitations or external reviewer mechanisms), use the repository's documented re-review trigger or an explicit review-ready handoff signal (such as a PR comment) and report any remaining orchestration limitation;
+  - the final report must identify the updated PR, the pushed commits/corrections, thread status, and the review handoff state (reviewer re-requested or handoff signal used).
 - Never push implementation commits directly to the default branch unless the user explicitly authorizes that exception.
-- Stop before push/PR only when the user explicitly requested local-only work or a real blocker prevents delivery, such as missing write permission, authentication failure, unavailable remote, or an unresolved branch conflict. Report the blocker and the exact local branch/commit state.
-- A final report for implementation work should identify the PR that now contains the delivered change, or the concrete blocker that prevented creating/updating it.
+- Stop before push/PR or review handoff only when the user explicitly requested local-only work or a real blocker prevents delivery or handoff, such as missing write permission, authentication failure, unavailable remote, or an unresolved branch conflict. Report the blocker and the exact local branch/commit and review state.
+- A final report for implementation or review-fix work should identify the PR that now contains the delivered change and its review handoff state, or the concrete blocker that prevented completing it.
 
-Why: the PR, not an agent worktree, is the shared review and integration surface. Leaving verified changes only in local state makes implementation and review-fix tasks appear complete while the repository still contains the previous code.
+Why: the PR, not an agent worktree, is the shared review and integration surface. Leaving verified changes only in local state makes implementation and review-fix tasks appear complete while the repository still contains the previous code. Similarly, pushing review fixes without handling review threads and handing the PR back to the review lifecycle leaves reviewers unaware that corrections are ready for verification and stalls follow-up review.
 
 ## Policy routing
 
@@ -77,7 +84,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | --- | --- |
 | Writing or revising durable agent guidance, AGENTS content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
 | Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
-| Public or canonical boundary migrations (API, model, IR, protocol), contract continuity, issue readiness, and one-pass implementation/PR review workflow | [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md) |
+| Public or canonical boundary migrations (API, model, IR, protocol), contract continuity, issue readiness, one-pass implementation/PR review, and review-fix handoff | [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md) |
 | Tests, fixtures, corpora, snapshots, expected results, compatibility evidence, fuzzing, verification artifacts | [`docs/testing-policy.md`](docs/testing-policy.md) |
 | Durable documentation that summarizes mutable inventories or status | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
 | A CI job failed and the owning surface is unclear (Rust quality vs. LPP integration vs. differential/compatibility vs. dist/release) | Classify by job before fixing: `rust-quality`/local gates → fix in place; cross-repo integration (`lpp-client-integration`) → identify whether the failure is in `wright` or the pinned `language-provider-protocol` commit before changing either; differential/compatibility jobs → treat a new failure as a compatibility regression under `docs/testing-policy.md`, not a flaky test, unless proven otherwise |
