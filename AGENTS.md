@@ -41,34 +41,6 @@ For cross-repository work:
 4. Implement consumer integration separately.
 5. Verify the cross-repository contract explicitly.
 
-## Implementation context preflight
-
-A short request such as `implement #123` or `fix #123` is sufficient instruction for normal implementation work. The agent is responsible for resolving the relevant project context before editing code; the user should not have to repeat repository guidance, architecture links, or skill names in every prompt.
-
-Before substantive implementation:
-
-1. Read the linked Issue and nearest repository `AGENTS.md`.
-2. Identify the affected domain and owning repository before choosing an implementation location.
-3. Resolve the current architecture or contract relevant to that domain through repository guidance and durable documentation. An ADR records a decision and rationale; its existence alone does not prove that current code implements that decision or that the decision remains the active contract.
-4. Inspect the current implementation, affected consumers, tests/evidence, and dependency boundaries far enough to establish current reality.
-5. Compare the Issue contract, current architecture/contract, and current code reality. When replacing, hiding, or retiring a public or canonical boundary, verify that surviving accepted capabilities are accounted for on the replacement boundary, explicitly approved for removal/change, or transferred to another owner. `ready-for-implementation` does not waive this consistency check.
-6. If they are materially inconsistent, stop as Engineer and report the mismatch to the appropriate Architect/owner instead of choosing a new architecture by implementation convenience.
-7. If they are aligned, load the specialized policy or skills indicated by the actual risk surface and implement the smallest complete coherent change.
-
-Do not preload every architecture document or specialist skill. The preflight exists to find the smallest relevant context, not to turn each implementation into a repository-wide audit.
-
-## Delivery is part of completion
-
-For repository work, a locally correct implementation is not delivered until the remote review surface reflects it.
-
-- For `implement #123`, `fix #123`, or equivalent implementation requests, complete verification, commit the change on a non-default branch, push that branch, and open a PR unless an appropriate PR already exists. If one already exists, update it instead of creating a duplicate.
-- For requests to address PR review findings, commit the corrections and push them to the existing PR head branch. Do not stop after editing, verification, or a local commit while the PR still points at the old code.
-- Never push implementation commits directly to the default branch unless the user explicitly authorizes that exception.
-- Stop before push/PR only when the user explicitly requested local-only work or a real blocker prevents delivery, such as missing write permission, authentication failure, unavailable remote, or an unresolved branch conflict. Report the blocker and the exact local branch/commit state.
-- A final report for implementation work should identify the PR that now contains the delivered change, or the concrete blocker that prevented creating/updating it.
-
-Why: the PR, not an agent worktree, is the shared review and integration surface. Leaving verified changes only in local state makes implementation and review-fix tasks appear complete while the repository still contains the previous code.
-
 ## Policy routing
 
 Load policy documents only when their concern is relevant. Do not preload all of them.
@@ -77,11 +49,10 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | --- | --- |
 | Writing or revising durable agent guidance, AGENTS content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
 | Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
-| Public or canonical boundary migrations (API, model, IR, protocol), contract continuity, issue readiness, and one-pass implementation/PR review workflow | [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md) |
+| Public or canonical boundary migrations (API, model, IR, protocol), contract continuity, issue readiness, one-pass implementation/PR review, and review-fix handoff | [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md) |
 | Tests, fixtures, corpora, snapshots, expected results, compatibility evidence, fuzzing, verification artifacts | [`docs/testing-policy.md`](docs/testing-policy.md) |
-| Durable documentation that summarizes mutable inventories or status | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
-| A CI job failed and the owning surface is unclear (Rust quality vs. LPP integration vs. differential/compatibility vs. dist/release) | Classify by job before fixing: `rust-quality`/local gates → fix in place; cross-repo integration (`lpp-client-integration`) → identify whether the failure is in `wright` or the pinned `language-provider-protocol` commit before changing either; differential/compatibility jobs → treat a new failure as a compatibility regression under `docs/testing-policy.md`, not a flaky test, unless proven otherwise |
-| Dead-code, redundancy, over-engineering, post-migration simplification | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
+| Code entropy, dead code, redundancy, over-engineering, mutable-inventory documentation | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
+| CI failure triage across job surfaces (Rust quality vs. LPP integration vs. differential/compatibility vs. dist/release) | Classify by surface: local/quality gates fix in place; LPP integration check protocol commit first; differential/compatibility triage under testing policy |
 | Rust CI toolchain, caching, and job composition | [`docs/rust-ci.md`](docs/rust-ci.md) |
 | Rust build artifact growth, dev/test profile configuration, ephemeral worktree lifecycle, and local storage management | [`docs/rust-build-artifacts.md`](docs/rust-build-artifacts.md) |
 | Release engineering, tagging, and artifact publication | [`docs/release-engineering.md`](docs/release-engineering.md) |
@@ -95,9 +66,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 These rules always apply regardless of repository:
 
 - Use [`GOAL.md`](GOAL.md) to resolve product-direction tradeoffs; do not duplicate or silently redefine its intent in repository-local guidance.
-- Respect repository ownership boundaries. Modify authoritative contracts in their owning repository.
-- Integrate cross-repository changes separately in consumers.
-- Do not bypass ownership boundaries for implementation convenience.
+- Respect repository ownership boundaries: modify authoritative contracts in their owning repository, integrate cross-repository changes separately in consumers, and never bypass ownership for implementation convenience.
 - Do not introduce complex abstractions only for hypothetical future needs.
 - Preserve provenance for semantic, compatibility, and regression evidence.
 - Do not silently weaken diagnostics, tests, compatibility expectations, validation, or error handling to make CI pass.
@@ -107,9 +76,7 @@ These rules always apply regardless of repository:
 
 ## Role and self-authorization
 
-WrightKit uses role separation to prevent an agent from self-authorizing decisions owned by another role.
-
-Typical separation:
+WrightKit uses role separation to prevent an agent from self-authorizing decisions owned by another role:
 
 - **PM** owns scope and execution planning.
 - **Architect** owns significant architecture and contract decisions.
@@ -118,13 +85,43 @@ Typical separation:
 
 An agent that proposes a compatibility, public-contract, or architecture change must not self-authorize that decision when the repository's role model assigns it to an Architect, maintainer, or product owner.
 
+## Implementation context preflight
+
+A short request such as `implement #123` or `fix #123` is sufficient instruction for normal implementation work. The agent is responsible for resolving the relevant project context before editing code; the user should not have to repeat repository guidance, architecture links, or skill names in every prompt.
+
+Before substantive implementation:
+
+1. Read the linked Issue and nearest repository `AGENTS.md`.
+2. Identify the affected domain and owning repository before choosing an implementation location.
+3. Resolve the current architecture or contract relevant to that domain through repository guidance and durable documentation. Treat ADRs as decision records; verify current implementation reality separately.
+4. Inspect the current implementation, affected consumers, tests/evidence, and dependency boundaries far enough to establish current reality.
+5. Compare the Issue contract, current architecture/contract, and current code reality. When replacing, hiding, or retiring a public or canonical boundary, verify that surviving accepted capabilities are accounted for on the replacement boundary, explicitly approved for removal/change, or transferred to another owner. `ready-for-implementation` does not waive this consistency check.
+6. If they are materially inconsistent, stop as Engineer and report the mismatch to the appropriate Architect/owner instead of choosing a new architecture by implementation convenience.
+7. If they are aligned, load the specialized policy or skills indicated by the actual risk surface and implement the smallest complete coherent change.
+
+Do not preload every architecture document or specialist skill. The preflight exists to find the smallest relevant context, not to turn each implementation into a repository-wide audit.
+
+## Delivery is part of completion
+
+For repository work, a locally correct implementation is not delivered until the remote review surface reflects it.
+
+- For `implement #123`, `fix #123`, or equivalent implementation requests: complete verification, commit on a non-default branch, push, and open or update a PR.
+- For requests to address PR review findings:
+  - keep changes strictly focused on actionable review findings without unrelated cleanup, redesign, or scope expansion;
+  - commit verified corrections and push to the existing PR head branch (do not stop after local commit);
+  - review-fix work is complete only when the PR is handed back to review: handle affected review threads without hiding unresolved findings, and re-request review or signal handoff per [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md);
+  - the final report must identify the updated PR, pushed commits, thread status, and review handoff state.
+- Never push implementation commits directly to the default branch unless the user explicitly authorizes that exception.
+- Stop before push/PR or review handoff only when local-only work was requested or a concrete blocker prevents delivery/handoff (e.g. missing permissions, auth failure, branch conflict); report the blocker and exact local state.
+- A final report for implementation or review-fix work should identify the PR containing the delivered change and its review handoff state, or the concrete blocker that prevented completing it.
+
+Why: the PR, not an agent worktree, is the shared review surface. Leaving verified changes in local state, or pushing fixes without thread handling and re-review handoff, stalls the review lifecycle and leaves reviewers unaware that verification is needed.
+
 ## Verification evidence
 
 Verification evidence that is useful for a single task is not automatically repository state.
 
-Before committing any test, fixture, report, log, benchmark output, screenshot, or other proof artifact to a repository, load [`docs/testing-policy.md`](docs/testing-policy.md) and apply its evidence admission criteria.
-
-For focused change verification, use `.agents/skills/wrightkit-verify-change/SKILL.md`.
+Before committing any test, fixture, report, log, benchmark output, screenshot, or other proof artifact to a repository, load [`docs/testing-policy.md`](docs/testing-policy.md) and apply its evidence admission criteria. For focused change verification, use `.agents/skills/wrightkit-verify-change/SKILL.md`.
 
 ## Independent ablation
 

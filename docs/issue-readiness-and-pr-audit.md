@@ -1,6 +1,6 @@
 # Issue Readiness and One-Pass PR Audit
 
-This document defines the WrightKit-wide workflow for deciding whether an issue is ready for implementation and for auditing the resulting PR. It makes the PM/Architect/Engineer/QA boundary explicit without requiring every task to use all four roles or creating an autonomous issue-to-PR system.
+This document defines the WrightKit-wide workflow for deciding whether an issue is ready for implementation, auditing the resulting PR, and handing review fixes back to the review lifecycle. It makes the PM/Architect/Engineer/QA boundary explicit without requiring every task to use all four roles or creating an autonomous issue-to-PR system.
 
 The intended model is agent-compatible, not agent-autonomous: humans or Architects decide unresolved product and architecture questions; Engineer agents implement a settled contract; reviewers verify the complete result against that contract.
 
@@ -102,9 +102,53 @@ Keep the explanation only as long as needed to establish the defect. Do not add 
 
 If there are no actionable findings, reply `LGTM` and approve the PR. Do not add a checklist or summary of categories inspected.
 
+## Addressing review findings and handoff
+
+When an Engineer agent addresses PR review findings, the work is governed by the same scope discipline and contract boundaries as the original implementation. Pushing code is necessary but not sufficient: review-fix work is complete only when verified corrections are pushed, affected review threads are handled, and the PR is explicitly handed back to follow-up review.
+
+Repository guidance should specialize this shared policy only when local repository ownership or tooling requires it (such as a repository-specific re-review trigger); repositories must not duplicate or contradict this workflow.
+
+### Scope discipline during review fixes
+
+Addressing review findings is strictly verification and fix work. It addresses actionable defects reported in the review without expanding the PR:
+
+- Correct only the actionable defects identified in the review and verify that no regressions were introduced.
+- Do not add unrelated cleanup, renaming, broad refactoring, formatting churn, or speculative extensibility while fixing review findings.
+- Do not redesign the feature, revisit settled architecture preferences, or expand the issue's scope.
+- If a review finding suggests an architectural change, redesign, or scope expansion that contradicts the approved issue or current architecture, stop as Engineer and report the decision mismatch rather than self-authorizing an out-of-scope redesign.
+
+### Review threads: reply and resolution
+
+When review findings are reported as review threads on GitHub and client/API operations are available:
+
+- **Reply to confirm fixes**: Once the correction is verified and pushed, reply to the thread concisely confirming the resolution, citing the fixing commit or explaining the change if non-obvious rationale was required.
+- **Resolve addressed threads**: Mark threads as resolved only when the underlying finding has genuinely been corrected and verified in the pushed branch.
+- **Never hide unresolved findings**: Do not resolve or clear threads for findings that are contested, deferred, unaddressed, or only partially addressed. If a finding cannot be resolved within the PR's scope or requires maintainer/Architect clarification, reply with the status, leave the thread open/unresolved, and surface the item in the handoff report.
+
+### Handing back to follow-up review
+
+A review-fix task is not complete solely because fixes were verified, committed, and pushed. The agent must hand the updated PR back to the review lifecycle:
+
+- **Directly re-requestable reviewers**: When GitHub supports re-requesting the reviewer identity (e.g., human reviewers or GitHub users/teams where `gh pr review --re-request` or the review-request API succeeds), re-request review from the applicable reviewer who reported the findings.
+- **Indirect / bot / external reviewers**: When the reviewer cannot be re-requested directly via GitHub's native review-request mechanism (such as certain bot accounts, GitHub Apps, external review tools, or missing API permissions):
+  1. Check repository guidance for a documented re-review trigger (such as a bot mention or slash command) and invoke it if supported.
+  2. If no documented trigger exists or automated re-request fails, post an explicit review-ready comment on the PR summarizing the addressed findings, pushed commits, and readiness for follow-up review.
+  3. Report any remaining orchestration limitation (e.g., that follow-up review requires manual triggering or reviewer notification) in the final handoff.
+
+### Review-fix completion criteria
+
+A review-fix task is complete only when all of the following are satisfied:
+
+1. **Corrections verified and pushed**: Fixes are verified at the narrowest decisive surface (including regression checks against previous findings and proportionate repository gates), committed on the PR branch, and pushed to the remote PR.
+2. **Review threads handled**: Addressed review threads are replied to and/or resolved without concealing unresolved findings.
+3. **Follow-up review signaled**: Follow-up review is explicitly triggered or re-requested via GitHub or the repository's documented mechanism, or an explicit review-ready handoff comment is left if direct re-request is unsupported.
+4. **Handoff reported**: The final report identifies the PR URL, pushed commits, thread resolution status, and the review handoff state (reviewer re-requested or handoff signal used).
+
+Why: committing and pushing code updates the branch, but without thread handling and an explicit handoff back to review, the reviewer is not informed that corrections are ready for verification, leaving PRs stalled in an ambiguous state.
+
 ## Follow-up review
 
-After the Engineer addresses findings, review only:
+After the Engineer addresses findings and hands the PR back, review only:
 
 1. the previously reported findings;
 2. regressions introduced by those fixes;
