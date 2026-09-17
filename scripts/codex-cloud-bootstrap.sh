@@ -5,7 +5,6 @@ context_root="${WRIGHTKIT_CONTEXT_ROOT:-$HOME/.wrightkit}"
 codex_home="${CODEX_HOME:-$HOME/.codex}"
 github_repo="${WRIGHTKIT_GITHUB_REPO:-https://github.com/wrightkit/.github.git}"
 agents_repo="${WRIGHTKIT_AGENTS_REPO:-https://github.com/wrightkit/.agents.git}"
-github_token="${WRIGHTKIT_GITHUB_TOKEN:-}"
 
 log() {
   printf 'wrightkit bootstrap: %s\n' "$*" >&2
@@ -20,74 +19,34 @@ command -v git >/dev/null 2>&1 || fail "git is required"
 
 export GIT_TERMINAL_PROMPT=0
 
-askpass=""
-cleanup() {
-  if [[ -n "$askpass" ]]; then
-    rm -f "$askpass"
-  fi
-}
-trap cleanup EXIT
-
-prepare_private_git_auth() {
-  [[ -n "$github_token" ]] || fail "WRIGHTKIT_GITHUB_TOKEN is required to read private wrightkit/.agents context"
-
-  askpass="$(mktemp)"
-  chmod 700 "$askpass"
-  cat >"$askpass" <<'EOF'
-#!/bin/sh
-case "$1" in
-  *Username*) printf '%s\n' 'x-access-token' ;;
-  *Password*) printf '%s\n' "$WRIGHTKIT_GITHUB_TOKEN" ;;
-  *) exit 1 ;;
-esac
-EOF
-}
-
-run_public_git() {
-  git -c credential.helper= "$@"
-}
-
-run_private_git() {
-  GIT_ASKPASS="$askpass" git -c credential.helper= "$@"
+run_git() {
+  git \
+    -c credential.helper= \
+    -c http.lowSpeedLimit=1 \
+    -c http.lowSpeedTime=30 \
+    "$@"
 }
 
 sync_repo() {
   local url="$1"
   local dest="$2"
   local label="$3"
-  local auth="$4"
 
   log "syncing $label"
 
   if [[ -d "$dest/.git" ]]; then
-    if [[ "$auth" == "private" ]]; then
-      run_private_git -C "$dest" fetch origin main
-      run_private_git -C "$dest" merge --ff-only origin/main
-    else
-      run_public_git -C "$dest" fetch origin main
-      run_public_git -C "$dest" merge --ff-only origin/main
-    fi
+    run_git -C "$dest" fetch origin main
+    run_git -C "$dest" merge --ff-only origin/main
   else
     [[ ! -e "$dest" ]] || fail "refusing to replace existing $dest"
-
-    if [[ "$auth" == "private" ]]; then
-      run_private_git clone "$url" "$dest"
-    else
-      run_public_git clone "$url" "$dest"
-    fi
+    run_git clone --depth 1 --branch main --single-branch "$url" "$dest"
   fi
 }
 
 mkdir -p "$context_root" "$codex_home"
 
-agents_auth="public"
-if [[ "$agents_repo" == "https://github.com/wrightkit/.agents.git" ]]; then
-  agents_auth="private"
-  prepare_private_git_auth
-fi
-
-sync_repo "$github_repo" "$context_root/.github" "shared policy (.github)" "public"
-sync_repo "$agents_repo" "$context_root/.agents" "shared skills (.agents)" "$agents_auth"
+sync_repo "$github_repo" "$context_root/.github" "shared policy (.github)"
+sync_repo "$agents_repo" "$context_root/.agents" "shared skills (.agents)"
 
 workspace_agents="$context_root/.github/AGENTS.md"
 workspace_goal="$context_root/.github/GOAL.md"
