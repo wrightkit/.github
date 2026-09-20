@@ -2,7 +2,7 @@
 
 WrightKit uses small, versioned reusable workflows for repeated organization
 contracts. Repository workflows remain the owners of triggers, path routing,
-matrices, job dependencies, and domain-specific evidence.
+matrices, job dependencies, and domain-specific validation.
 
 ## Workflow boundaries
 
@@ -14,7 +14,7 @@ matrices, job dependencies, and domain-specific evidence.
   `strategy.matrix`, caller-level concurrency and `needs`, and semantic,
   compatibility, corpus, conformance, packaging, or product-release jobs.
 - A **composite action** owns a repeated multi-step procedure only after
-  repeated evidence justifies extracting that procedure. No composite action
+  repeated validation justifies extracting that procedure. No composite action
   is required by the v1 contracts.
 
 Callers must reference a stable v1 tag or an explicitly pinned compatible SHA.
@@ -23,8 +23,8 @@ arbitrary command hooks or `secrets: inherit` for the crate release workflow.
 
 The shared quality workflow is the prerequisite for repository-owned Rust
 validation where the same failure would otherwise be repeated. Repository
-specific validation stays in its owner: Workshop catalog/scenario evidence,
-OPY and DEL compatibility/corpus evidence, LPP conformance, and Wright
+specific validation stays in its owner: Workshop catalog/scenario checks,
+OPY and DEL compatibility/corpus checks, LPP conformance, and Wright
 integration/distribution behavior.
 
 Release ownership is similarly split: release-plz maintains Release PRs,

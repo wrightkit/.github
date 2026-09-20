@@ -14,7 +14,7 @@ Use hard rules only when the boundary itself is non-negotiable, such as reposito
 
 ## Explain why
 
-Important guidance should explain the reason behind the rule: correctness, ownership, maintainability, reviewability, provenance, compatibility, or another concrete project goal.
+Important guidance should explain the reason behind the rule: correctness, ownership, maintainability, reviewability, source attribution, compatibility, or another concrete project goal.
 
 Why: a reason lets the agent distinguish the intended invariant from the wording used to express it. This reduces mechanical compliance that produces the wrong result in an unfamiliar case.
 
@@ -72,8 +72,8 @@ Why: an agent can often produce a plausible implementation for an undecided ques
 
 ## Prefer concise procedures
 
-A reusable skill should normally contain only the context needed to perform its task: purpose, relevant principles, hard boundaries, a broad workflow, stop conditions, and the evidence or output that completes the task.
+A reusable skill should normally contain only the context needed to perform its task: purpose, relevant principles, hard boundaries, a broad workflow, stop conditions, and the concrete checks or output that completes the task.
 
 This is guidance, not a required section template. Omit structure that does not help the task.
 
-Why: procedural detail is valuable when ordering matters, but excessive instructions compete with the actual repository evidence the agent needs to reason about.
+Why: procedural detail is valuable when ordering matters, but excessive instructions compete with the repository material the agent needs to inspect and reason about.

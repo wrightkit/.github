@@ -50,7 +50,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Writing or revising durable agent guidance, AGENTS content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
 | Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
 | Public or canonical boundary migrations (API, model, IR, protocol), contract continuity, issue readiness, one-pass implementation/PR review, and review-fix handoff | [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md) |
-| Tests, fixtures, corpora, snapshots, expected results, compatibility evidence, fuzzing, verification artifacts | [`docs/testing-policy.md`](docs/testing-policy.md) |
+| Tests, fixtures, corpora, snapshots, expected results, compatibility tests, fuzzing, independent verification | [`docs/testing-policy.md`](docs/testing-policy.md) |
 | Code entropy, dead code, redundancy, over-engineering, mutable-inventory documentation | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
 | CI failure triage across job surfaces (Rust quality vs. LPP integration vs. differential/compatibility vs. dist/release) | Classify by surface: local/quality gates fix in place; LPP integration check protocol commit first; differential/compatibility triage under testing policy |
 | Rust CI toolchain, caching, and job composition | [`docs/rust-ci.md`](docs/rust-ci.md) |
@@ -59,7 +59,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Entropy reclamation workflow | `.agents/skills/wrightkit-reclaim-entropy/SKILL.md` |
 | Rust architecture/API/concurrency/responsibility review | `.agents/skills/wrightkit-rust-engineering-review/SKILL.md` |
 | Test necessity/stability/duplication review | `.agents/skills/wrightkit-test-design-review/SKILL.md` |
-| Evidence-first change verification | `.agents/skills/wrightkit-verify-change/SKILL.md` |
+| Independent change verification | `.agents/skills/wrightkit-verify-change/SKILL.md` |
 
 ## Global invariants
 
@@ -68,10 +68,10 @@ These rules always apply regardless of repository:
 - Use [`GOAL.md`](GOAL.md) to resolve product-direction tradeoffs; do not duplicate or silently redefine its intent in repository-local guidance.
 - Respect repository ownership boundaries: modify authoritative contracts in their owning repository, integrate cross-repository changes separately in consumers, and never bypass ownership for implementation convenience.
 - Do not introduce complex abstractions only for hypothetical future needs.
-- Preserve provenance for semantic, compatibility, and regression evidence.
+- Keep source attribution, pinned reference identity, and related decision history where a semantic, compatibility, or regression workflow requires them.
 - Do not silently weaken diagnostics, tests, compatibility expectations, validation, or error handling to make CI pass.
-- When replacing, hiding, or retiring a public or canonical boundary (API, model, IR, or protocol), verify continuity of surviving accepted contracts through the replacement boundary itself. Tests or evidence exercising only retired, private, or compatibility-only paths do not prove replacement completeness.
-- Do not treat upstream bugs or implementation details as ideal WrightKit semantics without evidence.
+- When replacing, hiding, or retiring a public or canonical boundary (API, model, IR, or protocol), verify continuity of surviving accepted contracts through the replacement boundary itself. Tests or checks exercising only retired, private, or compatibility-only paths do not prove replacement completeness.
+- Do not treat upstream bugs or implementation details as ideal WrightKit semantics without an accepted contract or reference comparison.
 - Do not invent WrightKit-only OPY or OSTW syntax unless explicitly approved as a language-level design.
 
 ## Role and self-authorization
@@ -94,7 +94,7 @@ Before substantive implementation:
 1. Read the linked Issue and nearest repository `AGENTS.md`.
 2. Identify the affected domain and owning repository before choosing an implementation location.
 3. Resolve the current architecture or contract relevant to that domain through repository guidance and durable documentation. Treat ADRs as decision records; verify current implementation reality separately.
-4. Inspect the current implementation, affected consumers, tests/evidence, and dependency boundaries far enough to establish current reality.
+4. Inspect the current implementation, affected consumers, tests, and dependency boundaries far enough to establish current reality.
 5. Compare the Issue contract, current architecture/contract, and current code reality. When replacing, hiding, or retiring a public or canonical boundary, verify that surviving accepted capabilities are accounted for on the replacement boundary, explicitly approved for removal/change, or transferred to another owner. `ready-for-implementation` does not waive this consistency check.
 6. If they are materially inconsistent, stop as Engineer and report the mismatch to the appropriate Architect/owner instead of choosing a new architecture by implementation convenience.
 7. If they are aligned, load the specialized policy or skills indicated by the actual risk surface and implement the smallest complete coherent change.
@@ -117,16 +117,16 @@ For repository work, a locally correct implementation is not delivered until the
 
 Why: the PR, not an agent worktree, is the shared review surface. Leaving verified changes in local state, or pushing fixes without thread handling and re-review handoff, stalls the review lifecycle and leaves reviewers unaware that verification is needed.
 
-## Verification evidence
+## Tests and verification artifacts
 
-Verification evidence that is useful for a single task is not automatically repository state.
+One-off command output, reports, screenshots, and temporary reproducers are not repository state merely because they helped with one task.
 
-Before committing any test, fixture, report, log, benchmark output, screenshot, or other proof artifact to a repository, load [`docs/testing-policy.md`](docs/testing-policy.md) and apply its evidence admission criteria. For focused change verification, use `.agents/skills/wrightkit-verify-change/SKILL.md`.
+Before committing a test, fixture, snapshot, corpus case, or other test data, load [`docs/testing-policy.md`](docs/testing-policy.md) and confirm that it protects a durable contract or regression in an existing feature-owned location. For material changes, use `.agents/skills/wrightkit-verify-change/SKILL.md` to attempt independent falsification.
 
 ## Independent ablation
 
 After completing design or implementation work, do not declare it complete until an independent agent/reviewer who did not author it has run an ablation pass.
 
 - For design, remove, defer, or replace each new abstraction, dependency, state mechanism, public API, protocol boundary, or cross-repository contract. Keep it only when its absence demonstrably breaks an approved requirement, invariant, ownership boundary, acceptance criterion, or known real workflow. Hypothetical future flexibility is not enough.
-- For implementation, use a temporary patch/worktree to remove, disable, or simplify the key new behavior and rerun independent regression, contract, corpus/fixture, or real-project evidence. Evidence claimed to validate the change should fail again under the relevant ablation; otherwise investigate ineffective code or insufficient evidence.
+- For implementation, use a temporary patch/worktree to remove, disable, or simplify the key new behavior and rerun the relevant regression, contract, corpus/fixture, or real-project checks. The check supporting the change should fail again under the relevant ablation; otherwise investigate ineffective code or insufficient coverage.
 - Ablation is not merely rerunning the normal test suite or mechanically mutation-testing every line. Do not add production APIs or permanent scaffolding solely for ablation. Keep ablation artifacts temporary unless they independently deserve durable regression/contract status.

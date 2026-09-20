@@ -1,83 +1,89 @@
 # WrightKit Testing Policy
 
-This document defines organization-wide testing principles for WrightKit repositories.
+This policy defines organization-wide testing principles for WrightKit
+repositories.
 
-The policy exists to make tests independent correctness constraints rather than snapshots of the implementation that happens to exist today. This is especially important in AI-assisted development, where production code and tests may be authored together and a green test suite can otherwise drift away from the intended semantic contract.
-
-Repository-local guidance may add stricter or domain-specific requirements, but it must not weaken this policy.
+Tests should protect contracts and failure behavior that matter to users and
+maintainers. They should not merely mirror the implementation that happens to
+exist today. Repository-local guidance may add stricter requirements, but it
+must not weaken this policy or replace repository-specific contracts and test
+commands.
 
 ## Applicability
 
 This policy applies to changes involving:
 
 - tests and test infrastructure;
-- fixtures, snapshots, and corpora;
-- expected results and compatibility baselines;
-- regression and conformance evidence;
+- fixtures, snapshots, corpora, and other test data;
+- expected outputs and compatibility baselines;
+- regression, conformance, and integration checks;
 - fuzzing, property testing, and robustness testing;
-- public or canonical boundary migrations that replace, hide, or retire an accepted contract;
-- changes that add, remove, weaken, quarantine, or reclassify test coverage or support states.
+- public or canonical boundary migrations that replace, hide, or retire an
+  accepted contract;
+- changes that add, remove, weaken, quarantine, or reclassify test coverage or
+  support states.
 
-Workspace and repository guidance should route agents and contributors to this policy when these concerns are affected. It does not need to be loaded for work that does not affect them.
+Workspace and repository guidance should route agents and contributors here
+when these concerns are affected. It does not need to be loaded for work that
+does not affect them.
 
-## 1. Evidence before expectations
+## 1. Start from the contract, not the implementation
 
-A correctness expectation must have an identifiable source of truth independent from the implementation under test.
-
-Acceptable evidence includes, as appropriate:
+Every expected result needs an independent source. Depending on the feature,
+that source may be:
 
 - reproducible Overwatch Workshop client behavior;
 - a pinned upstream compatibility oracle;
 - an accepted semantic or public API contract;
-- a provenance-linked real-world project regression;
+- a real-project regression tied to its source repository, revision, and path;
 - a deliberately specified invariant or property.
 
-Changing production behavior and changing its correctness expectation in the same change is not sufficient evidence by itself. When an expected result changes, the change must identify what external evidence or accepted contract changed.
+When production behavior and an expected result change in the same change,
+explain which contract, reference comparison, or runtime behavior justifies the
+new result. A value is not a valid expectation merely because it matches the
+current implementation.
 
-Changing a case between match, gap, expected failure, unsupported, inconclusive, or an equivalent support state is also a correctness expectation change and requires the same independent evidence.
-
-Fixed expected values are valid when they encode independently established observable behavior. They are not valid merely because they match the current implementation.
+Changing a case between match, gap, expected failure, unsupported, or
+inconclusive is also a correctness change. Keep the intended behavior and the
+reason for the classification visible in the test or its feature-owned data.
 
 ## 2. Test counts are not correctness claims
 
-Counts such as `26/26 fixtures passed`, `124 tests passed`, or similar totals are useful execution summaries, but they are not compatibility or correctness evidence on their own.
+Counts such as `26/26 fixtures passed` and `124 tests passed` are useful
+execution summaries, but they do not establish compatibility or correctness by
+themselves.
 
-Compatibility and conformance reporting should be organized around semantic capabilities and evidence states rather than testcase quantity.
-
-Reports should distinguish, where applicable:
+Compatibility and conformance reports should distinguish, where applicable:
 
 - matched behavior;
 - known gaps;
 - unsupported or out-of-scope behavior;
 - unexpected regressions or divergences;
-- inconclusive evidence.
+- inconclusive results.
 
-A known reference or contract mismatch must not be reported as a successful compatibility match simply because the current implementation reproduces the previously recorded failure.
+A known reference or contract mismatch must not be reported as a successful
+match merely because the implementation reproduces an old failure.
 
-## 3. Positive and negative behavior are both first-class
+## 3. Test both successful and failing behavior
 
-Important behavior should be tested across both successful and failing paths.
+Important behavior should be tested across positive and negative paths. Select
+the cases that matter to the component, such as:
 
-Depending on the component, tests should cover relevant cases such as:
-
-- valid input;
-- invalid input;
-- incomplete or truncated input;
-- malformed input;
-- ambiguous input;
-- unsupported input;
+- valid, invalid, incomplete, malformed, ambiguous, and unsupported input;
 - boundary values and nesting limits;
 - cross-file or project-graph failures;
 - missing catalog or locale data;
 - dependency, runtime, or process failures.
 
-A test that only proves "the operation did not fail" is insufficient when the semantic result, diagnostic, emitted artifact, mutation, or refusal is part of the contract.
+A test that only proves that an operation did not fail is insufficient when the
+semantic result, diagnostic, emitted artifact, mutation, or refusal is part of
+the contract.
 
-## 4. Errors must remain observable
+## 4. Keep failures observable
 
-WrightKit components must not turn failures into silent success.
-
-Tests for important failure paths should verify propagation through the layers that expose the behavior, for example library, driver, CLI, provider, protocol, or tooling boundaries.
+WrightKit components must not turn failures into silent success. Tests for
+important failure paths should follow the behavior through the layer that
+exposes it: library, driver, CLI, provider, protocol, or tooling.
 
 Tests should detect regressions such as:
 
@@ -85,52 +91,57 @@ Tests should detect regressions such as:
 - converting failure into an empty or default result;
 - returning success with missing diagnostics;
 - emitting a partial artifact after a failed operation;
-- losing the original source path, span, or provenance;
+- losing the original source path, span, or source attribution;
 - accepting an unsupported construct without an explicit support contract.
 
-For public command or protocol surfaces, failure tests should validate the externally visible contract: status/result kind, structured diagnostic or refusal, source attribution, and absence of misleading success output.
+For public command or protocol surfaces, failure tests should validate the
+externally visible result kind, structured diagnostic or refusal, source
+attribution, and absence of misleading success output.
 
-## 5. Real projects are permanent evidence
+## 5. Preserve real-project regressions and test data carefully
 
-Synthetic unit tests are necessary but are not sufficient for compatibility work.
+Synthetic unit tests are necessary but are not sufficient for compatibility or
+project-graph work.
 
-When a defect is discovered in a real project, preserve a minimized reproduction as a permanent regression fixture whenever practical. The minimized case should retain enough provenance to identify the original repository, immutable revision, and source path or equivalent origin.
+When a defect is found in a real project, preserve a minimized reproduction as
+a feature-owned regression test whenever practical. Its metadata should retain
+the source repository, immutable revision, source path, and related Issue or
+PR identifiers when useful. Keep project-level corpus coverage when it tests
+imports, includes, macros, project graphs, cross-file symbols and types,
+settings/catalog interactions, or combinations that a minimized case cannot
+exercise.
 
-Keep project-level corpus coverage where it provides additional evidence for behavior that a minimized fixture cannot exercise, including:
-
-- imports and includes;
-- project graphs;
-- macros or preprocessing interactions;
-- cross-file symbol and type relationships;
-- settings and catalog interactions;
-- unusual combinations of otherwise supported features.
-
-Minimized regressions and full-project corpus tests are complementary; neither replaces the other.
-
-Third-party fixture inclusion must follow the owning repository's licensing and provenance rules.
+Minimized regressions and complete project cases are complementary. Neither
+replaces focused diagnostics or failure-path tests. Third-party test data must
+follow the owning repository's licensing and attribution requirements.
 
 ## 6. Prefer invariants over duplicated bookkeeping
 
-Derived data should normally be checked through invariants instead of duplicated hard-coded totals that must be manually updated with the implementation.
+Derived data should normally be checked through invariants instead of a second
+hard-coded total that must be updated with the implementation.
 
-For example, a support-state summary should be verified against the entries from which it is computed rather than by maintaining a second expected count beside the same data source.
-
-Property and invariant tests are preferred where they can protect a broader contract, including examples such as:
+Useful invariant tests include:
 
 - parse -> emit -> parse preserving declared semantics;
 - locale conversion preserving canonical identities;
-- diagnostics retaining valid source provenance;
+- diagnostics retaining valid source mapping;
 - validated source edits remaining atomic;
-- malformed input producing a structured failure rather than a panic or silent success.
+- malformed input producing a structured failure rather than a panic or silent
+  success.
 
-## 7. Robustness must be tested adversarially
+Property and invariant tests are valuable when they protect a broader contract
+than a collection of examples. Dynamic facts such as current registry
+membership, corpus size, or enum cardinality should not become durable
+expectations merely because they are easy to enumerate.
 
-Parsers, compilers, analyzers, language services, protocol handlers, and agent-facing tools should be tested against hostile or pathological input where relevant.
+## 7. Test robustness adversarially
 
-Useful robustness classes include:
+Parsers, compilers, analyzers, language services, protocol handlers, and
+agent-facing tools should be tested against hostile or pathological input where
+relevant. Useful classes include:
 
 - deep nesting;
-- unexpected EOF at syntax boundaries;
+- unexpected end-of-file at syntax boundaries;
 - recursive or cyclic imports/includes;
 - recursive macro expansion;
 - large arrays or strings;
@@ -141,79 +152,85 @@ Useful robustness classes include:
 - malformed external/process responses;
 - resource limits and interruption behavior.
 
-User-controlled input should not cause an uncontrolled panic, abort, hang, or fabricated success result. Explicitly documented resource exhaustion or unsupported behavior is acceptable when surfaced deterministically.
+User-controlled input must not cause an uncontrolled panic, abort, hang, or
+fabricated success result. Explicitly documented resource exhaustion or
+unsupported behavior is acceptable when surfaced deterministically.
 
-Fuzzing is encouraged for parsers, serializers, protocol boundaries, and other high-input-space components when it adds meaningful coverage beyond hand-written fixtures.
+Fuzzing is encouraged for parsers, serializers, protocol boundaries, and other
+high-input-space components when it adds meaningful coverage beyond hand-written
+cases.
 
-## 8. Tests should resist plausible implementation faults
+## 8. Make tests resist plausible wrong implementations
 
-A green suite is stronger when it can demonstrate that plausible incorrect implementations would fail.
-
-For high-risk code, maintainers should consider mutation-style checks or equivalent adversarial review, such as verifying that tests fail when:
+A green suite is stronger when a plausible incorrect implementation would fail.
+For high-risk code, maintainers should consider mutation-style checks or
+equivalent adversarial review, such as verifying that tests fail when:
 
 - a validation condition is inverted or removed;
 - an error path is converted to a default value;
 - a required diagnostic is dropped;
 - a semantic branch returns the wrong identity or result;
-- a known gap is reclassified as passing without the implementation actually matching the contract.
+- a known gap is reclassified as passing without matching the contract.
 
-Mutation testing does not need to be a per-PR mandatory gate in every repository. It is a QA technique for evaluating whether important tests are capable of detecting meaningful faults.
+Mutation testing is a QA technique, not a mandatory gate for every repository.
+Use it when it adds meaningful information about the strength of the tests.
 
-## 9. Independent verification
+## 9. Independently verify material changes
 
-AI-generated tests are subject to the same evidence requirements as human-written tests.
+For material semantic, compatibility, compiler, parser, source-edit, or
+protocol changes, acceptance should include an independent attempt to falsify
+the implementation rather than only rerunning tests authored with it.
 
-For material semantic, compatibility, compiler, parser, source-edit, or protocol changes, acceptance should include an independent attempt to falsify the implementation rather than relying only on tests authored alongside it.
+State a concrete claim, identify the contract or reference that defines the
+expected behavior, and choose the narrowest check that would fail if the claim
+were false. Where meaningful, compare pre-change and post-change behavior under
+equivalent conditions and compare the result with the independent reference.
 
-Independent verification may be performed by a separate reviewer, QA agent, review pass, or another repository-appropriate mechanism. The testing policy defines the required verification property, not a specific agent-team topology.
+Independent verification may be performed by a separate reviewer, QA agent,
+review pass, or another repository-appropriate mechanism. Rerunning the same
+green command is not, by itself, an independent check.
 
-Appropriate verification work includes:
+When a new development failure escapes existing tests, add a regression in the
+owning feature's established test structure where practical.
 
-- checking expectations against the original evidence source;
-- adding missing negative and boundary cases;
-- exercising failure propagation through public surfaces;
-- testing real-project regressions;
-- checking that known gaps remain explicit;
-- considering whether a simple incorrect mutation would escape the suite.
+## 10. Compatibility tests protect semantics, not formatting
 
-Independent verification is not satisfied by only rerunning the existing test command and observing that it is green.
+For OPY, DEL/OSTW-compatible, raw Workshop, locale, and interoperability
+testing, observable semantic compatibility is the default correctness target.
 
-When a new class of development failure escapes existing tests, add a regression that makes that failure mode observable where practical.
+Do not require identity of generated formatting, temporary variables, optimizer
+choices, internal IR, or other implementation details that do not affect a
+declared observable contract. Normalized output comparison is valid only when
+the normalization preserves the semantics being claimed and does not erase the
+difference the test is meant to detect.
 
-## 10. Compatibility tests preserve the contract, not the implementation
+If an upstream oracle accepts a case and WrightKit does not, preserve the
+accepted expected behavior and record the WrightKit result as a gap,
+unsupported boundary, or divergence as appropriate. Do not rewrite the
+expected result to the current failure merely to make the suite pass.
 
-For OPY, DEL/OSTW-compatible, raw Workshop, locale, and interoperability testing, observable semantic compatibility is the default correctness target.
+## 11. Keep test layers complementary
 
-Do not require identity of:
-
-- generated formatting;
-- temporary variables;
-- optimizer choices;
-- internal IR;
-- other implementation details that do not affect a declared observable contract.
-
-Conversely, normalized output comparison is evidence only when the normalization preserves the semantics being claimed. It must not erase the difference that the test is supposed to detect.
-
-If an upstream oracle accepts a case and WrightKit does not, preserve the expected accepted behavior and record the WrightKit result as a gap, unsupported boundary, or divergence as appropriate. Do not rewrite the expected result to the current failure merely to make the suite pass.
-
-## 11. Test layers should remain complementary
-
-Repositories should use the smallest useful combination of test layers for their responsibilities. Typical layers include:
+Use the smallest useful combination of layers for the repository's
+responsibilities. Typical layers include:
 
 1. focused unit and semantic tests;
 2. negative and error-propagation tests;
 3. property and invariant tests;
-4. minimized provenance-linked regressions;
-5. complete real-world corpus cases;
-6. differential/oracle tests;
+4. minimized feature-owned regressions;
+5. complete real-world project cases;
+6. differential or oracle tests;
 7. fuzz or robustness tests;
 8. cross-component or end-to-end conformance tests.
 
-A large corpus does not replace focused diagnostics. Hundreds of unit tests do not replace real-project evidence. A full-feature census does not replace malformed-input and failure-path testing.
+A large corpus does not replace focused diagnostics. Hundreds of unit tests do
+not replace real-project checks. A feature census does not replace malformed
+input and failure-path tests.
 
-## 12. Test-design review: protect the right surface
+## 12. Organize tests by feature and behavior
 
-Durable tests should be selected by the behavior they protect, not generated mechanically from a code diff. The preferred hierarchy is:
+Select durable tests by the behavior they protect, not mechanically from a code
+diff. Prefer, in order:
 
 1. regression tests for real failure classes;
 2. public contract tests;
@@ -221,120 +238,85 @@ Durable tests should be selected by the behavior they protect, not generated mec
 4. property or invariant tests;
 5. unit tests for isolated stable logic where they add distinct value.
 
-Use the smallest useful combination of layers, starting with existing coverage. A lower-level test remains valuable when it detects a distinct failure mode, such as a parser diagnostic or an invariant that a higher-level test cannot isolate. Otherwise, prefer one test at the highest layer that makes the contract observable.
+Every durable test belongs to a stable feature. Within that feature, it may
+protect a public contract, invariant, regression, failure mode, or other
+observable behavior. Issue, pull-request, and task identifiers are related
+history, not test taxonomy: they must not define a test file, module, suite,
+case name, or committed test directory.
 
-Code changing does not, by itself, require a new test. Add a test only when it protects a meaningful observable behavior, regression class, public contract, or stable invariant that existing coverage does not already protect. Fewer tests, including consolidating or deleting a proposed test, is a valid outcome.
+Real-project tests may retain source repository, immutable revision, source
+path, and related Issue or PR identifiers in comments or test-data metadata.
+Those details identify the input; they do not determine test organization.
 
-### Feature ownership, not issue taxonomy
+Code changing does not, by itself, require a new test. Add, consolidate, or
+remove tests according to the contract and distinct failure mode they protect.
+Do not lock current documentation prose, private implementation structure,
+helper call counts, or dynamic inventory totals into tests.
 
-Every durable test must belong to a stable feature. Within that feature, a test may protect a public contract, invariant, regression, failure mode, or other observable behavior. Test files, modules, suites, case names, and fixture placement must be organized around the owning feature and behavior.
+## 13. Verify surviving contracts at replacement boundaries
 
-Issue, pull-request, and task identifiers are provenance, not test taxonomy. They must not define a test file, module, suite, case name, or committed test directory. A narrowly scoped defect belongs to the feature it regressed. A broad issue that spans multiple capabilities distributes its tests to the corresponding feature-owned suites rather than creating one issue-owned suite. If no stable feature can own a proposed test, keep the proof ephemeral until that ownership is established.
+When replacing, hiding, or retiring a public or canonical boundary such as an
+API, model, IR, or protocol, test surviving accepted capabilities through the
+replacement boundary itself.
 
-Real-project regressions should preserve project, immutable revision, source path, and related issue or PR identifiers where useful, but that provenance belongs in comments or fixture metadata. It does not replace feature ownership or determine test naming and placement.
+For each capability, identify whether it is preserved, intentionally changed
+or removed under an approved contract decision, or transferred to another
+owner. Tests that exercise only a retired, private, hidden, or compatibility
+path do not prove that the replacement is complete.
 
-### Stable invariants versus dynamic facts
+## 14. Avoid production pollution
 
-A stable invariant is a deliberately accepted property that should survive a correct internal rewrite, such as semantic round-trip preservation, atomic validated edits, or structured error propagation. A dynamic fact is mutable state of an upstream source or current inventory, such as today's corpus/test count, membership or names in an upstream registry, or current enum/domain cardinality. Dynamic facts should not become durable expectations merely because they are easy to enumerate. Validate them from their source of truth when their change is itself the contract; otherwise do not lock them in a test.
+Tests should not normally require new `pub` or `pub(crate)` APIs, test-only
+hooks, configuration surfaces, visibility changes, or architectural indirection
+solely to observe internals. Prefer an existing public or integration boundary.
+If a proposed test needs production structure only for test access, first look
+for an existing contract or rewrite the test.
 
-Tests should normally not exist primarily to lock:
+Prefer minimal representative inputs inline. Add a fixture file when it is
+shared, large, source-linked, or owned by an established canonical corpus
+location. Keep licensing and source attribution with third-party or real-world
+inputs.
 
-- dynamic corpus or test counts;
-- current upstream membership or name lists;
-- documentation prose or incidental formatting;
-- private implementation structure or helper call counts;
-- current enum or domain cardinality; or
-- behavior already fully covered at a higher layer without a distinct failure mode.
+## 15. Pull request expectations
 
-Snapshots, fixtures, and numeric assertions are not categorically forbidden. They are appropriate when they encode a stable, independently justified contract and a plausible incorrect implementation would fail. If a correct internal rewrite would make a test fail while preserving the public contract, reconsider whether the test targets the right surface.
+A PR that changes observable behavior should make the following reviewable when
+applicable:
 
-### Contract continuity across boundary replacement
-
-When replacing, hiding, or retiring a public or canonical boundary (such as an API, model, IR, or protocol), tests must verify surviving accepted contracts through the replacement boundary itself. Tests or evidence exercising only retired, private, or compatibility-only paths do not prove that the replacement boundary is complete (see [`docs/issue-readiness-and-pr-audit.md`](issue-readiness-and-pr-audit.md)).
-
-### Avoid production pollution
-
-Tests should not normally require new `pub` or `pub(crate)` APIs, test-only hooks, configuration surfaces, visibility changes, or architectural indirection solely to observe internals. Prefer testing an existing public or integration boundary. If a proposed test needs production structure only for test access, first look for an existing contract or rewrite the test; a test convenience is not by itself a reason to expand the production design.
-
-Prefer minimal representative inputs inline. Add a fixture file only when it is shared, large, provenance-relevant, or owned by an established canonical corpus location. A new ad-hoc fixture, report, or verification file must also satisfy the evidence-admission rules in Section 15.
-
-## 13. Pull request expectations
-
-A PR that changes observable behavior should make the evidence for that behavior reviewable.
-
-When applicable, the PR should identify:
-
-- the contract or evidence that defines the expected behavior;
+- the contract, expected output, or reference comparison defining the behavior;
 - the regression or capability being protected;
 - relevant positive and negative coverage;
-- known limitations or gaps that remain;
-- why any changed expected result or support classification is correct.
+- known limitations or remaining gaps;
+- the reason for any changed expected result or support classification;
+- the required local, CI, runtime, or workflow validation.
 
-Tests must not be weakened, removed, broadly ignored, or reclassified solely to obtain a green CI result.
+Tests must not be weakened, removed, broadly ignored, or reclassified solely to
+obtain a green CI result. Temporary command output, screenshots, benchmark
+dumps, and one-off reports are not durable tests and should not be committed.
 
-Temporary quarantines or expected-failure classifications are acceptable only when the gap remains visible, the intended behavior remains preserved, and the owning repository has a clear way to track the limitation.
+## 16. Repository responsibilities
 
-## 14. Repository responsibilities
-
-This policy defines WrightKit-wide testing governance. Each repository remains responsible for documenting and implementing its own evidence sources, fixture layouts, validation commands, and CI gates.
+Each repository remains responsible for documenting and implementing its own
+test commands, fixture layouts, expected-output format, and CI gates.
 
 In particular:
 
-- canonical Workshop conformance and client-observable Workshop evidence belong with the repository that owns canonical Workshop semantics;
-- source-language compatibility evidence belongs with the corresponding source-language repository;
-- protocol conformance belongs with the protocol repository;
-- Wright-owned tooling, orchestration, lint, source-edit, and integration behavior is tested in Wright.
+- canonical Workshop conformance and client-observable behavior belong with the
+  repository that owns canonical Workshop semantics;
+- source-language compatibility tests belong with the corresponding
+  source-language repository;
+- protocol conformance belongs to the protocol repository;
+- Wright-owned tooling, orchestration, lint, source-edit, and integration
+  behavior is tested in Wright.
 
-Cross-repository tests must respect these ownership boundaries rather than duplicating authoritative semantic data for convenience.
-
-## 15. Verification evidence lifecycle and repository admission
-
-Not all evidence produced during development belongs in the repository. AI agents in particular frequently create ad-hoc files — baseline captures, CLI transcripts, benchmark dumps, one-off verification reports, temporary repro scripts, issue-specific fixtures, and debug logs — to prove that a single change worked. This section defines when such artifacts may enter the repository.
-
-### Evidence classes
-
-Every artifact produced during development or verification belongs to exactly one lifecycle class:
-
-**Ephemeral verification evidence** — artifacts useful only for the current task. Examples: baseline and treatment command output, stderr captures, benchmark dumps, one-off verification Markdown, screenshots used only to demonstrate a PR, temporary shell or Python harnesses, and debugging logs. These must stay outside the repository by default: in `$TMPDIR`, a local work directory, or CI artifact storage. They are not commit-worthy merely because they were useful during verification.
-
-**Durable regression assets** — minimized, deterministic tests or fixtures that protect a surviving observable contract or known failure class independently from the current PR. These may enter the repository only after passing the admission criteria below. They belong in an existing canonical test location with established provenance.
-
-**Canonical evidence corpora** — provenance- and ownership-managed compatibility, conformance, locale/catalog, or real-project evidence with long-lived value beyond any single task. Ownership is defined by repository-local guidance. Changes require the same independent evidence as any other correctness expectation.
-
-### Repository admission criteria
-
-A temporary artifact may be promoted into the repository only when it satisfies all of the following:
-
-- a durable observable contract, invariant, or known regression class is protected;
-- a plausible incorrect implementation would be detected;
-- value survives the current PR or task and benefits future maintainers;
-- the artifact is minimal and deterministic;
-- an existing canonical test or corpus location in the repository can own it;
-- it does not duplicate equivalent coverage already in the suite;
-- external or real-world inputs retain required provenance and licensing information.
-
-If any criterion fails, the artifact stays ephemeral and must not be committed.
-
-### Ad-hoc evidence directories
-
-Unless a repository explicitly defines a canonical location for a category of evidence, agents must not create committed directories or files solely for verification purposes.
-
-Directories such as `evidence/`, `verification/`, `reports/`, `debug/`, `tmp-tests/`, or task-specific subtrees are not canonical locations. Creating them to hold a single-task proof that has no durable successor is not a valid reason to commit the directory.
-
-If no canonical location exists and the artifact would meet all admission criteria, the appropriate action is to report it as a promotion candidate and let the owning maintainer or QA role decide whether and how to integrate it into the existing test structure.
-
-### Promotion candidates
-
-When verification reveals an artifact that appears to meet admission criteria, report it explicitly as a promotion candidate without committing it. The report should describe:
-
-- what durable contract or regression class the artifact protects;
-- where in the existing test structure it would integrate;
-- which admission criteria it satisfies and which require maintainer judgment.
-
-The owning maintainer or QA role authorizes the final integration. An agent that implemented the change being verified must not self-authorize the promotion.
+Cross-repository tests must respect these ownership boundaries rather than
+duplicating authoritative semantic data for convenience.
 
 ## Non-goals
 
-This policy does not mandate a single Rust test framework, fixture schema, fuzzing library, mutation-testing tool, coverage percentage, agent topology, or CI topology for every repository.
+This policy does not mandate a single Rust test framework, fixture schema,
+fuzzing library, mutation-testing tool, coverage percentage, agent topology, or
+CI topology for every repository.
 
-It also does not require maximum testcase quantity. The objective is stronger evidence, meaningful failure detection, and durable semantic protection.
+It also does not require maximum test quantity. The objective is durable tests,
+meaningful failure detection, clear expected outputs, and protection of the
+contracts that users and maintainers actually depend on.

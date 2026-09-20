@@ -68,7 +68,7 @@ If a tool generates a workflow and verifies that generated file against its conf
 1. **Generator-owned:** keep the workflow generated and change it only through the generator/configuration; or
 2. **Repository-owned:** remove the generator contract and maintain the workflow directly.
 
-Do not treat a generated workflow as hand-maintained source while still running generator integrity checks. If maintainers need routine edits that the generator does not support cleanly, that is evidence that the generator may be the wrong abstraction for the repository.
+Do not treat a generated workflow as hand-maintained source while still running generator integrity checks. If maintainers need routine edits that the generator does not support cleanly, that is a sign that the generator may be the wrong abstraction for the repository.
 
 ### Keep the happy path small; recover rare partial states explicitly
 
@@ -101,9 +101,9 @@ Do not allow duplicate jobs for the same canonical tag.
 
 ## Validation standard
 
-Release validation has multiple evidence levels. Keep them distinct.
+Release validation has distinct stages. Keep them separate.
 
-### Static / pre-publication evidence
+### Static / pre-publication checks
 
 Useful checks include:
 
@@ -116,7 +116,7 @@ Useful checks include:
 
 These prove only the paths they actually execute.
 
-### Production release evidence
+### Production release validation
 
 A release-system migration is not proven solely because its PR CI is green.
 
@@ -146,7 +146,7 @@ When reviewing release changes, verify:
 - Is the normal path free from recovery logic for rare hypothetical states?
 - Are credential choices explained by permission and event-propagation needs?
 - Can concurrent main pushes or repeated tag events race publication?
-- Does the validation evidence include a real release before the migration is declared proven?
+- Does validation include a real release before the migration is declared established?
 
 ## Repository-local documentation
 
@@ -163,7 +163,7 @@ Each releasing repository should document only its concrete release contract:
 
 Do not copy this policy verbatim into every repository. Link to it and keep repo-local docs focused on current reality.
 
-## Evidence behind this standard
+## Why this standard
 
 This standard incorporates lessons from the `workshop-rs` release-pipeline rework in August 2026. The repository accumulated failures while combining release-plz, repository-owned recovery logic, detached merge-commit execution, and generated `dist` workflow behavior. The stable direction reduced the topology to release-plz for version/registry/tag responsibilities and a small tag-triggered repository workflow for fixed-platform binary builds and GitHub Release creation.
 

@@ -34,11 +34,11 @@ Durable documentation must classify numeric claims before changing them:
   files, entries, or supported items. When a catalog, registry, manifest,
   dataset, or adjacent list already owns that state, do not hand-maintain its
   cardinality in prose. Name or link the owning surface instead.
-- A cardinality tied to an immutable provenance snapshot or historical revision
-  is not automatically a mutable current-inventory claim. Retain it when it
-  materially establishes the evidence scope or completeness of that snapshot;
-  otherwise prefer the provenance reference without adding another inventory
-  summary. Test, fixture, and corpus counts remain governed by #11.
+- A cardinality tied to an immutable source revision or historical snapshot is
+  not automatically a mutable current-inventory claim. Retain it when it
+  materially establishes the scope or completeness of that snapshot; otherwise
+  prefer the source reference without adding another inventory summary. Test,
+  fixture, and corpus counts remain governed by the testing policy.
 - **Generated derived displays** may retain a useful count when it is clearly
   identified as derived and produced and validated by the same deterministic
   path that owns the underlying data. A manually copied number is not made
@@ -52,14 +52,14 @@ numbers.
 
 This rule covers non-test inventory and status claims. Test, fixture, snapshot,
 corpus, and testcase cardinality policy remains scoped to
-[`wrightkit/.github#11`](https://github.com/wrightkit/.github/issues/11) and is
+[`docs/testing-policy.md`](testing-policy.md) and is
 not replaced or broadened by this guidance.
 
 ## 1. Simplification removes obligations, not merely lines
 
 A simplification is valuable when it reduces the number of concepts, states, contracts, dependencies, or representations that contributors and agents must keep coherent.
 
-A diff with fewer lines is not sufficient evidence. Moving the same complexity behind another wrapper, compatibility shim, helper, or abstraction is not entropy reclamation.
+A diff with fewer lines does not prove simplification. Moving the same complexity behind another wrapper, compatibility shim, helper, or abstraction is not entropy reclamation.
 
 Prefer, in order:
 
@@ -89,7 +89,7 @@ Repository-local architecture and compatibility documents define additional cont
 
 A pre-1.0 version number is not blanket permission to remove a public surface. A repository may explicitly define some pre-1.0 APIs as unstable and allow breaking changes; when such a versioning policy exists, those surfaces may be treated as review-required rather than product-stable. Without that explicit policy, public surfaces remain contract-sensitive.
 
-## 3. Repository search is evidence, not proof of no consumers
+## 3. Repository search is a candidate generator, not proof of no consumers
 
 `rg`, compiler warnings, dead-code tools, dependency analyzers, and similar scanners are candidate generators.
 
@@ -101,7 +101,7 @@ Classify consumers as:
 - **non-production** — tests, docs, comments, snapshots, and support-only expected output;
 - **ambiguous/external** — examples, plugins, reflection, dynamic loading, published APIs, downstream crates, user scripts, or cross-repository consumers.
 
-A public item with no in-repository caller is not automatically dead. Published crates and stable CLI or protocol surfaces must be treated as externally consumable unless compatibility evidence shows otherwise.
+A public item with no in-repository caller is not automatically dead. Published crates and stable CLI or protocol surfaces must be treated as externally consumable unless a compatibility check shows otherwise.
 
 ## 4. Compatibility removal is a product decision
 
@@ -120,15 +120,15 @@ An entropy audit may identify such a surface, but it must classify it as a produ
 
 WrightKit is a multi-repository ecosystem. A surface may be unused locally while still being required by another WrightKit component.
 
-Before removing a shared crate API, schema, generated artifact, compatibility hook, CLI contract, or tool interface, inspect known ecosystem consumers and the owning documentation. If cross-repository evidence cannot be obtained, record the uncertainty and downgrade the candidate rather than assuming it is safe.
+Before removing a shared crate API, schema, generated artifact, compatibility hook, CLI contract, or tool interface, inspect known ecosystem consumers and the owning documentation. If cross-repository consumer inspection cannot be completed, record the uncertainty and downgrade the candidate rather than assuming it is safe.
 
 Do not introduce duplicate implementations across repositories merely to make one repository locally simpler. Simplification should reduce ecosystem-wide obligations, not relocate them.
 
-## 6. Tests are evidence, not an untouchable implementation snapshot
+## 6. Tests are contract checks, not an untouchable implementation snapshot
 
 Follow the [WrightKit Testing Policy](testing-policy.md).
 
-Tests that exist only to preserve an obsolete internal mechanism may be removed with that mechanism. Tests that protect surviving observable behavior, compatibility, negative behavior, provenance, or independent correctness evidence must remain or be replaced with an equivalent or stronger check.
+Tests that exist only to preserve an obsolete internal mechanism may be removed with that mechanism. Tests that protect surviving observable behavior, compatibility, negative behavior, source attribution, or independent correctness checks must remain or be replaced with an equivalent or stronger check.
 
 Do not weaken or rewrite a meaningful expectation simply to make a deletion pass. A green suite alone does not prove that a candidate was non-load-bearing.
 
@@ -174,7 +174,7 @@ Do not reclaim apparent entropy by removing:
 - diagnostics or error propagation required to keep failures observable;
 - accessibility or safety behavior that is part of a user-facing contract.
 
-If one of these looks redundant, treat it as a high-risk architecture/security candidate and require stronger evidence and explicit review.
+If one of these looks redundant, treat it as a high-risk architecture/security candidate and require stronger checks and explicit review.
 
 ## 10. AI-assisted simplification requires independent judgment
 
@@ -182,10 +182,10 @@ AI agents are particularly prone to preserving every existing abstraction while 
 
 For material simplifications:
 
-- the auditing agent must provide consumer and contract evidence, not aesthetic claims;
+- the auditing agent must provide consumer and contract checks, not aesthetic claims;
 - an agent that proposes a compatibility/public-contract change must not self-authorize that decision when the repository's role model assigns it to an Architect, maintainer, or product owner;
 - cheap/subordinate agents may perform broad discovery, history search, call-site tracing, and mechanical implementation, but final acceptance remains with the role responsible for the contract;
-- final review should inspect the relevant diff and decisive evidence directly, not only a worker-agent summary.
+- final review should inspect the relevant diff and decisive checks directly, not only a worker-agent summary.
 
 ## 11. Risk classes
 
@@ -213,7 +213,7 @@ Typical examples:
 - cross-repository surfaces with verified consumers that must migrate together;
 - removal that changes substantial test or generated-artifact structure.
 
-Require explicit review of the evidence and migration scope before acceptance.
+Require explicit review of the checks and migration scope before acceptance.
 
 ### C — product/architecture decision
 
@@ -228,21 +228,21 @@ Typical examples:
 
 An audit may recommend the change, but implementation requires the repository's normal architecture/product decision path or an already explicit user decision.
 
-## 12. Audit evidence format
+## 12. Audit candidate format
 
 A useful candidate should be reportable in this compact form:
 
 ```text
 [confidence | risk class] candidate
 obligation: concept/state/API/compatibility surface currently maintained
-evidence: production consumers; dynamic/external checks; history/decision owner
+consumers: production callers; dynamic/external entrypoints; history/decision owner
 cut: exact declarations, implementations, artifacts, tests/docs, or dependencies removed
 tradeoff: observable capability, compatibility, or future extension lost
 verify: smallest decisive check plus broader required gates
 net effect: concepts/contracts/dependencies removed; replacement cost introduced
 ```
 
-Candidates without enough evidence should be recorded as uncertain or rejected, not inflated into a cleanup backlog.
+Candidates without enough consumer, contract, or test information should be recorded as uncertain or rejected, not inflated into a cleanup backlog.
 
 ## 13. Implementation discipline
 
@@ -276,4 +276,4 @@ Prefer audit first, then approve and implement a small number of high-confidence
 
 ## Upstream inspiration
 
-This policy is independently written for WrightKit. Its evidence-first approach is informed by [DeepSeek Harness's simplification practice](https://github.com/deepseek-ai/deepseek-harness/blob/master/.agents/skills/dsh-find-simplifications/SKILL.md) and the generalized [`reclaim-code-entropy`](https://github.com/Yevanchen/reclaim-code-entropy) agent skill. Their guidance is useful input, but WrightKit's repository, compatibility, testing, Rust, licensing, and role constraints take precedence.
+This policy is independently written for WrightKit. Its simplification approach is informed by [DeepSeek Harness's simplification practice](https://github.com/deepseek-ai/deepseek-harness/blob/master/.agents/skills/dsh-find-simplifications/SKILL.md) and the generalized [`reclaim-code-entropy`](https://github.com/Yevanchen/reclaim-code-entropy) agent skill. Their guidance is useful input, but WrightKit's repository, compatibility, testing, Rust, licensing, and role constraints take precedence.
