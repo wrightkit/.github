@@ -14,9 +14,9 @@ When choosing between valid implementations, follow these priorities in order:
 4. Locality of the change and ease of review
 5. Clear, readable code and documentation
 6. DRY, when a demonstrated abstraction reduces total maintenance cost
-7. Speculative extensibility, only when current evidence justifies it
+7. Speculative extensibility, only when a current requirement justifies it
 
-The default is the smallest complete coherent change that satisfies the issue and existing architecture. Complexity needs a current reason. Existing placement is not evidence that new behavior belongs there.
+The default is the smallest complete coherent change that satisfies the issue and existing architecture. Complexity needs a current reason. Existing placement is not proof that new behavior belongs there.
 
 ## Preserve domain locality and responsibility
 
@@ -36,7 +36,7 @@ Use AHA and the Rule of Three as reasoning heuristics, not eligibility tests. Ke
 
 Why: premature abstraction couples cases before their common shape is understood. Small duplication is usually cheaper than the wrong helper, trait, adapter, or wrapper layer.
 
-Do not add an extension point for a hypothetical consumer. When a new layer is proposed, identify the current owner, real consumer, and independently observable benefit. If those are unclear, keep the behavior local until evidence establishes the boundary.
+Do not add an extension point for a hypothetical consumer. When a new layer is proposed, identify the current owner, real consumer, and independently observable benefit. If those are unclear, keep the behavior local until a real requirement and contract establish the boundary.
 
 ## Prefer simple, idiomatic Rust
 
@@ -62,13 +62,13 @@ Do not add comments that:
 - preserve transient project state, migration progress, issue status, or speculative future work;
 - compensate for unclear naming, mixed responsibility, weak decomposition, poor feature locality, or an implementation whose purpose is otherwise difficult to infer.
 
-When explanatory prose appears necessary to understand changed code, first improve the code itself: rename, narrow the API, expose the domain distinction through types, simplify control flow, or perform the bounded structural extraction needed to keep the behavior in its coherent owning responsibility. If removing a file or module header leaves an experienced maintainer unable to determine why the unit exists or how to work on its feature, treat that as evidence to improve the implementation structure rather than evidence that the header should be retained.
+When explanatory prose appears necessary to understand changed code, first improve the code itself: rename, narrow the API, expose the domain distinction through types, simplify control flow, or perform the bounded structural extraction needed to keep the behavior in its coherent owning responsibility. If removing a file or module header leaves an experienced maintainer unable to determine why the unit exists or how to work on its feature, treat that as a structural signal to improve the implementation rather than a reason to retain the header.
 
-Comments remain appropriate for durable information that code cannot encode cleanly, including non-obvious invariants, external compatibility constraints and quirks, correctness or safety rationale, provenance/evidence, and public API contracts that consumers need. These exceptions must explain information outside the implementation's ordinary structural meaning; they do not justify a prose description of the implementation itself. Rustdoc should document real consumer-facing contracts; do not mechanically restate a symbol's name or type merely to increase documentation coverage.
+Comments remain appropriate for durable information that code cannot encode cleanly, including non-obvious invariants, external compatibility constraints and quirks, correctness or safety rationale, source mapping or attribution, and public API contracts that consumers need. These exceptions must explain information outside the implementation's ordinary structural meaning; they do not justify a prose description of the implementation itself. Rustdoc should document real consumer-facing contracts; do not mechanically restate a symbol's name or type merely to increase documentation coverage.
 
-Comment ablation is therefore a readability test, not only a comment-retention test. For substantive code, temporarily remove explanatory file/module headers and local narration, then judge the source on its own. If responsibility, feature placement, or control flow becomes materially harder to understand, correct the names/types/modules/APIs/decomposition first. Restore only irreducible external constraints, invariants, rationale, provenance, or consumer contracts.
+Comment ablation is therefore a readability test, not only a comment-retention test. For substantive code, temporarily remove explanatory file/module headers and local narration, then judge the source on its own. If responsibility, feature placement, or control flow becomes materially harder to understand, correct the names/types/modules/APIs/decomposition first. Restore only irreducible external constraints, invariants, rationale, source mapping or attribution, or consumer contracts.
 
-Source comments are not architecture contracts or independent evidence of current behavior. A comment that says a design is intentional does not waive the requirement to check the current architecture contract and implementation reality.
+Source comments are not architecture contracts or independent checks of current behavior. A comment that says a design is intentional does not waive the requirement to check the current architecture contract and implementation reality.
 
 Why: explanatory comments are an unvalidated natural-language cache. They can become stale while still looking authoritative to humans and coding agents, and extensive explanatory prose can hide a codebase whose structure is not self-explanatory. WrightKit therefore treats the need for implementation-explaining prose as a maintenance signal and admits prose only when removing it would lose durable information that cannot be recovered reliably from the code.
 
@@ -91,8 +91,8 @@ Why: stable documents remain reliable context for humans and agents and improve 
 This policy sets baseline defaults. Refer to specialized policies for domain-specific requirements:
 
 - [Agent Guidance Principles](agent-guidance.md) for writing durable agent-facing policy and skills.
-- [Testing Policy](testing-policy.md) for tests, fixtures, compatibility evidence, robustness, and independent verification.
-- [Code Entropy Policy](entropy-policy.md) for deletion, consolidation, and evidence-backed simplification.
+- [Testing Policy](testing-policy.md) for tests, fixtures, compatibility checks, robustness, and independent verification.
+- [Code Entropy Policy](entropy-policy.md) for deletion, consolidation, and contract-backed simplification.
 - [Rust CI standard](rust-ci.md) for Rust toolchain and cache composition.
 - [Release engineering standard](release-engineering.md) for release ownership, publication, and recovery.
 

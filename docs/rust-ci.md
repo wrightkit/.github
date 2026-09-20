@@ -5,7 +5,7 @@ This document defines the Rust CI composition behind WrightKit's versioned
 cache ownership as separate, visible workflow responsibilities.
 
 The reusable workflow owns the fundamental quality contract. Repository-local
-workflows own triggers, caller matrices, domain-specific commands and evidence,
+workflows own triggers, caller matrices, domain-specific commands and validation,
 and release behavior. Callers may configure the declared Cargo topology, but do
 not bypass the contract with arbitrary command hooks.
 
@@ -37,7 +37,7 @@ Use a dedicated toolchain step followed by one explicit cache step:
   with:
     # One stable logical family for compatible Linux CI jobs.
     shared-key: linux-ci
-    # Target artifacts are allowed only for compile-heavy jobs with evidence.
+    # Target artifacts are allowed only for compile-heavy jobs with a measured benefit.
     cache-targets: true
     cache-all-crates: false
     cache-workspace-crates: false
@@ -73,7 +73,7 @@ Commands such as `cargo fmt --all -- --check` do not resolve dependencies and do
 - A matrix or secondary job may restore the family but must not save another persistent entry unless it is deliberately the sole `main` writer.
 - Set `cache-on-failure: false`; failed jobs must not persist incomplete artifacts.
 - Keep `cache-all-crates` and `cache-workspace-crates` false unless a measured case requires them.
-- Add a new family only for a real incompatibility such as a different operating system or materially different build environment, and record the evidence in the repository's CI documentation or PR.
+- Add a new family only for a real incompatibility such as a different operating system or materially different build environment, and record the reason in the repository's CI documentation or PR.
 - Do not use a cache to hide release reproducibility problems. Release/tag jobs must remain independently buildable from the lockfile.
 
 The expected bounded pattern is therefore:
@@ -89,7 +89,7 @@ The expected bounded pattern is therefore:
 
 `language-provider-protocol#8` is the first pilot for the bounded shared-cache policy. Its merge commit is [`05ce40a`](https://github.com/wrightkit/language-provider-protocol/commit/05ce40ad5b67b9f9aad584768e966ea0b4470040). The corresponding `main` CI run [32022937163](https://github.com/wrightkit/language-provider-protocol/actions/runs/32022937163) succeeded for both `rust` and `conformance` and created one `linux-ci` cache entry.
 
-The first `main` run recorded `No cache found` in both jobs, so it proves a successful seed but not a subsequent restore. The pilot is not yet accepted as the reference pattern. Before migrating another repository, a later `main` run must show an actual restore or exact cache hit, and the repository should record:
+The first `main` run recorded `No cache found` in both jobs, so it confirms a successful seed but not a subsequent restore. The pilot is not yet accepted as the reference pattern. Before migrating another repository, a later `main` run must show an actual restore or exact cache hit, and the repository should record:
 
 - the run and commit that seeded the cache;
 - the later run and job that restored it;
@@ -98,10 +98,10 @@ The first `main` run recorded `No cache found` in both jobs, so it proves a succ
 
 The v1 reusable-workflow rollout uses the explicit composition above while
 preserving each repository's existing gates and release behavior. A local or
-PR pass does not prove the rollout: after the pinned workflow revision is
+PR pass does not establish the rollout: after the pinned workflow revision is
 available remotely, each migrated repository needs a real post-migration main
 or PR run showing the intended gate ordering and cache behavior. The cache
-pilot's seed and later restore remain separate evidence requirements.
+pilot's seed and later restore remain separate validation checks.
 
 ## References
 

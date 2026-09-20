@@ -15,7 +15,7 @@ Use the following semantic states:
 - **`blocked`** — the contract is sufficiently decided, but an external dependency, owner, access requirement, or prerequisite prevents the work. Record the dependency and the condition that will unblock it.
 - **`ready-for-implementation`** — the issue contains enough settled scope and contract information for an Engineer to implement it without inventing a product or architecture decision. Implementation details may remain open.
 
-An issue can move back from `ready-for-implementation` when new evidence, architecture drift, current-code reality, or a scope change reopens a design, product, or dependency question. `ready-for-implementation` is not a permanent assertion that the Issue still matches the repository when implementation begins. Do not hide an unresolved decision inside an apparently ready issue; name the decision and route it to its owner first.
+An issue can move back from `ready-for-implementation` when new contract information, architecture drift, current-code reality, or a scope change reopens a design, product, or dependency question. `ready-for-implementation` is not a permanent assertion that the Issue still matches the repository when implementation begins. Do not hide an unresolved decision inside an apparently ready issue; name the decision and route it to its owner first.
 
 ## Minimum implementation contract
 
@@ -42,7 +42,7 @@ Every capability under the previous accepted contract must fall into one of thre
 2. **Approved removals or changes** — intentional deprecations, breaking changes, or behavioral modifications must be backed by an approved architecture or contract decision; they must not be dropped silently as an implementation convenience or incidental side effect of the migration.
 3. **Ownership transfers** — capabilities moved to another layer, crate, or repository must explicitly declare the new authoritative owner and handoff boundary.
 
-Tests, fixtures, or evidence exercising only retired, private, hidden, or compatibility-only paths are insufficient to prove that a replacement boundary is complete. Passing legacy or compatibility suites does not compensate for missing capabilities on the claimed canonical contract.
+Tests or checks exercising only retired, private, hidden, or compatibility-only paths are insufficient to prove that a replacement boundary is complete. Passing legacy or compatibility suites does not compensate for missing capabilities on the claimed canonical contract.
 
 Why: migrating a boundary can leave legacy or compatibility adapters green while the new canonical entry point silently drops existing capabilities. Contract continuity ensures that replacements are verified at the surface where future consumers and tools will actually interact with the capability.
 
@@ -55,11 +55,11 @@ For substantive implementation work, an Engineer should:
 1. Read the linked Issue and nearest repository guidance.
 2. Identify the affected domain and owning repository before choosing the implementation location.
 3. Resolve the current architecture or contract relevant to that domain through repository guidance and durable documentation. Treat ADRs as decision records; verify current implementation reality separately.
-4. Inspect the current implementation, affected consumers, tests/evidence, and dependency boundaries far enough to establish current reality.
+4. Inspect the current implementation, affected consumers, tests, and dependency boundaries far enough to establish current reality.
 5. Compare the Issue contract, current architecture/contract, and current code reality. When replacing, hiding, or retiring a public or canonical boundary, verify that surviving accepted capabilities are accounted for on the replacement boundary, explicitly approved for removal/change, or transferred to another owner. If they are materially inconsistent, stop and report the mismatch to the appropriate Architect/owner; do not self-authorize a replacement design.
 6. If they are aligned, load specialized policy or skills for the actual risk surface and make the smallest complete coherent change that satisfies the issue and current architecture.
 7. Keep unrelated cleanup, renaming, broad refactoring, and speculative extensibility out of the change. A bounded structural extraction needed to keep the changed behavior in its coherent owning responsibility is part of the implementation scope, not unrelated cleanup.
-8. Temporarily remove newly added explanatory comments and file/module headers, then read the changed implementation as code. If an experienced maintainer can no longer determine the unit's responsibility, feature placement, major relationships, or control flow from names, types, modules, APIs, and implementation structure, treat that as a readability/maintainability defect and improve the code first. Restore only irreducible external contracts, invariants, compatibility/safety rationale, provenance, or consumer-facing API documentation.
+8. Temporarily remove newly added explanatory comments and file/module headers, then read the changed implementation as code. If an experienced maintainer can no longer determine the unit's responsibility, feature placement, major relationships, or control flow from names, types, modules, APIs, and implementation structure, treat that as a readability/maintainability defect and improve the code first. Restore only irreducible external contracts, invariants, compatibility/safety rationale, source mapping or attribution, or consumer-facing API documentation.
 9. Verify the behavior at the narrowest decisive surface first, then run the broader gates required by the repository or risk surface. For boundary migrations, verify surviving contracts through the replacement boundary itself rather than relying only on legacy or compatibility paths.
 10. Report material assumptions, limitations, and remaining gaps against the acceptance criteria. A green build does not resolve an undecided or inconsistent contract.
 
@@ -69,7 +69,7 @@ These defaults complement [`docs/engineering-quality.md`](engineering-quality.md
 
 A reviewer verifies whether the PR correctly and completely implements its approved issue, current architecture, and contracts. Review is not an opportunity to redesign the system, revisit accepted architecture preferences, or expand the issue into cleanup and future work.
 
-Why: architecture and product decisions have their own owners and decision process. Reopening them during PR review creates scope drift and repeated implementation cycles without new evidence.
+Why: architecture and product decisions have their own owners and decision process. Reopening them during PR review creates scope drift and repeated implementation cycles without new information.
 
 The reviewer should inspect the full applicable PR scope in the initial pass. Finding one blocker does not end the review; continue through the remaining changed behavior and report all currently discoverable actionable findings together.
 
@@ -83,9 +83,9 @@ Review, as applicable:
 - newly added or materially affected explanatory comments and file/module headers, including whether the prose is functioning as a README for code whose responsibility, ownership, pipeline, or internal relationships are otherwise not self-explanatory;
 - changes outside the approved scope that affect correctness or maintenance obligations.
 
-Architecture is a compliance boundary during review. Do not propose an alternative architecture when the PR follows the current approved one. If new evidence shows that the Issue, documented contract, and current implementation disagree materially, identify the decision mismatch and route it to the appropriate owner rather than asking the Engineer to redesign it inside the PR.
+Architecture is a compliance boundary during review. Do not propose an alternative architecture when the PR follows the current approved one. If the Issue, documented contract, and current implementation disagree materially, identify the decision mismatch and route it to the appropriate owner rather than asking the Engineer to redesign it inside the PR.
 
-A comment is not independently authoritative evidence that a placement or behavior is intentional. Do not treat an accurate explanatory header as sufficient evidence of readability. If removing the prose makes a changed feature/module/file materially difficult to understand, require the smallest code-level correction needed to make the responsibility and behavior discoverable. Require comment removal when the prose merely restates implementation; retain only information that cannot reasonably be expressed by code structure and belongs with the source.
+A comment is not independently authoritative proof that a placement or behavior is intentional. Do not treat an accurate explanatory header as sufficient proof of readability. If removing the prose makes a changed feature/module/file materially difficult to understand, require the smallest code-level correction needed to make the responsibility and behavior discoverable. Require comment removal when the prose merely restates implementation; retain only information that cannot reasonably be expressed by code structure and belongs with the source.
 
 ## Findings and output
 
@@ -154,7 +154,7 @@ After the Engineer addresses findings and hands the PR back, review only:
 2. regressions introduced by those fixes;
 3. materially new code or behavior added since the previous review.
 
-Do not reopen previously reviewed areas or add preference-based concerns without new evidence. If the prior findings are fixed and no new defect was introduced, reply `LGTM` and approve.
+Do not reopen previously reviewed areas or add preference-based concerns without new information. If the prior findings are fixed and no new defect was introduced, reply `LGTM` and approve.
 
 Why: follow-up review verifies the correction. Re-running a fresh architectural audit after every fix creates avoidable review loops and makes the effective PR scope unstable.
 

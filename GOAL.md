@@ -28,7 +28,7 @@ WrightKit is a tooling-first development toolchain for the Overwatch Workshop. I
 
 9. **Game knowledge supports tooling, not game design judgments.** WrightKit tracks verified technical facts about the Workshop environment: element catalogs, script resource limits, and static stability hazards. The toolchain reports risks and explains its static reasoning without claiming to guarantee runtime behavior. Its scope ends at technical tooling; WrightKit does not evaluate gameplay balance, fun, or game design quality.
 
-10. **Keep the core small and predictable.** Built-in lints focus on high-confidence rules with minimal false positives; broader checks belong in optional or community rule sets. Stable integration points allow third-party tools and language providers to connect when needed, but the project does not build abstractions for hypothetical consumers. Default conventions handle standard workflows; platform-specific work requires backing evidence from real users.
+10. **Keep the core small and predictable.** Built-in lints focus on high-confidence rules with minimal false positives; broader checks belong in optional or community rule sets. Stable integration points allow third-party tools and language providers to connect when needed, but the project does not build abstractions for hypothetical consumers. Default conventions handle standard workflows; platform-specific work requires a demonstrated need from real users.
 
 ## Decision priorities
 
@@ -40,7 +40,7 @@ When competing technical approaches are on the table, prefer in this order:
 4. Enable safe, localized source edits.
 5. Fix the issue in the repository that owns the underlying semantics.
 6. Advance Workshop analysis, interoperability, compilation, or reconstruction in service of the priorities above.
-7. Keep the implementation small, focused, and backed by concrete evidence.
+7. Keep the implementation small, focused, and backed by concrete tests, references, or workflow checks.
 
 Never trade these outcomes for feature-matrix symmetry, identical compiler output, roadmap checklists, architectural purism, or speculative extensibility.
 

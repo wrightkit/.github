@@ -123,7 +123,7 @@ pressure or incremental correctness concerns arise, not on a timer.
   lifecycle model—profile defaults plus worktree retirement cleanup—is the
   primary mechanism. Add pruning only if that model proves insufficient.
 
-## Acceptance evidence
+## Acceptance checks
 
 Before declaring this policy applied to a repository:
 
