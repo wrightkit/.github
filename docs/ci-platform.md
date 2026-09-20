@@ -13,9 +13,10 @@ matrices, job dependencies, and domain-specific validation.
 - A **repository workflow** owns the repository's event triggers, native
   `strategy.matrix`, caller-level concurrency and `needs`, and semantic,
   compatibility, corpus, conformance, packaging, or product-release jobs.
-- A **composite action** owns a repeated multi-step procedure only after
-  repeated validation justifies extracting that procedure. No composite action
-  is required by the v1 contracts.
+- A **composite action** owns a repeated multi-step procedure only after the
+  same stable procedure is used across repositories and extracting it removes
+  duplicated workflow steps. No composite action is required by the v1
+  contracts.
 
 Callers must reference a stable v1 tag or an explicitly pinned compatible SHA.
 They pass only declared inputs and explicitly named secrets; they must not use

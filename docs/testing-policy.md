@@ -91,12 +91,12 @@ Tests should detect regressions such as:
 - converting failure into an empty or default result;
 - returning success with missing diagnostics;
 - emitting a partial artifact after a failed operation;
-- losing the original source path, span, or source attribution;
+- losing the original source path, span, or source mapping;
 - accepting an unsupported construct without an explicit support contract.
 
 For public command or protocol surfaces, failure tests should validate the
-externally visible result kind, structured diagnostic or refusal, source
-attribution, and absence of misleading success output.
+externally visible result kind, structured diagnostic or refusal, source mapping,
+and absence of misleading success output.
 
 ## 5. Preserve real-project regressions and test data carefully
 
@@ -105,8 +105,9 @@ project-graph work.
 
 When a defect is found in a real project, preserve a minimized reproduction as
 a feature-owned regression test whenever practical. Its metadata should retain
-the source repository, immutable revision, source path, and related Issue or
-PR identifiers when useful. Keep project-level corpus coverage when it tests
+the source repository, immutable revision, and source path. Related Issue or PR
+history belongs in GitHub or Git history rather than committed test metadata.
+Keep project-level corpus coverage when it tests
 imports, includes, macros, project graphs, cross-file symbols and types,
 settings/catalog interactions, or combinations that a minimized case cannot
 exercise.
@@ -244,9 +245,10 @@ observable behavior. Issue, pull-request, and task identifiers are related
 history, not test taxonomy: they must not define a test file, module, suite,
 case name, or committed test directory.
 
-Real-project tests may retain source repository, immutable revision, source
-path, and related Issue or PR identifiers in comments or test-data metadata.
-Those details identify the input; they do not determine test organization.
+Real-project tests may retain the source repository, immutable revision, and
+source path in comments or test-data metadata. Those details identify the
+input; related Issue or PR history remains in GitHub or Git history and does
+not determine test organization.
 
 Code changing does not, by itself, require a new test. Add, consolidate, or
 remove tests according to the contract and distinct failure mode they protect.
