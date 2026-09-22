@@ -4,6 +4,8 @@ This document defines how durable agent-facing guidance should be written across
 
 The goal is to improve agent judgment, not to simulate a program with a growing list of instructions. Agents already have general reasoning ability; durable guidance should focus it on WrightKit's contracts, priorities, and failure modes.
 
+Keep the layers distinct: the user request and Issue set task scope; `AGENTS.md` supplies durable constraints and routing; shared policies define domain rules; task-specific skills provide procedures and cannot widen the approved work.
+
 ## Guide reasoning, not execution by checklist
 
 Prefer principles and decision criteria over exhaustive lists of cases. Describe what matters, what tradeoff is being protected, and how to recognize an exception.
