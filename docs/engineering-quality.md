@@ -18,6 +18,46 @@ When choosing between valid implementations, follow these priorities in order:
 
 The default is the smallest complete coherent change that satisfies the issue and existing architecture. Complexity needs a current reason. Existing placement is not proof that new behavior belongs there.
 
+## Admit the minimum persistent mechanism
+
+KISS applies to the design boundary, before implementation, not only to the
+choice between implementations after a design has been accepted. Start from
+the direct solution:
+
+```text
+current requirement or contract
+        ↓
+can existing mechanisms satisfy it directly?
+        ↓ no
+what exact gap remains?
+        ↓
+add only the minimum persistent mechanism needed for that gap
+```
+
+The smallest diff, fewest changed files, or fewest added lines is not
+necessarily the simplest complete mechanism. Prefer the design that minimizes
+persistent concepts, state, indirection, ownership surfaces, dependencies,
+APIs, scripts or tooling, schemas or metadata, protocols, configuration
+surfaces, feature switches, fallback or compatibility layers, cross-repository
+contracts, and maintenance obligations while still satisfying the approved
+contract.
+
+Before introducing a material persistent mechanism, establish a concrete
+present justification: a current requirement, invariant, ownership boundary,
+accepted contract, measurable constraint, or known workflow that the direct or
+existing approach cannot satisfy. Future usefulness, agent convenience,
+abstract reproducibility, and internal coherence are not sufficient by
+themselves.
+
+For a substantive design that introduces such mechanisms, independently try to
+remove, defer, inline, reuse an existing mechanism, or use a simpler direct
+alternative for each one before implementation. Keep a mechanism only when its
+absence breaks a concrete requirement, invariant, ownership boundary,
+acceptance criterion, or known workflow, or creates a higher total maintenance
+obligation. Ordinary local changes remain lightweight and do not need a
+separate design ceremony. Significant architecture, public-contract,
+compatibility, or ownership decisions remain with the Architect or owner.
+
 ## Preserve domain locality and responsibility
 
 Organize implementation so a maintainer can find the behavior through the domain responsibility it implements rather than reconstructing unrelated compiler phases, registries, or framework machinery first.
