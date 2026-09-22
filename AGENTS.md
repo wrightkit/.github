@@ -2,22 +2,17 @@
 
 This file is the workspace-level agent routing entry point for the WrightKit organization.
 
-Read [`GOAL.md`](GOAL.md) first for durable product intent. This file explains how work is routed and governed; it is not a technical manual or a second copy of the product goal.
+This file carries durable organization constraints and routing; it is not a technical manual or a second copy of the product goal.
 
 Repository-local `AGENTS.md` files specialize contracts for their own repository. They must not duplicate shared policy, but they may add stricter or domain-specific requirements that take precedence locally.
 
-To apply this routing from a local workspace:
-
-1. Read [`GOAL.md`](GOAL.md).
-2. Read this file.
-3. Read the nearest repository-local `AGENTS.md`.
-4. Load routed policy or skills only when the task touches their concern.
+The user request and linked Issue, when present, set task scope. [`GOAL.md`](GOAL.md) resolves project-direction tradeoffs. Identify the owning repository, read its linked Issue and nearest `AGENTS.md` when present, then load only relevant policy or skills. A short request such as `implement #123` is sufficient when the Issue and repository provide the needed context. Continue authorized reversible work without routine confirmation. Ask or stop only when missing information could materially change the outcome, an owner decision is unresolved, the Issue, documented contract, and current implementation materially conflict, or an external or irreversible action is not authorized.
 
 No proprietary include syntax is required.
 
 ## Repository routing
 
-Before substantial work, identify the affected repository and read its `AGENTS.md`.
+Use this map to identify the likely owner, then confirm current ownership and read its `AGENTS.md` before substantial work.
 
 | Concern | Primary repository |
 | --- | --- |
@@ -33,13 +28,7 @@ Before substantial work, identify the affected repository and read its `AGENTS.m
 
 Confirm current reality before making architectural assumptions. Repository ownership may evolve.
 
-For cross-repository work:
-
-1. Identify the semantic or product owner.
-2. Read every affected repository's `AGENTS.md`.
-3. Change the authoritative contract in the owning repository.
-4. Implement consumer integration separately.
-5. Verify the cross-repository contract explicitly.
+For cross-repository work, read each affected repository's guidance, change the authoritative contract in its owning repository, integrate consumers separately, and verify the contract across the boundary.
 
 ## Policy routing
 
@@ -85,44 +74,15 @@ WrightKit uses role separation to prevent an agent from self-authorizing decisio
 
 An agent that proposes a compatibility, public-contract, or architecture change must not self-authorize that decision when the repository's role model assigns it to an Architect, maintainer, or product owner.
 
-## Implementation context preflight
-
-A short request such as `implement #123` or `fix #123` is sufficient instruction for normal implementation work. The agent is responsible for resolving the relevant project context before editing code; the user should not have to repeat repository guidance, architecture links, or skill names in every prompt.
-
-Before substantive implementation:
-
-1. Read the linked Issue and nearest repository `AGENTS.md`.
-2. Identify the affected domain and owning repository before choosing an implementation location.
-3. Resolve the current architecture or contract relevant to that domain through repository guidance and durable documentation. Treat ADRs as decision records; verify current implementation reality separately.
-4. Inspect the current implementation, affected consumers, tests, and dependency boundaries far enough to establish current reality.
-5. Compare the Issue contract, current architecture/contract, and current code reality. When replacing, hiding, or retiring a public or canonical boundary, verify that surviving accepted capabilities are accounted for on the replacement boundary, explicitly approved for removal/change, or transferred to another owner. `ready-for-implementation` does not waive this consistency check.
-6. If they are materially inconsistent, stop as Engineer and report the mismatch to the appropriate Architect/owner instead of choosing a new architecture by implementation convenience.
-7. Before adding material persistent complexity, establish its current requirement or contract as described in [`docs/engineering-quality.md`](docs/engineering-quality.md). Significant architecture, public-contract, compatibility, and ownership decisions remain with the Architect or owner.
-8. If they are aligned, load the specialized policy or skills indicated by the actual risk surface and implement the smallest complete coherent change.
-
-Do not preload every architecture document or specialist skill. The preflight exists to find the smallest relevant context, not to turn each implementation into a repository-wide audit.
-
 ## Delivery is part of completion
 
-For repository work, a locally correct implementation is not delivered until the remote review surface reflects it.
-
-- For `implement #123`, `fix #123`, or equivalent implementation requests: complete verification, commit on a non-default branch, push, and open or update a PR.
-- For requests to address PR review findings:
-  - keep changes strictly focused on actionable review findings without unrelated cleanup, redesign, or scope expansion;
-  - commit verified corrections and push to the existing PR head branch (do not stop after local commit);
-  - review-fix work is complete only when the PR is handed back to review: handle affected review threads without hiding unresolved findings, and re-request review or signal handoff per [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md);
-  - the final report must identify the updated PR, pushed commits, thread status, and review handoff state.
-- Never push implementation commits directly to the default branch unless the user explicitly authorizes that exception.
-- Stop before push/PR or review handoff only when local-only work was requested or a concrete blocker prevents delivery/handoff (e.g. missing permissions, auth failure, branch conflict); report the blocker and exact local state.
-- A final report for implementation or review-fix work should identify the PR containing the delivered change and its review handoff state, or the concrete blocker that prevented completing it.
+Implementation requests are complete after relevant verification, a commit on a non-default branch, a push, and an open or updated PR. Never push implementation commits directly to the default branch unless the user explicitly authorizes that exception. Review-fix work also requires affected threads to be handled and follow-up review to be signaled as described in [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md). Stop before delivery only for a local-only request or a concrete blocker; report the PR and handoff state, or the blocker and local state.
 
 Why: the PR, not an agent worktree, is the shared review surface. Leaving verified changes in local state, or pushing fixes without thread handling and re-review handoff, stalls the review lifecycle and leaves reviewers unaware that verification is needed.
 
 ## Tests and verification artifacts
 
-One-off command output, reports, screenshots, and temporary reproducers are not repository state merely because they helped with one task.
-
-Before committing a test, fixture, snapshot, corpus case, or other test data, load [`docs/testing-policy.md`](docs/testing-policy.md) and confirm that it protects a durable contract or regression in an existing feature-owned location. For material changes, use `.agents/skills/wrightkit-verify-change/SKILL.md` to attempt independent falsification.
+One-off command output, reports, screenshots, and temporary reproducers are not repository state merely because they helped with one task. Test data belongs in an existing feature-owned location only when it protects a durable contract or regression under [`docs/testing-policy.md`](docs/testing-policy.md). For material changes, use `.agents/skills/wrightkit-verify-change/SKILL.md` to attempt independent falsification.
 
 ## Independent simplification review
 
