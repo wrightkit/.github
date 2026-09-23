@@ -49,7 +49,7 @@ sync_repo "$github_repo" "$context_root/.github" "shared policy (.github)"
 sync_repo "$agents_repo" "$context_root/.agents" "shared skills (.agents)"
 
 workspace_agents="$context_root/.github/AGENTS.md"
-workspace_goal="$context_root/.github/GOAL.md"
+workspace_goal="$context_root/.github/docs/goal.md"
 
 log "validating shared context"
 

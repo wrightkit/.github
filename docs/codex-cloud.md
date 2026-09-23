@@ -4,7 +4,7 @@ WrightKit keeps shared agent guidance outside individual product repositories. A
 
 The canonical bootstrap is [`scripts/codex-cloud-bootstrap.sh`](../scripts/codex-cloud-bootstrap.sh). It prepares:
 
-- `~/.wrightkit/.github`: workspace `AGENTS.md`, `GOAL.md`, and routed durable policy;
+- `~/.wrightkit/.github`: workspace `AGENTS.md` plus routed durable policy under `docs/`, including `docs/goal.md`;
 - `~/.wrightkit/.agents`: reusable WrightKit skills;
 - `$CODEX_HOME/AGENTS.md` (or `~/.codex/AGENTS.md`): a small cloud entry point that routes Codex to the canonical shared context before repository-local guidance.
 
