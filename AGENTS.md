@@ -6,7 +6,7 @@ This file carries durable organization constraints and routing; it is not a tech
 
 Repository-local `AGENTS.md` files specialize contracts for their own repository. They must not duplicate shared policy, but they may add stricter or domain-specific requirements that take precedence locally.
 
-The user request and linked Issue, when present, set task scope. [`GOAL.md`](GOAL.md) resolves project-direction tradeoffs. Identify the owning repository, read its linked Issue and nearest `AGENTS.md` when present, then load only relevant policy or skills. A short request such as `implement #123` is sufficient when the Issue and repository provide the needed context. Continue authorized reversible work without routine confirmation. Ask or stop only when missing information could materially change the outcome, an owner decision is unresolved, the Issue, documented contract, and current implementation materially conflict, or an external or irreversible action is not authorized.
+The user request and linked Issue, when present, set task scope. [`docs/goal.md`](docs/goal.md) resolves project-direction tradeoffs. Identify the owning repository, read its linked Issue and nearest `AGENTS.md` when present, then load only relevant policy or skills. A short request such as `implement #123` is sufficient when the Issue and repository provide the needed context. Continue authorized reversible work without routine confirmation. Ask or stop only when missing information could materially change the outcome, an owner decision is unresolved, the Issue, documented contract, and current implementation materially conflict, or an external or irreversible action is not authorized.
 
 No proprietary include syntax is required.
 
@@ -37,6 +37,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Task concern | Load |
 | --- | --- |
 | Writing or revising durable agent guidance, AGENTS content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
+| Durable documentation layout, progressive disclosure, documentation synchronization, or drift audits | [`docs/documentation.md`](docs/documentation.md) |
 | Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
 | Public or canonical boundary migrations (API, model, IR, protocol), contract continuity, issue readiness, one-pass implementation/PR review, and review-fix handoff | [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md) |
 | Tests, fixtures, corpora, snapshots, expected results, compatibility tests, fuzzing, independent verification | [`docs/testing-policy.md`](docs/testing-policy.md) |
@@ -54,8 +55,9 @@ Load policy documents only when their concern is relevant. Do not preload all of
 
 These rules always apply regardless of repository:
 
-- Use [`GOAL.md`](GOAL.md) to resolve product-direction tradeoffs; do not duplicate or silently redefine its intent in repository-local guidance.
+- Use [`docs/goal.md`](docs/goal.md) to resolve product-direction tradeoffs; do not duplicate or silently redefine its intent in repository-local guidance.
 - Respect repository ownership boundaries: modify authoritative contracts in their owning repository, integrate cross-repository changes separately in consumers, and never bypass ownership for implementation convenience.
+- Durable documentation belongs under `docs/` and follows [`docs/documentation.md`](docs/documentation.md). When supported behavior, a public contract, architecture, ownership, workflow, or operational procedure changes, update the owning documentation in the same change when applicable; review must check this explicitly.
 - Do not introduce complex abstractions only for hypothetical future needs.
 - Keep source attribution, pinned reference identity, and related decision history where a semantic, compatibility, or regression workflow requires them.
 - Do not silently weaken diagnostics, tests, compatibility expectations, validation, or error handling to make CI pass.
