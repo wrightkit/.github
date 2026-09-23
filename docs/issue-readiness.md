@@ -3,6 +3,12 @@
 This policy defines the minimum task contract, boundary-migration continuity,
 and Engineer preflight required before implementation.
 
+WrightKit separates PM/Architect/Engineer/QA authority without requiring every
+task to use all four roles. The workflow is agent-compatible, not
+autonomous: humans or Architects resolve product and architecture decisions;
+Engineer agents implement settled contracts; reviewers verify the complete
+result against those contracts.
+
 ## Issue readiness
 
 Readiness describes the state of the issue's contract, not the confidence of an agent or the presence of a particular GitHub label. A repository may represent these states with labels, fields, issue sections, or another explicit mechanism as long as the meaning remains discoverable.
