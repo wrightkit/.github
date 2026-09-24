@@ -62,7 +62,7 @@ These rules always apply regardless of repository:
 - Keep source attribution, pinned reference identity, and related decision history where a semantic, compatibility, or regression workflow requires them.
 - Do not silently weaken diagnostics, tests, compatibility expectations, validation, or error handling to make CI pass.
 - When replacing, hiding, or retiring a public or canonical boundary (API, model, IR, or protocol), verify continuity of surviving accepted contracts through the replacement boundary itself. Tests or checks exercising only retired, private, or compatibility-only paths do not prove replacement completeness.
-- Do not treat upstream bugs or implementation details as ideal WrightKit semantics without an accepted contract or reference comparison.
+- Source-language compilation converges structurally on the established upstream compiler output ([`docs/goal.md`](docs/goal.md) principle 7). Do not deviate from it, including for an apparent upstream bug, without a recorded exception approved by the owner.
 - Do not invent WrightKit-only OPY or OSTW syntax unless explicitly approved as a language-level design.
 
 ## Role and self-authorization
