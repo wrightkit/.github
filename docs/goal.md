@@ -22,7 +22,7 @@ WrightKit is a tooling-first development toolchain for the Overwatch Workshop. I
 
 6. **Workshop is the semantic and conversion hub.** `workshop-rs` owns canonical Workshop semantics and validated engine facts. Individual language crates own their respective syntax and semantics, and `wright` integrates them into cross-language tooling. Conversions between languages like OPY and DEL route through Workshop representation instead of bespoke direct bridges. When reconstructing source code from Workshop rules, the output should be idiomatic and maintainable while retaining any structure preserved by the Workshop format.
 
-7. **Compatibility means matching semantics, not exact text.** Supported language constructs must preserve execution behavior, diagnostic contracts, and safe editing boundaries. Identical formatting, matching temporary variable names, optimizer choices, and byte-for-byte compiler output are not correctness criteria unless they alter behavior. Known upstream quirks can be preserved when projects depend on them, but upstream bugs should not be treated as intended language design. WrightKit cannot guarantee that generated code will execute without issues on a live game server.
+7. **Compatibility means structural convergence with the established upstream compiler.** For a source language with an established upstream compiler, that compiler is the executable specification. Supported constructs produce the same canonical Workshop structure as upstream: rule order, element identities, control-flow structure, condition shape, value construction, variable names and indices (including compiler-generated helpers), and element cost. Compatibility is measured by comparing both outputs as canonical Workshop programs parsed by `workshop-rs`, never by text diffs or line counts. Formatting, whitespace, and comments are not criteria. Structural rewrites are not accepted, even when they appear behaviorally equivalent or cheaper. Any deviation from upstream output, including one for an apparent upstream bug, requires an explicitly approved and recorded exception. WrightKit cannot guarantee that generated code will execute without issues on a live game server.
 
 8. **Support Workshop updates independently.** Official Workshop additions like new heroes, maps, actions, and settings should land without waiting on upstream OPY or OSTW releases. While an upstream language remains active, WrightKit follows its specification rather than inventing custom dialects. If an upstream compiler is abandoned, WrightKit will maintain compatibility and evolve the language when real user demand justifies it.
 
@@ -42,7 +42,7 @@ When competing technical approaches are on the table, prefer in this order:
 6. Advance Workshop analysis, interoperability, compilation, or reconstruction in service of the priorities above.
 7. Keep the implementation small, focused, and backed by concrete tests, references, or workflow checks.
 
-Never trade these outcomes for feature-matrix symmetry, identical compiler output, roadmap checklists, architectural purism, or speculative extensibility.
+Never trade these outcomes for feature-matrix symmetry, textual identity of compiler output, roadmap checklists, architectural purism, or speculative extensibility.
 
 ## Measuring success
 

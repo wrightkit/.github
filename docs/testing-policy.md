@@ -194,16 +194,21 @@ green command is not, by itself, an independent check.
 When a new development failure escapes existing tests, add a regression in the
 owning feature's established test structure where practical.
 
-## 10. Compatibility tests protect semantics, not formatting
+## 10. Compatibility tests protect structure, not formatting
 
-For OPY, DEL/OSTW-compatible, raw Workshop, locale, and interoperability
-testing, observable semantic compatibility is the default correctness target.
+For OPY and DEL/OSTW-compatible compilation, the correctness target is
+structural convergence with the established upstream compiler, as defined in
+[`goal.md`](goal.md) principle 7. Compare the upstream and WrightKit outputs as
+canonical Workshop programs parsed by `workshop-rs`; never compare text diffs,
+line counts, or text-pattern counts. Formatting, whitespace, and comments are
+not criteria. A structural difference fails unless it is a recorded, approved
+exception in the owning repository.
 
-Do not require identity of generated formatting, temporary variables, optimizer
-choices, internal IR, or other implementation details that do not affect a
-declared observable contract. Normalized output comparison is valid only when
-the normalization preserves the semantics being claimed and does not erase the
-difference the test is meant to detect.
+For raw Workshop, locale, and interoperability testing without an upstream
+compiler oracle, observable semantic compatibility remains the correctness
+target. Do not require identity of formatting or internal IR there. Normalized
+output comparison is valid only when the normalization preserves the property
+being claimed and does not erase the difference the test is meant to detect.
 
 If an upstream oracle accepts a case and WrightKit does not, preserve the
 accepted expected behavior and record the WrightKit result as a gap,
