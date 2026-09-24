@@ -89,8 +89,12 @@ Why: a text-only turn ends the work until someone replies. In unattended worktre
 
 ## Tests and verification artifacts
 
-One-off command output, reports, screenshots, and temporary reproducers are not repository state merely because they helped with one task. Test data belongs in an existing feature-owned location only when it protects a durable contract or regression under [`docs/testing-policy.md`](docs/testing-policy.md). For material changes, use `.agents/skills/wrightkit-verify-change/SKILL.md` to attempt independent falsification.
+One-off command output, reports, screenshots, and temporary reproducers are not repository state merely because they helped with one task. Test data belongs in an existing feature-owned location only when it protects a durable contract or regression under [`docs/testing-policy.md`](docs/testing-policy.md).
 
-## Independent simplification review
+Verify material changes against an authority independent of the implementation, such as an accepted contract, a pinned upstream oracle, or a real project, not only against tests written with the change. Independence comes from that authority, not from another agent: do not spawn a verifier or reviewer agent to re-check your own work. The independent second pass is PR review or an assigned QA role, which may use `.agents/skills/wrightkit-verify-change/SKILL.md`.
 
-Substantive design or implementation work should receive one independent simplification review, as described in [`docs/engineering-quality.md`](docs/engineering-quality.md). Ablation is a necessity review that asks whether newly proposed or added mechanisms can be removed or simplified while the approved requirement and contract still hold. It does not establish correctness; verify correctness independently under [`docs/testing-policy.md`](docs/testing-policy.md) and `.agents/skills/wrightkit-verify-change/SKILL.md`. Repeat the simplification review only when a concrete new mechanism or risk warrants it.
+Why: a same-model agent re-reading the same change shares its blind spots and adds cost; a check against an outside authority catches a wrong expectation that both the implementation and its tests agree on.
+
+## Simplification review
+
+Substantive design or implementation work applies one ablation pass, as described in [`docs/engineering-quality.md`](docs/engineering-quality.md): the Engineer asks whether newly added mechanisms can be removed or simplified while the approved requirement and contract still hold, and PR review checks the result independently. Ablation reviews necessity, not correctness.

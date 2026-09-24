@@ -49,14 +49,15 @@ existing approach cannot satisfy. Future usefulness, agent convenience,
 abstract reproducibility, and internal coherence are not sufficient by
 themselves.
 
-Treat ablation in substantive design or implementation work as one independent
-simplification pass, made when proposed or added mechanisms are concrete enough
-to assess. Ask whether a mechanism can be removed, deferred, inlined, merged
-into an existing path, or otherwise simplified while the approved requirement
-and contract still hold. Keep it only when simplifying it would violate that
-requirement or contract, or increase total maintenance. Repeat only when a
-concrete new mechanism or risk warrants it. Ablation reviews necessity; verify
-correctness separately under the testing policy and `wrightkit-verify-change`.
+Treat ablation in substantive design or implementation work as one
+simplification pass by the Engineer, made when proposed or added mechanisms are
+concrete enough to assess, and checked independently in PR review. Ask whether
+a mechanism can be removed, deferred, inlined, merged into an existing path, or
+otherwise simplified while the approved requirement and contract still hold.
+Keep it only when simplifying it would violate that requirement or contract, or
+increase total maintenance. Repeat only when a concrete new mechanism or risk
+warrants it. Ablation reviews necessity; verify correctness separately under
+the testing policy.
 
 ## Preserve domain locality and responsibility
 
