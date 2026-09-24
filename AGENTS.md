@@ -6,7 +6,7 @@ This file carries durable organization constraints and routing; it is not a tech
 
 Repository-local `AGENTS.md` files specialize contracts for their own repository. They must not duplicate shared policy, but they may add stricter or domain-specific requirements that take precedence locally.
 
-The user request and linked Issue, when present, set task scope. [`docs/goal.md`](docs/goal.md) resolves project-direction tradeoffs. Identify the owning repository, read its linked Issue and nearest `AGENTS.md` when present, then load only relevant policy or skills. A short request such as `implement #123` is sufficient when the Issue and repository provide the needed context. Continue authorized reversible work without routine confirmation. Ask or stop only when missing information could materially change the outcome, an owner decision is unresolved, the Issue, documented contract, and current implementation materially conflict, or an external or irreversible action is not authorized.
+The user request and linked Issue, when present, set task scope. [`docs/goal.md`](docs/goal.md) resolves project-direction tradeoffs. Identify the owning repository, read its linked Issue and nearest `AGENTS.md` when present, then load only relevant policy or skills. Before editing, also read the Issue's comments, its parent Issue, and linked or referenced Issues and PRs, even when the request does not mention them; decisions and corrections often live there rather than in the Issue body. A short request such as `implement #123` is sufficient when the Issue and repository provide the needed context. Continue authorized reversible work without routine confirmation. Ask or stop only when missing information could materially change the outcome, an owner decision is unresolved, the Issue, documented contract, and current implementation materially conflict, or an external or irreversible action is not authorized.
 
 No proprietary include syntax is required.
 
@@ -81,6 +81,10 @@ An agent that proposes a compatibility, public-contract, or architecture change 
 Implementation requests are complete after relevant verification, a commit on a non-default branch, a push, and an open or updated PR. Never push implementation commits directly to the default branch unless the user explicitly authorizes that exception. Review-fix work also requires affected threads to be handled and follow-up review to be signaled as described in [`docs/issue-readiness-and-pr-audit.md`](docs/issue-readiness-and-pr-audit.md). Stop before delivery only for a local-only request or a concrete blocker; report the PR and handoff state, or the blocker and local state.
 
 Why: the PR, not an agent worktree, is the shared review surface. Leaving verified changes in local state, or pushing fixes without thread handling and re-review handoff, stalls the review lifecycle and leaves reviewers unaware that verification is needed.
+
+Do not end a turn while owed work remains by writing a summary that announces the next step without taking it, offering to continue unless told otherwise, listing decisions that by your own account block nothing, or stopping because a milestone is done or the turn has been long. Put status notes and recommendations in the same message as the next action and continue with whatever does not depend on an answer. Stop only under the ask-or-stop conditions above or for a concrete blocker.
+
+Why: a text-only turn ends the work until someone replies. In unattended worktree runs, a mid-task report silently becomes an unfinished delivery.
 
 ## Tests and verification artifacts
 
