@@ -187,9 +187,11 @@ expected behavior, and choose the narrowest check that would fail if the claim
 were false. Where meaningful, compare pre-change and post-change behavior under
 equivalent conditions and compare the result with the independent reference.
 
-Independent verification may be performed by a separate reviewer, QA agent,
-review pass, or another repository-appropriate mechanism. Rerunning the same
-green command is not, by itself, an independent check.
+Independence comes from the reference, not from who runs the check. Rerunning
+the same green command, or having another agent re-read the change, is not an
+independent check. The Engineer performs this falsification as part of normal
+verification and reports the reference used; PR review or an assigned QA role
+provides the second pass, not an ad-hoc verifier agent.
 
 When a new development failure escapes existing tests, add a regression in the
 owning feature's established test structure where practical.

@@ -20,7 +20,7 @@ Use the following semantic states:
 - **`blocked`** — the contract is sufficiently decided, but an external dependency, owner, access requirement, or prerequisite prevents the work. Record the dependency and the condition that will unblock it.
 - **`ready-for-implementation`** — the issue contains enough settled scope and contract information for an Engineer to implement it without inventing a product or architecture decision. Implementation details may remain open.
 
-An issue can move back from `ready-for-implementation` when new contract information, architecture drift, current-code reality, or a scope change reopens a design, product, or dependency question. `ready-for-implementation` is not a permanent assertion that the Issue still matches the repository when implementation begins. It settles the contract, not whether a new persistent mechanism is necessary: establish its current requirement and apply the single independent simplification review in [`docs/engineering-quality.md`](engineering-quality.md) once proposed or added mechanisms are concrete enough to assess. Do not hide an unresolved decision inside an apparently ready issue; name the decision and route it to its owner first.
+An issue can move back from `ready-for-implementation` when new contract information, architecture drift, current-code reality, or a scope change reopens a design, product, or dependency question. `ready-for-implementation` is not a permanent assertion that the Issue still matches the repository when implementation begins. It settles the contract, not whether a new persistent mechanism is necessary: establish its current requirement and apply the single simplification pass in [`docs/engineering-quality.md`](engineering-quality.md) once proposed or added mechanisms are concrete enough to assess. Do not hide an unresolved decision inside an apparently ready issue; name the decision and route it to its owner first.
 
 ## Minimum implementation contract
 
@@ -51,22 +51,18 @@ Tests or checks exercising only retired, private, hidden, or compatibility-only 
 
 Why: migrating a boundary can leave legacy or compatibility adapters green while the new canonical entry point silently drops existing capabilities. Contract continuity ensures that replacements are verified at the surface where future consumers and tools will actually interact with the capability.
 
-## Engineer preflight and defaults
+## Engineer preflight
 
-A short request such as `implement #123` or `fix #123` is sufficient. Before changing code, the Engineer is responsible for resolving the relevant current context rather than expecting the prompt to repeat repository documents or skill names.
+A short request such as `implement #123` or `fix #123` is sufficient; the Engineer resolves context through the routing in `AGENTS.md` rather than expecting the prompt to repeat documents or skill names.
 
-For substantive implementation work, an Engineer should:
+Before changing code in substantive work, establish and compare three things:
 
-1. Read the linked Issue and nearest repository guidance.
-2. Identify the affected domain and owning repository before choosing the implementation location.
-3. Resolve the current architecture or contract relevant to that domain through repository guidance and durable documentation. Treat ADRs as decision records; verify current implementation reality separately.
-4. Inspect the current implementation, affected consumers, tests, and dependency boundaries far enough to establish current reality.
-5. Compare the Issue contract, current architecture/contract, and current code reality. When replacing, hiding, or retiring a public or canonical boundary, verify that surviving accepted capabilities are accounted for on the replacement boundary, explicitly approved for removal/change, or transferred to another owner. If they are materially inconsistent, stop and report the mismatch to the appropriate Architect/owner; do not self-authorize a replacement design.
-6. If they are aligned and the proposed design introduces a material persistent mechanism, establish its current requirement as described in [`docs/engineering-quality.md`](engineering-quality.md). The single independent simplification review should happen once proposed or added mechanisms are concrete enough to assess; implementation readiness does not depend on completing it before coding. Do not treat a small diff, few files, or few lines as proof that the mechanism is simple or necessary.
-7. If they are aligned, load specialized policy or skills for the actual risk surface and make the smallest complete coherent change that satisfies the issue and current architecture.
-8. Keep unrelated cleanup, renaming, broad refactoring, and speculative extensibility out of the change. A bounded structural extraction needed to keep the changed behavior in its coherent owning responsibility is part of the implementation scope, not unrelated cleanup.
-9. Temporarily remove newly added explanatory comments and file/module headers, then read the changed implementation as code. If an experienced maintainer can no longer determine the unit's responsibility, feature placement, major relationships, or control flow from names, types, modules, APIs, and implementation structure, treat that as a readability/maintainability defect and improve the code first. Restore only irreducible external contracts, invariants, compatibility/safety rationale, source mapping or attribution, or consumer-facing API documentation.
-10. Verify the behavior at the narrowest decisive surface first, then run the broader gates required by the repository or risk surface. For boundary migrations, verify surviving contracts through the replacement boundary itself rather than relying only on legacy or compatibility paths.
-11. Report material assumptions, limitations, and remaining gaps against the acceptance criteria. A green build does not resolve an undecided or inconsistent contract.
+- the Issue contract, including its discussion, parent, and linked work;
+- the current architecture or contract for the affected domain, from repository guidance and durable documentation (ADRs are decision records, not proof of current behavior);
+- current implementation reality: code, consumers, tests, and dependency boundaries, inspected far enough to be decisive.
 
-These defaults complement [`docs/engineering-quality.md`](engineering-quality.md) and do not replace repository-local architecture or contribution guidance.
+If they materially disagree, including a boundary replacement that would drop surviving capabilities (see [Contract continuity](#contract-continuity-for-boundary-migrations)), stop and report the mismatch to the appropriate Architect or owner rather than choosing a design.
+
+Why: an agent can produce a plausible implementation for an undecided or drifted contract; a green build does not make that decision authorized.
+
+When they align, implement under [`docs/engineering-quality.md`](engineering-quality.md) and verify under [`docs/testing-policy.md`](testing-policy.md). Report material assumptions, the reference used for verification, and remaining gaps against the acceptance criteria. Repository-local guidance may add stricter requirements.

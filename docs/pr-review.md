@@ -17,7 +17,8 @@ Review, as applicable:
 - correctness, regressions, failure and unsupported paths;
 - compliance with the current approved architecture, ownership, dependency, compatibility, API/protocol, and security contracts;
 - contract continuity when replacing, hiding, or retiring a public or canonical boundary: confirm that surviving accepted capabilities are verified through the replacement boundary itself, that removals/changes have explicit contract approval, that ownership transfers explicitly declare the new authoritative owner and handoff boundary, and that tests exercising only retired or compatibility paths are not treated as proving replacement completeness;
-- test coverage when it is materially relevant to a current failure mode or contract;
+- test coverage when it is materially relevant to a current failure mode or contract, and whether material changes were verified against an independent reference rather than only tests written with the change;
+- necessity of newly added persistent mechanisms under the ablation rule in [`docs/engineering-quality.md`](engineering-quality.md);
 - newly added or materially affected explanatory comments and file/module headers, including whether the prose is functioning as a README for code whose responsibility, ownership, pipeline, or internal relationships are otherwise not self-explanatory;
 - changes outside the approved scope that affect correctness or maintenance obligations.
 
