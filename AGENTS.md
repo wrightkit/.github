@@ -65,6 +65,7 @@ These rules always apply regardless of repository:
 - When replacing, hiding, or retiring a public or canonical boundary (API, model, IR, or protocol), verify continuity of surviving accepted contracts through the replacement boundary itself. Tests or checks exercising only retired, private, or compatibility-only paths do not prove replacement completeness.
 - Source-language compilation converges structurally on the established upstream compiler output ([`docs/goal.md`](docs/goal.md) principle 7). Do not deviate from it, including for an apparent upstream bug, without a recorded exception approved by the owner.
 - Do not invent WrightKit-only OPY or OSTW syntax unless explicitly approved as a language-level design.
+- Do not create GitHub cross-references to repositories outside WrightKit from issues, PRs, comments, or commit messages unless notifying that thread is intended. Cite external issues and PRs inside a code span, such as `owner/repo#123`, or by pinned version or commit. Why: a linked reference adds a backlink to the external thread, notifying its maintainers and exposing WrightKit planning there; a bare `#123` after an external reference also silently links to the local repository instead.
 
 ## Role and self-authorization
 
