@@ -52,6 +52,15 @@ Keep these concerns separate:
 Current documentation describes the current contract. Git history and ADRs preserve history.
 Do not keep stale prose merely as an archive.
 
+An ADR records the decision, its binding constraints, and the rejected alternatives with their
+reasons. Enumerations and detail expected to change, such as covered cases, per-item rules, storage
+shapes, and evidence gaps, belong in the owning current-contract document, which the ADR links to.
+The Architect owns the decision; the current-contract document follows the decision and is
+maintained with the implementation. Requirements, scope, and acceptance criteria stay in Issues.
+
+Why: an accepted ADR is not rewritten, so detail placed in it goes stale without a way to correct
+it, and a second document type for that detail would duplicate the current contract.
+
 ## Change synchronization
 
 A change that materially changes supported behavior, a public contract, architecture, ownership,
