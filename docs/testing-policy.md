@@ -14,6 +14,7 @@ commands.
 This policy applies to changes involving:
 
 - tests and test infrastructure;
+- the executable checks that decide completion of substantive behavior work;
 - fixtures, snapshots, corpora, and other test data;
 - expected outputs and compatibility baselines;
 - regression, conformance, and integration checks;
@@ -176,7 +177,31 @@ equivalent adversarial review, such as verifying that tests fail when:
 Mutation testing is a QA technique, not a mandatory gate for every repository.
 Use it when it adds meaningful information about the strength of the tests.
 
-## 9. Independently verify material changes
+## 9. Establish the verification boundary before implementation
+
+For machine-verifiable behavior, the executable checks that decide completion
+should exist, or have a defined place in the owning repository's test harness,
+before implementation capacity for that behavior is expanded. Task admission,
+missing harnesses, and the rationale are in
+[`issue-readiness.md`](issue-readiness.md#verifiable-outcomes).
+
+- Existing coverage is the boundary when it would already fail on a plausible
+  wrong implementation of the requested behavior. Pure refactors, mechanical
+  migrations, removals, and changes already protected by existing tests rely
+  on that coverage; do not author a duplicate failing test only to satisfy
+  this rule.
+- New feature-specific cases belong in the owning repository's existing
+  harness and may land in the same change as the implementation. Strict
+  test-first ordering is not required.
+- The tests and checks that constitute merge-time acceptance should run in the
+  repository's CI. A check that can only run locally or by hand is reported in
+  the PR as such and is not a merge gate. Each repository chooses its own CI
+  topology under [`ci-platform.md`](ci-platform.md).
+- Green CI establishes acceptance only as far as the boundary reaches. When
+  the checks do not cover an acceptance criterion or important failure path,
+  report that gap instead of treating the passing run as proof.
+
+## 10. Independently verify material changes
 
 For material semantic, compatibility, compiler, parser, source-edit, or
 protocol changes, acceptance should include an independent attempt to falsify
@@ -196,7 +221,7 @@ provides the second pass, not an ad-hoc verifier agent.
 When a new development failure escapes existing tests, add a regression in the
 owning feature's established test structure where practical.
 
-## 10. Compatibility tests protect structure, not formatting
+## 11. Compatibility tests protect structure, not formatting
 
 For OPY and DEL/OSTW-compatible compilation, the correctness target is
 structural convergence with the established upstream compiler, as defined in
@@ -217,7 +242,7 @@ accepted expected behavior and record the WrightKit result as a gap,
 unsupported boundary, or divergence as appropriate. Do not rewrite the
 expected result to the current failure merely to make the suite pass.
 
-## 11. Keep test layers complementary
+## 12. Keep test layers complementary
 
 Use the smallest useful combination of layers for the repository's
 responsibilities. Typical layers include:
@@ -235,7 +260,7 @@ A large corpus does not replace focused diagnostics. Hundreds of unit tests do
 not replace real-project checks. A feature census does not replace malformed
 input and failure-path tests.
 
-## 12. Organize tests by feature and behavior
+## 13. Organize tests by feature and behavior
 
 Select durable tests by the behavior they protect, not mechanically from a code
 diff. Prefer, in order:
@@ -262,7 +287,7 @@ remove tests according to the contract and distinct failure mode they protect.
 Do not lock current documentation prose, private implementation structure,
 helper call counts, or dynamic inventory totals into tests.
 
-## 13. Verify surviving contracts at replacement boundaries
+## 14. Verify surviving contracts at replacement boundaries
 
 When replacing, hiding, or retiring a public or canonical boundary such as an
 API, model, IR, or protocol, test surviving accepted capabilities through the
@@ -273,7 +298,7 @@ or removed under an approved contract decision, or transferred to another
 owner. Tests that exercise only a retired, private, hidden, or compatibility
 path do not prove that the replacement is complete.
 
-## 14. Avoid production pollution
+## 15. Avoid production pollution
 
 Tests should not normally require new `pub` or `pub(crate)` APIs, test-only
 hooks, configuration surfaces, visibility changes, or architectural indirection
@@ -286,7 +311,7 @@ shared, large, source-linked, or owned by an established canonical corpus
 location. Keep licensing and source attribution with third-party or real-world
 inputs.
 
-## 15. Pull request expectations
+## 16. Pull request expectations
 
 A PR that changes observable behavior should make the following reviewable when
 applicable:
@@ -302,7 +327,7 @@ Tests must not be weakened, removed, broadly ignored, or reclassified solely to
 obtain a green CI result. Temporary command output, screenshots, benchmark
 dumps, and one-off reports are not durable tests and should not be committed.
 
-## 16. Repository responsibilities
+## 17. Repository responsibilities
 
 Each repository remains responsible for documenting and implementing its own
 test commands, fixture layouts, expected-output format, and CI gates.
