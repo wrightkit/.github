@@ -72,6 +72,20 @@ Tell the agent when it does not have authority to continue. Unresolved product, 
 
 Why: an agent can often produce a plausible implementation for an undecided question. That does not make the decision authorized.
 
+## Write for current models, not around old ones
+
+Durable guidance is read by several agents and model generations. State the outcome, the boundaries, and the stop conditions; do not script how the model should think.
+
+Leave out instructions that compensated for older models: "think step by step" or "think carefully", scratchpad or show-your-reasoning requirements, rules to verify twice or re-read before every answer, fixed step sequences where order does not matter, and the same rule repeated for emphasis. State a rule once, with its reason, in its owning document; an always-loaded entry file may summarize it in one line and link there.
+
+Why: current models reason before acting and adjust how much. Ritual instructions make them write more and repeat tool calls without improving the result, repetition makes one rule outweigh others it was not meant to override, and some models decline requests to reproduce their internal reasoning.
+
+## Keep tool-specific tuning in tool entry files
+
+`AGENTS.md` and the policies it routes to stay tool-neutral. Guidance that depends on one agent harness or model family, such as its subagent, task-list, or model-selection features, belongs in that tool's entry file, for example `CLAUDE.md`. The entry file loads `AGENTS.md`, adds only tool-specific guidance, and does not restate or override shared policy.
+
+Why: shared policy stays portable across agents, and tool-specific tuning can change with a model release without editing policy.
+
 ## Prefer concise procedures
 
 A reusable skill should normally contain only the context needed to perform its task: purpose, relevant principles, hard boundaries, a broad workflow, stop conditions, and the concrete checks or output that completes the task.

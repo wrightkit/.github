@@ -8,6 +8,7 @@ Reusable WrightKit agent skills are owned by the sibling [`wrightkit/.agents`](h
 
 - [WrightKit goal](docs/goal.md): durable product intent, priorities, success outcomes, and deliberate non-goals. Read this first when a product or implementation tradeoff is unclear.
 - [Workspace agent routing](AGENTS.md): organization-level routing entry point; routes agents to the right policy, skill, or repository-local guidance.
+- [Claude Code entry point](CLAUDE.md): loads the goal and `AGENTS.md`, then adds Claude-specific guidance for long runs and subagents. Claude Code reads `CLAUDE.md` rather than `AGENTS.md`, so the workspace root needs a `CLAUDE.md` that imports the local workspace `AGENTS.md` (if any) and `@.github/CLAUDE.md`. Imports resolve relative to the importing file, so the imports inside `.github/CLAUDE.md` keep resolving from `.github/`.
 
 ## Documentation
 

@@ -92,4 +92,4 @@ Why: an agent can produce a plausible implementation for an undecided or drifted
 
 Also identify the checks that decide completion: the existing tests or checks the change relies on and, where new behavior needs new cases, the feature-owned location in the existing harness where they belong. If no such boundary can be established, the task is not ready; see [Verifiable outcomes](#verifiable-outcomes).
 
-When the three align and the verification boundary is established, implement under [`docs/engineering-quality.md`](engineering-quality.md) and verify under [`docs/testing-policy.md`](testing-policy.md). Report material assumptions, the reference used for verification, and remaining gaps against the acceptance criteria. Repository-local guidance may add stricter requirements.
+When the three align and the verification boundary is established, implement under [`docs/engineering-quality.md`](engineering-quality.md) and verify under [`docs/testing-policy.md`](testing-policy.md). In the [final report](../AGENTS.md#final-report), include material assumptions and remaining gaps against the acceptance criteria. Repository-local guidance may add stricter requirements.

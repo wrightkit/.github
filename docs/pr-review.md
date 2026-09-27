@@ -35,7 +35,12 @@ A useful finding identifies:
 - the concrete location or behavior;
 - what is wrong;
 - why it affects the current issue, contract, correctness, or regression risk;
+- the evidence that shows it: a failing input, command, or trace for a behavior defect, or the contract or policy text it violates;
 - the required correction, at the smallest useful level.
+
+A concern you cannot support with that evidence is not yet a finding. Check it further, or leave it out.
+
+Why: a finding the Engineer can reproduce is fixed in one pass; an unsupported one costs a round trip to disprove.
 
 Keep the explanation only as long as needed to establish the defect. Do not add review summaries, praise, architecture essays, speculative concerns, nits, future improvements, or optional suggestions by default.
 
