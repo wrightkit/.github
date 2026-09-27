@@ -10,6 +10,8 @@ The user request and linked Issue, when present, set task scope. [`docs/goal.md`
 
 No proprietary include syntax is required. Tool-specific entry files such as [`CLAUDE.md`](CLAUDE.md) load this file and add only guidance specific to that tool; they do not override it.
 
+Paths here assume the workspace root, the directory that holds the `.github` and `.agents` checkouts: `docs/` links resolve to `.github/docs/`, and `.agents/skills/` paths resolve from that root.
+
 ## Repository routing
 
 Use this map to identify the likely owner, then confirm current ownership and read its `AGENTS.md` before substantial work.
