@@ -16,7 +16,7 @@ Review, as applicable:
 - the linked issue scope, non-goals, and acceptance criteria;
 - correctness, regressions, failure and unsupported paths;
 - compliance with the current approved architecture, ownership, dependency, compatibility, API/protocol, and security contracts;
-- contract continuity when replacing, hiding, or retiring a public or canonical boundary: confirm that surviving accepted capabilities are verified through the replacement boundary itself, that removals/changes have explicit contract approval, that ownership transfers explicitly declare the new authoritative owner and handoff boundary, and that tests exercising only retired or compatibility paths are not treated as proving replacement completeness;
+- contract continuity when replacing, hiding, or retiring a public or canonical boundary, as defined in [Contract continuity for boundary migrations](issue-readiness.md#contract-continuity-for-boundary-migrations);
 - test coverage when it is materially relevant to a current failure mode or contract, and whether material changes were verified against an independent reference rather than only tests written with the change;
 - necessity of newly added persistent mechanisms under the ablation rule in [`docs/engineering-quality.md`](engineering-quality.md);
 - newly added or materially affected explanatory comments and file/module headers, including whether the prose is functioning as a README for code whose responsibility, ownership, pipeline, or internal relationships are otherwise not self-explanatory;
@@ -106,9 +106,9 @@ Why: follow-up review verifies the correction. Re-running a fresh architectural 
 
 Specialist policy and skills are demand-driven, not mandatory review stages:
 
-- Route material test-quality or agent-generated-test questions to `.agents/skills/wrightkit-test-design-review/SKILL.md` and the canonical testing policy.
+- Route material test-quality or agent-generated-test questions to `.agents/skills/wrightkit-test-design-review/SKILL.md` and the canonical [testing policy](testing-policy.md).
 - Route material Rust ownership, API, error, async/concurrency, abstraction, semantic-placement, responsibility-growth, feature-locality, or metadata-driven behavior risk to `.agents/skills/wrightkit-rust-engineering-review/SKILL.md`.
 - Route substantial simplification, deletion, duplication, or post-migration entropy work to [`docs/entropy-policy.md`](entropy-policy.md) and `.agents/skills/wrightkit-reclaim-entropy/SKILL.md` when that work is inside the approved scope.
-- Route material changes requiring independent falsification or public boundary contract continuity verification to `.agents/skills/wrightkit-verify-change/SKILL.md` and the canonical testing policy.
+- Route material changes requiring independent falsification or public boundary contract continuity verification to `.agents/skills/wrightkit-verify-change/SKILL.md` and [`docs/verification-and-acceptance.md`](verification-and-acceptance.md).
 
 Do not load every specialist route because a PR contains Rust, tests, or abstractions. The linked issue and the actual risk surface determine what is applicable.

@@ -14,7 +14,10 @@ contract relevant to the task.
 - [Engineering quality](engineering-quality.md) — implementation quality, simplicity, locality, readability, and durable-vs-dynamic knowledge.
 - [Issue readiness and implementation preflight](issue-readiness.md) — task readiness, verifiable outcomes, and public-boundary continuity.
 - [PR review and review-fix handoff](pr-review.md) — one-pass review, findings, thread handling, and re-review.
-- [Testing policy](testing-policy.md) — tests, fixtures, compatibility checks, verification boundaries, and independent verification.
+- [Testing policy](testing-policy.md) — testing entry point: core test principles, test organization, fixtures, and routing to the narrower testing documents.
+  - [Compatibility and reference testing](compatibility-testing.md) — upstream-compiler structural convergence, raw Workshop/locale semantic compatibility, oracle gaps, and real-project regressions and corpora.
+  - [Robustness testing](robustness-testing.md) — adversarial input and fuzzing.
+  - [Verification and acceptance](verification-and-acceptance.md) — verification boundaries, merge-time CI acceptance, independent verification, and PR expectations.
 - [Entropy policy](entropy-policy.md) — removal, consolidation, and post-wave cleanup.
 
 ## CI and release
