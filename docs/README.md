@@ -12,9 +12,9 @@ contract relevant to the task.
 
 - [Documentation management](documentation.md) — documentation layout, progressive disclosure, synchronization, and drift audits.
 - [Engineering quality](engineering-quality.md) — implementation quality, simplicity, locality, readability, and durable-vs-dynamic knowledge.
-- [Issue readiness and implementation preflight](issue-readiness.md) — task readiness and public-boundary continuity.
+- [Issue readiness and implementation preflight](issue-readiness.md) — task readiness, verifiable outcomes, and public-boundary continuity.
 - [PR review and review-fix handoff](pr-review.md) — one-pass review, findings, thread handling, and re-review.
-- [Testing policy](testing-policy.md) — tests, fixtures, compatibility checks, and independent verification.
+- [Testing policy](testing-policy.md) — tests, fixtures, compatibility checks, verification boundaries, and independent verification.
 - [Entropy policy](entropy-policy.md) — removal, consolidation, and post-wave cleanup.
 
 ## CI and release
