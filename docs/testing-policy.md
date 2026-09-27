@@ -181,8 +181,8 @@ Use it when it adds meaningful information about the strength of the tests.
 
 For machine-verifiable behavior, the executable checks that decide completion
 should exist, or have a defined place in the owning repository's test harness,
-before implementation capacity for that behavior is expanded. The readiness
-side of this rule is in
+before implementation capacity for that behavior is expanded. Task admission,
+missing harnesses, and the rationale are in
 [`issue-readiness.md`](issue-readiness.md#verifiable-outcomes).
 
 - Existing coverage is the boundary when it would already fail on a plausible
@@ -193,9 +193,6 @@ side of this rule is in
 - New feature-specific cases belong in the owning repository's existing
   harness and may land in the same change as the implementation. Strict
   test-first ordering is not required.
-- When a behavior class has no harness to add cases to, building one is
-  separate prerequisite work, not an incidental part of a feature task.
-  Parallel or bulk implementation in that area should wait for it.
 - The tests and checks that constitute merge-time acceptance should run in the
   repository's CI. A check that can only run locally or by hand is reported in
   the PR as such and is not a merge gate. Each repository chooses its own CI
@@ -203,10 +200,6 @@ side of this rule is in
 - Green CI establishes acceptance only as far as the boundary reaches. When
   the checks do not cover an acceptance criterion or important failure path,
   report that gap instead of treating the passing run as proof.
-
-Why: CI status and a spot-check of which boundaries the tests cover are the
-signals a reviewer can read quickly across many agent-produced commits. They
-are reliable only when the checks exist before the implementation volume does.
 
 ## 10. Independently verify material changes
 
