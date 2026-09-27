@@ -6,9 +6,9 @@ This file carries durable organization constraints and routing; it is not a tech
 
 Repository-local `AGENTS.md` files specialize contracts for their own repository. They must not duplicate shared policy, but they may add stricter or domain-specific requirements that take precedence locally.
 
-The user request and linked Issue, when present, set task scope. [`docs/goal.md`](docs/goal.md) resolves project-direction tradeoffs. Identify the owning repository, read its linked Issue and nearest `AGENTS.md` when present, then load only relevant policy or skills. Before editing, also read the Issue's comments, its parent Issue, and linked or referenced Issues and PRs, even when the request does not mention them; decisions and corrections often live there rather than in the Issue body. A short request such as `implement #123` is sufficient when the Issue and repository provide the needed context. Substantive behavior work also needs a verifiable outcome: before editing, identify the tests or checks that will decide completion, as defined in [`docs/issue-readiness.md`](docs/issue-readiness.md#verifiable-outcomes). Continue authorized reversible work without routine confirmation. Ask or stop only when missing information could materially change the outcome, an owner decision is unresolved, the Issue, documented contract, and current implementation materially conflict, or an external or irreversible action is not authorized.
+The user request and linked Issue, when present, set task scope. [`docs/goal.md`](docs/goal.md) resolves project-direction tradeoffs. Identify the owning repository, read its linked Issue and nearest `AGENTS.md` when present, then load only relevant policy or skills. Before editing, also read the Issue's comments, its parent Issue, and linked or referenced Issues and PRs, even when the request does not mention them; decisions and corrections often live there rather than in the Issue body. A short request such as `implement #123` is sufficient when the Issue and repository provide the needed context. Substantive behavior work also needs a verifiable outcome: before editing, identify the tests or checks that will decide completion, as defined in [`docs/issue-readiness.md`](docs/issue-readiness.md#verifiable-outcomes). The Issue's acceptance criteria and [Delivery is part of completion](#delivery-is-part-of-completion) define when the work is done; [When to stop](#when-to-stop) defines when to ask before then.
 
-No proprietary include syntax is required.
+No proprietary include syntax is required. Tool-specific entry files such as [`CLAUDE.md`](CLAUDE.md) load this file and add only guidance specific to that tool; they do not override it.
 
 ## Repository routing
 
@@ -18,7 +18,7 @@ Use this map to identify the likely owner, then confirm current ownership and re
 | --- | --- |
 | Canonical Workshop semantics, catalog, locales, parsing, validation, Workshop representation and emission | `workshop-rs` |
 | OverPy-compatible language implementation | `opy-rs` |
-| DeltinScript / OSTW-compatible language implementation | `del-rs` |
+| DeltinScript / OSTW-compatible language implementation | `deltin-rs` |
 | Provider process/data protocol | `language-provider-protocol` |
 | User-facing tooling, orchestration, integration, analysis, and agent surfaces | `wright` |
 | Product website | `wrightkit.dev` |
@@ -36,7 +36,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 
 | Task concern | Load |
 | --- | --- |
-| Writing or revising durable agent guidance, AGENTS content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
+| Writing or revising durable agent guidance, AGENTS or CLAUDE content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
 | Durable documentation layout, progressive disclosure, documentation synchronization, or drift audits | [`docs/documentation.md`](docs/documentation.md) |
 | Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
 | Issue readiness, verifiable outcomes and task granularity, implementation preflight, and public/canonical boundary migration continuity | [`docs/issue-readiness.md`](docs/issue-readiness.md) |
@@ -80,13 +80,31 @@ An agent that proposes a compatibility, public-contract, or architecture change 
 
 ## Delivery is part of completion
 
-Implementation requests are complete after relevant verification, a commit on a non-default branch, a push, and an open or updated PR. Never push implementation commits directly to the default branch unless the user explicitly authorizes that exception. Review-fix work also requires affected threads to be handled and follow-up review to be signaled as described in [`docs/pr-review.md`](docs/pr-review.md). Stop before delivery only for a local-only request or a concrete blocker; report the PR and handoff state, or the blocker and local state.
+Implementation requests are complete after relevant verification, a commit on a non-default branch, a push, and an open or updated PR. Never push implementation commits directly to the default branch unless the user explicitly authorizes that exception. Review-fix work also requires affected threads to be handled and follow-up review to be signaled as described in [`docs/pr-review.md`](docs/pr-review.md). Stop before delivery only for a local-only request or a concrete blocker, then give the [final report](#final-report).
 
 Why: the PR, not an agent worktree, is the shared review surface. Leaving verified changes in local state, or pushing fixes without thread handling and re-review handoff, stalls the review lifecycle and leaves reviewers unaware that verification is needed.
 
-Do not end a turn while owed work remains by writing a summary that announces the next step without taking it, offering to continue unless told otherwise, listing decisions that by your own account block nothing, or stopping because a milestone is done or the turn has been long. Put status notes and recommendations in the same message as the next action and continue with whatever does not depend on an answer. Stop only under the ask-or-stop conditions above or for a concrete blocker.
+## When to stop
+
+Continue authorized, reversible work without routine confirmation. Stop and ask only when:
+
+- missing information could materially change the outcome;
+- an owner decision is unresolved;
+- the Issue, documented contract, and current implementation materially conflict;
+- the next action is external or irreversible and the task did not authorize it, such as force-pushing, pushing to a default branch, deleting branches, tags, releases, or data, publishing a release or package, or closing or editing Issues and PRs outside the task; or
+- a concrete blocker prevents progress.
+
+Before stopping, finish whatever does not depend on the answer.
+
+Do not end a turn while owed work remains by writing a summary that announces the next step without taking it, offering to continue unless told otherwise, listing decisions that by your own account block nothing, or stopping because a milestone is done or the turn has been long. Put status notes and recommendations in the same message as the next action.
 
 Why: a text-only turn ends the work until someone replies. In unattended worktree runs, a mid-task report silently becomes an unfinished delivery.
+
+## Final report
+
+End a task with a report a reviewer can act on without reading the session. Lead with what needs the reader: an open decision, a blocker, or an action that needs their authority; say so when nothing does. Then give the delivered state (PR, pushed commits, review handoff) or the local state if delivery stopped, the independent reference used for verification, and anything you could not confirm, with where you looked. Leave out a step-by-step account of the session.
+
+Why: the reader's first job is to unblock the work, and an unconfirmed claim listed among verified ones tends to be accepted as verified.
 
 ## Tests and verification artifacts
 
