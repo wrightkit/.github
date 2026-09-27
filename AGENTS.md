@@ -43,9 +43,12 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
 | Issue readiness, verifiable outcomes and task granularity, implementation preflight, and public/canonical boundary migration continuity | [`docs/issue-readiness.md`](docs/issue-readiness.md) |
 | One-pass PR review, review findings, review-fix thread handling, and follow-up review | [`docs/pr-review.md`](docs/pr-review.md) |
-| Tests, fixtures, corpora, snapshots, expected results, compatibility tests, fuzzing, verification boundaries and merge-time CI acceptance, independent verification | [`docs/testing-policy.md`](docs/testing-policy.md) |
+| Tests, fixtures and other test data, snapshots, expected results, test organization, and support classifications (testing entry point; routes to the narrower testing documents below) | [`docs/testing-policy.md`](docs/testing-policy.md) |
+| OPY or DEL/OSTW structural compatibility with the upstream compiler, raw Workshop/locale semantic compatibility, oracle or differential comparisons, real-project regressions and corpora | [`docs/compatibility-testing.md`](docs/compatibility-testing.md) |
+| Robustness against malformed, extreme, or adversarial input, and fuzzing | [`docs/robustness-testing.md`](docs/robustness-testing.md) |
+| Verification boundaries and merge-time CI acceptance, independent verification, behavior-changing PR evidence | [`docs/verification-and-acceptance.md`](docs/verification-and-acceptance.md) |
 | Code entropy, dead code, redundancy, over-engineering, mutable-inventory documentation | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
-| CI failure triage across job surfaces (Rust quality vs. LPP integration vs. differential/compatibility vs. dist/release) | Classify by surface: local/quality gates fix in place; LPP integration check protocol commit first; differential/compatibility triage under testing policy |
+| CI failure triage across job surfaces (Rust quality vs. LPP integration vs. differential/compatibility vs. dist/release) | Classify by surface: local/quality gates fix in place; LPP integration check protocol commit first; differential/compatibility triage under [`docs/compatibility-testing.md`](docs/compatibility-testing.md) |
 | Rust CI toolchain, caching, and job composition | [`docs/rust-ci.md`](docs/rust-ci.md) |
 | Rust build artifact growth, dev/test profile configuration, ephemeral worktree lifecycle, and local storage management | [`docs/rust-build-artifacts.md`](docs/rust-build-artifacts.md) |
 | Release engineering, tagging, and artifact publication | [`docs/release-engineering.md`](docs/release-engineering.md) |
@@ -64,7 +67,7 @@ These rules always apply regardless of repository:
 - Do not introduce complex abstractions only for hypothetical future needs.
 - Keep source attribution, pinned reference identity, and related decision history where a semantic, compatibility, or regression workflow requires them.
 - Do not silently weaken diagnostics, tests, compatibility expectations, validation, or error handling to make CI pass.
-- When replacing, hiding, or retiring a public or canonical boundary (API, model, IR, or protocol), verify continuity of surviving accepted contracts through the replacement boundary itself. Tests or checks exercising only retired, private, or compatibility-only paths do not prove replacement completeness.
+- When replacing, hiding, or retiring a public or canonical boundary (API, model, IR, or protocol), verify surviving accepted contracts through the replacement boundary itself, as defined in [Contract continuity for boundary migrations](docs/issue-readiness.md#contract-continuity-for-boundary-migrations).
 - Source-language compilation converges structurally on the established upstream compiler output ([`docs/goal.md`](docs/goal.md) principle 7). Do not deviate from it, including for an apparent upstream bug, without a recorded exception approved by the owner.
 - Do not invent WrightKit-only OPY or OSTW syntax unless explicitly approved as a language-level design.
 - Do not create GitHub cross-references to repositories outside WrightKit from issues, PRs, comments, or commit messages unless notifying that thread is intended. Cite external issues and PRs inside a code span, such as `owner/repo#123`, or by pinned version or commit. Why: a linked reference adds a backlink to the external thread, notifying its maintainers and exposing WrightKit planning there; a bare `#123` after an external reference also silently links to the local repository instead.

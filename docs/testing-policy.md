@@ -9,6 +9,10 @@ exist today. Repository-local guidance may add stricter requirements, but it
 must not weaken this policy or replace repository-specific contracts and test
 commands.
 
+This document is the testing entry point. It holds the principles that apply to
+all test work and routes to narrower documents for concerns that only some
+changes touch.
+
 ## Applicability
 
 This policy applies to changes involving:
@@ -28,7 +32,27 @@ Workspace and repository guidance should route agents and contributors here
 when these concerns are affected. It does not need to be loaded for work that
 does not affect them.
 
-## 1. Start from the contract, not the implementation
+## Narrower testing documents
+
+Load these only when the change touches their concern. Each builds on the
+principles in this document.
+
+- [Compatibility and reference testing](compatibility-testing.md) — structural
+  convergence with the upstream compiler, raw Workshop and locale semantic
+  compatibility, oracle-accepted cases recorded as gaps, and real-project
+  regressions and corpora.
+- [Robustness testing](robustness-testing.md) — adversarial and pathological
+  input, uncontrolled failure on user-controlled input, and fuzzing.
+- [Verification and acceptance](verification-and-acceptance.md) — the
+  verification boundary before implementation, merge-time CI acceptance,
+  independent falsification, and pull request expectations.
+
+When replacing, hiding, or retiring a public or canonical boundary, test
+surviving accepted capabilities through the replacement boundary itself, as
+defined in
+[Contract continuity for boundary migrations](issue-readiness.md#contract-continuity-for-boundary-migrations).
+
+## Start from the contract, not the implementation
 
 Every expected result needs an independent source. Depending on the feature,
 that source may be:
@@ -48,7 +72,7 @@ Changing a case between match, gap, expected failure, unsupported, or
 inconclusive is also a correctness change. Keep the intended behavior and the
 reason for the classification visible in the test or its feature-owned data.
 
-## 2. Test counts are not correctness claims
+## Test counts are not correctness claims
 
 Counts such as `26/26 fixtures passed` and `124 tests passed` are useful
 execution summaries, but they do not establish compatibility or correctness by
@@ -65,7 +89,7 @@ Compatibility and conformance reports should distinguish, where applicable:
 A known reference or contract mismatch must not be reported as a successful
 match merely because the implementation reproduces an old failure.
 
-## 3. Test both successful and failing behavior
+## Test both successful and failing behavior
 
 Important behavior should be tested across positive and negative paths. Select
 the cases that matter to the component, such as:
@@ -80,7 +104,7 @@ A test that only proves that an operation did not fail is insufficient when the
 semantic result, diagnostic, emitted artifact, mutation, or refusal is part of
 the contract.
 
-## 4. Keep failures observable
+## Keep failures observable
 
 WrightKit components must not turn failures into silent success. Tests for
 important failure paths should follow the behavior through the layer that
@@ -99,25 +123,7 @@ For public command or protocol surfaces, failure tests should validate the
 externally visible result kind, structured diagnostic or refusal, source mapping,
 and absence of misleading success output.
 
-## 5. Preserve real-project regressions and test data carefully
-
-Synthetic unit tests are necessary but are not sufficient for compatibility or
-project-graph work.
-
-When a defect is found in a real project, preserve a minimized reproduction as
-a feature-owned regression test whenever practical. Its metadata should retain
-the source repository, immutable revision, and source path. Related Issue or PR
-history belongs in GitHub or Git history rather than committed test metadata.
-Keep project-level corpus coverage when it tests
-imports, includes, macros, project graphs, cross-file symbols and types,
-settings/catalog interactions, or combinations that a minimized case cannot
-exercise.
-
-Minimized regressions and complete project cases are complementary. Neither
-replaces focused diagnostics or failure-path tests. Third-party test data must
-follow the owning repository's licensing and attribution requirements.
-
-## 6. Prefer invariants over duplicated bookkeeping
+## Prefer invariants over duplicated bookkeeping
 
 Derived data should normally be checked through invariants instead of a second
 hard-coded total that must be updated with the implementation.
@@ -136,33 +142,7 @@ than a collection of examples. Dynamic facts such as current registry
 membership, corpus size, or enum cardinality should not become durable
 expectations merely because they are easy to enumerate.
 
-## 7. Test robustness adversarially
-
-Parsers, compilers, analyzers, language services, protocol handlers, and
-agent-facing tools should be tested against hostile or pathological input where
-relevant. Useful classes include:
-
-- deep nesting;
-- unexpected end-of-file at syntax boundaries;
-- recursive or cyclic imports/includes;
-- recursive macro expansion;
-- large arrays or strings;
-- extreme numeric literals;
-- Unicode and encoding boundaries;
-- duplicate declarations or identities;
-- missing mappings or catalog entries;
-- malformed external/process responses;
-- resource limits and interruption behavior.
-
-User-controlled input must not cause an uncontrolled panic, abort, hang, or
-fabricated success result. Explicitly documented resource exhaustion or
-unsupported behavior is acceptable when surfaced deterministically.
-
-Fuzzing is encouraged for parsers, serializers, protocol boundaries, and other
-high-input-space components when it adds meaningful coverage beyond hand-written
-cases.
-
-## 8. Make tests resist plausible wrong implementations
+## Make tests resist plausible wrong implementations
 
 A green suite is stronger when a plausible incorrect implementation would fail.
 For high-risk code, maintainers should consider mutation-style checks or
@@ -177,72 +157,7 @@ equivalent adversarial review, such as verifying that tests fail when:
 Mutation testing is a QA technique, not a mandatory gate for every repository.
 Use it when it adds meaningful information about the strength of the tests.
 
-## 9. Establish the verification boundary before implementation
-
-For machine-verifiable behavior, the executable checks that decide completion
-should exist, or have a defined place in the owning repository's test harness,
-before implementation capacity for that behavior is expanded. Task admission,
-missing harnesses, and the rationale are in
-[`issue-readiness.md`](issue-readiness.md#verifiable-outcomes).
-
-- Existing coverage is the boundary when it would already fail on a plausible
-  wrong implementation of the requested behavior. Pure refactors, mechanical
-  migrations, removals, and changes already protected by existing tests rely
-  on that coverage; do not author a duplicate failing test only to satisfy
-  this rule.
-- New feature-specific cases belong in the owning repository's existing
-  harness and may land in the same change as the implementation. Strict
-  test-first ordering is not required.
-- The tests and checks that constitute merge-time acceptance should run in the
-  repository's CI. A check that can only run locally or by hand is reported in
-  the PR as such and is not a merge gate. Each repository chooses its own CI
-  topology under [`ci-platform.md`](ci-platform.md).
-- Green CI establishes acceptance only as far as the boundary reaches. When
-  the checks do not cover an acceptance criterion or important failure path,
-  report that gap instead of treating the passing run as proof.
-
-## 10. Independently verify material changes
-
-For material semantic, compatibility, compiler, parser, source-edit, or
-protocol changes, acceptance should include an independent attempt to falsify
-the implementation rather than only rerunning tests authored with it.
-
-State a concrete claim, identify the contract or reference that defines the
-expected behavior, and choose the narrowest check that would fail if the claim
-were false. Where meaningful, compare pre-change and post-change behavior under
-equivalent conditions and compare the result with the independent reference.
-
-Independence comes from the reference, not from who runs the check. Rerunning
-the same green command, or having another agent re-read the change, is not an
-independent check. The Engineer performs this falsification as part of normal
-verification and reports the reference used; PR review or an assigned QA role
-provides the second pass, not an ad-hoc verifier agent.
-
-When a new development failure escapes existing tests, add a regression in the
-owning feature's established test structure where practical.
-
-## 11. Compatibility tests protect structure, not formatting
-
-For OPY and DEL/OSTW-compatible compilation, the correctness target is
-structural convergence with the established upstream compiler, as defined in
-[`goal.md`](goal.md) principle 7. Compare the upstream and WrightKit outputs as
-canonical Workshop programs parsed by `workshop-rs`; never compare text diffs,
-line counts, or text-pattern counts. Formatting, whitespace, and comments are
-not criteria. A structural difference fails unless it is a recorded, approved
-exception in the owning repository.
-
-For raw Workshop, locale, and interoperability testing without an upstream
-compiler oracle, observable semantic compatibility remains the correctness
-target. Do not require identity of formatting or internal IR there. Normalized
-output comparison is valid only when the normalization preserves the property
-being claimed and does not erase the difference the test is meant to detect.
-
-If an upstream oracle accepts a case and WrightKit does not, preserve the
-accepted expected behavior and record the WrightKit result as a gap,
-unsupported boundary, or divergence as appropriate. Do not rewrite the
-expected result to the current failure merely to make the suite pass.
-
-## 12. Keep test layers complementary
+## Keep test layers complementary
 
 Use the smallest useful combination of layers for the repository's
 responsibilities. Typical layers include:
@@ -260,7 +175,7 @@ A large corpus does not replace focused diagnostics. Hundreds of unit tests do
 not replace real-project checks. A feature census does not replace malformed
 input and failure-path tests.
 
-## 13. Organize tests by feature and behavior
+## Organize tests by feature and behavior
 
 Select durable tests by the behavior they protect, not mechanically from a code
 diff. Prefer, in order:
@@ -275,30 +190,16 @@ Every durable test belongs to a stable feature. Within that feature, it may
 protect a public contract, invariant, regression, failure mode, or other
 observable behavior. Issue, pull-request, and task identifiers are related
 history, not test taxonomy: they must not define a test file, module, suite,
-case name, or committed test directory.
-
-Real-project tests may retain the source repository, immutable revision, and
-source path in comments or test-data metadata. Those details identify the
-input; related Issue or PR history remains in GitHub or Git history and does
-not determine test organization.
+case name, or committed test directory. This includes real-project tests,
+whose input metadata is defined in
+[Compatibility and reference testing](compatibility-testing.md#preserve-real-project-regressions-and-test-data-carefully).
 
 Code changing does not, by itself, require a new test. Add, consolidate, or
 remove tests according to the contract and distinct failure mode they protect.
 Do not lock current documentation prose, private implementation structure,
 helper call counts, or dynamic inventory totals into tests.
 
-## 14. Verify surviving contracts at replacement boundaries
-
-When replacing, hiding, or retiring a public or canonical boundary such as an
-API, model, IR, or protocol, test surviving accepted capabilities through the
-replacement boundary itself.
-
-For each capability, identify whether it is preserved, intentionally changed
-or removed under an approved contract decision, or transferred to another
-owner. Tests that exercise only a retired, private, hidden, or compatibility
-path do not prove that the replacement is complete.
-
-## 15. Avoid production pollution
+## Avoid production pollution
 
 Tests should not normally require new `pub` or `pub(crate)` APIs, test-only
 hooks, configuration surfaces, visibility changes, or architectural indirection
@@ -309,25 +210,10 @@ for an existing contract or rewrite the test.
 Prefer minimal representative inputs inline. Add a fixture file when it is
 shared, large, source-linked, or owned by an established canonical corpus
 location. Keep licensing and source attribution with third-party or real-world
-inputs.
+inputs, following the owning repository's licensing and attribution
+requirements.
 
-## 16. Pull request expectations
-
-A PR that changes observable behavior should make the following reviewable when
-applicable:
-
-- the contract, expected output, or reference comparison defining the behavior;
-- the regression or capability being protected;
-- relevant positive and negative coverage;
-- known limitations or remaining gaps;
-- the reason for any changed expected result or support classification;
-- the required local, CI, runtime, or workflow validation.
-
-Tests must not be weakened, removed, broadly ignored, or reclassified solely to
-obtain a green CI result. Temporary command output, screenshots, benchmark
-dumps, and one-off reports are not durable tests and should not be committed.
-
-## 17. Repository responsibilities
+## Repository responsibilities
 
 Each repository remains responsible for documenting and implementing its own
 test commands, fixture layouts, expected-output format, and CI gates.
