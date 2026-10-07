@@ -18,7 +18,7 @@ WrightKit is a tooling-first development toolchain for the Overwatch Workshop. I
 
 4. **Human developers and coding agents share the same core tooling.** Human-facing CLI and editor workflows must stay clear and usable. Coding agents also need structured, deterministic access to semantic analysis, diagnostics, AST queries, and validated edits without scraping terminal output or reimplementing language parsers. WrightKit gives coding agents Workshop-specific tooling; it does not try to be a generic agent framework.
 
-5. **Enable intent-driven development for agents.** Over time, an agent should be able to take a high-level requirement for a project, use WrightKit to inspect the code and its dependencies, apply targeted edits, check diagnostics, evaluate server-load risks, and flag what it cannot statically verify. Developers can then focus on design requirements rather than Workshop syntax details.
+5. **Enable intent-driven development for agents.** A general coding agent should be able to take a high-level requirement for a project and use WrightKit to discover the language forms and Workshop facts it needs, inspect the code and its dependencies, apply targeted edits, check diagnostics, evaluate server-load risks, and flag what it cannot statically verify. This must not depend on Workshop-, OverPy-, or DEL-specific prompts or skills: the owning implementations supply that knowledge and `wright` exposes it on demand. Skills may teach how to use the tools, but correctness never depends on them. Developers can then focus on design requirements rather than Workshop syntax details.
 
 6. **Workshop is the semantic and conversion hub.** `workshop-rs` owns canonical Workshop semantics and validated engine facts. Individual language crates own their respective syntax and semantics, and `wright` integrates them into cross-language tooling. Conversions between languages like OPY and DEL route through Workshop representation instead of bespoke direct bridges. When reconstructing source code from Workshop rules, the output should be idiomatic and maintainable while retaining any structure preserved by the Workshop format.
 
@@ -31,6 +31,8 @@ WrightKit is a tooling-first development toolchain for the Overwatch Workshop. I
 10. **Keep the core small and predictable.** Built-in lints focus on high-confidence rules with minimal false positives; broader checks belong in optional or community rule sets. Stable integration points allow third-party tools and language providers to connect when needed, but the project does not build abstractions for hypothetical consumers. Default conventions handle standard workflows; platform-specific work requires a demonstrated need from real users.
 
 ## Decision priorities
+
+The core principles are constraints. These priorities order work within them and never justify deviating from a principle, such as structural convergence under principle 7.
 
 When competing technical approaches are on the table, prefer in this order:
 

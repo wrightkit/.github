@@ -27,6 +27,7 @@ Use this map to identify the likely owner, then confirm current ownership and re
 | Distribution, packaging, and release-artifact ownership | `wright` (`dist/`, `.github/workflows/release.yml`) for build/package/publish; `homebrew-tap` for the published Homebrew formula only |
 | Organization-wide shared policy, CI patterns, and GitHub governance | `wrightkit/.github` |
 | WrightKit-wide reusable agent skills and procedures | `wrightkit/.agents` |
+| Optional user-facing agent skills for Workshop projects, such as the `wright` guide that Wright vendors | `wrightkit/skills` |
 
 Confirm current reality before making architectural assumptions. Repository ownership may evolve.
 
