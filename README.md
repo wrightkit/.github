@@ -12,15 +12,4 @@ Reusable WrightKit agent skills are owned by the sibling [`wrightkit/.agents`](h
 
 ## Documentation
 
-- [Documentation index](docs/README.md)
-- [Documentation management](docs/documentation.md)
-
-## Policies and standards
-
-- [Engineering quality policy](docs/engineering-quality.md)
-- [Issue readiness and implementation preflight](docs/issue-readiness.md)
-- [PR review and review-fix handoff](docs/pr-review.md)
-- [Rust CI standard](docs/rust-ci.md)
-- [Testing policy](docs/testing-policy.md)
-- [Code entropy policy](docs/entropy-policy.md)
-- [Release engineering](docs/release-engineering.md)
+Engineering policy, CI, release, and agent documentation are indexed in [docs/README.md](docs/README.md).
