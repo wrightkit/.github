@@ -59,6 +59,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Test necessity/stability/duplication review | `.agents/skills/wrightkit-test-design-review/SKILL.md` |
 | Independent change verification | `.agents/skills/wrightkit-verify-change/SKILL.md` |
 | Evidence-based Issue discovery and triage (read-only) | `.agents/skills/wrightkit-discover-issues/SKILL.md` |
+| One iteration of the unattended work loop (repeating runner, overnight or long-running pass) | `.agents/skills/wrightkit-work-loop/SKILL.md` |
 
 ## Global invariants
 
