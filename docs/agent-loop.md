@@ -38,13 +38,14 @@ Why: the owner settles scope and contract; an agent-run pre-check shares the pro
 ## Implementation boundaries
 
 - One Issue per agent run, and one open implementation PR per repository from the loop at a time.
+- Several agents of different kinds may work the same queue, so claim an Issue before substantive work: check that no open PR or branch references it, then open a draft PR that references it as soon as the first commit is pushed. An Issue with such a PR is taken; pick another or stop. The claim lives in GitHub, not in any one agent's session, so it must survive that agent stopping, and the owner may close a stale claim.
 - Follow [Engineer preflight](issue-readiness.md#engineer-preflight) and [Delivery is part of completion](../AGENTS.md#delivery-is-part-of-completion). Verify against an authority independent of the change.
 - Work stays inside the owning repository; cross-repository effects follow the contract-first order in [`AGENTS.md`](../AGENTS.md#repository-routing).
 - CI failures on the loop's own PR are fixed in place under the surface triage in [`AGENTS.md`](../AGENTS.md#policy-routing). Do not weaken checks, diagnostics, or compatibility expectations to turn CI green.
 - Release PRs, dependency-update PRs that change a public contract, and repositories the owner has marked paused are outside the loop. Read the pause from the current roadmap Issue rather than from this document.
 - Merging, pushing to a default branch, and closing Issues stay with the owner.
 
-Why: a narrow, single-owner change is reviewable in one pass, and the loop stays safe to run unattended because the irreversible steps are not in it.
+Why: agents share one GitHub identity, so an assignee cannot tell them apart, while a draft PR is visible to all of them. A narrow, single-owner change is reviewable in one pass, and the loop stays safe to run unattended because the irreversible steps are not in it.
 
 ## Stop conditions
 
