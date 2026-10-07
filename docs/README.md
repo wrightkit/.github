@@ -30,7 +30,6 @@ contract relevant to the task.
 ## Agents and cloud execution
 
 - [Agent guidance](agent-guidance.md) — durable agent-instruction design.
-- [Agent work loop](agent-loop.md) — evidence-based Issue discovery, owner-controlled readiness, implementation boundaries, and drift review.
 - [Codex Cloud](codex-cloud.md) — WrightKit shared-context bootstrap and cloud workspace routing.
 
 Repository-local documentation remains authoritative for repository-specific contracts. ADRs preserve
