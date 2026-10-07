@@ -23,7 +23,7 @@ contract relevant to the task.
 ## CI and release
 
 - [CI platform](ci-platform.md) — shared CI platform boundaries.
-- [Rust CI](rust-ci.md) — Rust job composition, caching, and toolchains.
+- [Rust CI](rust-ci.md) — Rust job composition, caching, toolchains, and runtime-bound gates.
 - [Rust build artifacts](rust-build-artifacts.md) — local/worktree build storage.
 - [Release engineering](release-engineering.md) — tagging, packaging, and publication.
 

@@ -49,7 +49,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Verification boundaries and merge-time CI acceptance, independent verification, behavior-changing PR evidence | [`docs/verification-and-acceptance.md`](docs/verification-and-acceptance.md) |
 | Code entropy, dead code, redundancy, over-engineering, mutable-inventory documentation | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
 | CI failure triage across job surfaces (Rust quality vs. LPP integration vs. differential/compatibility vs. dist/release) | Classify by surface: local/quality gates fix in place; LPP integration check protocol commit first; differential/compatibility triage under [`docs/compatibility-testing.md`](docs/compatibility-testing.md) |
-| Rust CI toolchain, caching, and job composition | [`docs/rust-ci.md`](docs/rust-ci.md) |
+| Rust CI toolchain, caching, job composition, and runtime-bound gates (corpus, probe, benchmark, latency) | [`docs/rust-ci.md`](docs/rust-ci.md) |
 | Rust build artifact growth, dev/test profile configuration, ephemeral worktree lifecycle, and local storage management | [`docs/rust-build-artifacts.md`](docs/rust-build-artifacts.md) |
 | Release engineering, tagging, and artifact publication | [`docs/release-engineering.md`](docs/release-engineering.md) |
 | Entropy reclamation workflow | `.agents/skills/wrightkit-reclaim-entropy/SKILL.md` |
