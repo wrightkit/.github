@@ -44,6 +44,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
 | Issue readiness, verifiable outcomes and task granularity, implementation preflight, and public/canonical boundary migration continuity | [`docs/issue-readiness.md`](docs/issue-readiness.md) |
 | One-pass PR review, review findings, review-fix thread handling, and follow-up review | [`docs/pr-review.md`](docs/pr-review.md) |
+| Discovering and proposing Issues, scheduled or unattended agent runs, and which stages of the discover-implement-review loop an agent may perform | [`docs/agent-loop.md`](docs/agent-loop.md) |
 | Tests, fixtures and other test data, snapshots, expected results, test organization, and support classifications (testing entry point; routes to the narrower testing documents below) | [`docs/testing-policy.md`](docs/testing-policy.md) |
 | OPY or DEL/OSTW structural compatibility with the upstream compiler, raw Workshop/locale semantic compatibility, oracle or differential comparisons, real-project regressions and corpora | [`docs/compatibility-testing.md`](docs/compatibility-testing.md) |
 | Robustness against malformed, extreme, or adversarial input, and fuzzing | [`docs/robustness-testing.md`](docs/robustness-testing.md) |
@@ -57,6 +58,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Rust architecture/API/concurrency/responsibility review | `.agents/skills/wrightkit-rust-engineering-review/SKILL.md` |
 | Test necessity/stability/duplication review | `.agents/skills/wrightkit-test-design-review/SKILL.md` |
 | Independent change verification | `.agents/skills/wrightkit-verify-change/SKILL.md` |
+| Evidence-based Issue discovery and triage (read-only) | `.agents/skills/wrightkit-discover-issues/SKILL.md` |
 
 ## Global invariants
 
