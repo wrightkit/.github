@@ -85,6 +85,22 @@ The expected bounded pattern is therefore:
 | secondary/conformance job | yes | no | same `shared-key`, `save-if: false` |
 | release/tag | no | no | no Rust cache step |
 
+## Runtime-bound gates
+
+A gate is runtime-bound when its cost is the run time of a process it executes, repeated over a corpus, probe set, or benchmark, rather than the time to compile it. These rules apply on top of the cache and build-identity rules above.
+
+1. **Attribute the cost first.** Identify which process holds the time and whether CI builds it. A profile change helps only a process that CI builds; a downloaded prebuilt binary, such as a language provider, keeps the profile it was released with.
+2. **Run a CI-built cost-carrying binary in release.** Keep `cargo test` and Clippy on the dev/test profile. Release is a separate build identity, so its cache follows the ownership rules above: a new family only for a real incompatibility, written by `main` only. Before switching, show that the gate's reports are identical between profiles.
+3. **One producer per build identity within a workflow run.** Consumers download the producer's artifact instead of rebuilding.
+4. **Parallelize with independent workers or jobs and merge deterministically.** Merge results in a fixed order before applying any global classification, such as gap or stale-entry checks, so a partition cannot change a verdict. Do not shrink PR coverage to save time.
+5. **Do not block on wall-clock time measured on shared hosted runners.** Runner speed varies between runs and differently between kinds of operation, so no single normalization factor cancels it reliably. A blocking gate compares deterministic outputs: sizes, counts, and structure. Record timing as a trend with a non-blocking job on the default branch, or measure it on hardware you control.
+6. **Repeat only what is compared on timing.** A deterministic measurement needs one run.
+7. **Give every job outside the shared quality workflow a `timeout-minutes`** with margin over its cold-cache duration. The default job limit is far longer than any gate should take.
+8. **Record the version of every tool under test, and track compatible versions rather than a historical snapshot.** While an upstream is changing quickly, follow its latest release. Once it is stable, test a declared minimum supported version and the latest, as the Rust jobs do with the MSRV and `stable`. Do not pin an old version only to keep a gate quiet.
+9. **A speed-up reports identical gate outputs before and after.** Give local and hosted timings separately, and state that local timings do not predict hosted ones.
+
+Why: a gate that fails for reasons unrelated to the change teaches reviewers to re-run and ignore it, and a gate whose time is spent in a process CI cannot rebuild cannot be made faster by changing how CI builds.
+
 ## Pilot and migration gate
 
 `language-provider-protocol#8` is the first pilot for the bounded shared-cache policy. Its merge commit is [`05ce40a`](https://github.com/wrightkit/language-provider-protocol/commit/05ce40ad5b67b9f9aad584768e966ea0b4470040). The corresponding `main` CI run [32022937163](https://github.com/wrightkit/language-provider-protocol/actions/runs/32022937163) succeeded for both `rust` and `conformance` and created one `linux-ci` cache entry.
@@ -108,3 +124,4 @@ pilot's seed and later restore remain separate validation checks.
 - [Swatinem/rust-cache](https://github.com/Swatinem/rust-cache)
 - [dtolnay/rust-toolchain](https://github.com/dtolnay/rust-toolchain)
 - [WrightKit issue #3](https://github.com/wrightkit/.github/issues/3)
+- [WrightKit issue #49](https://github.com/wrightkit/.github/issues/49), the audit behind the runtime-bound gate rules
