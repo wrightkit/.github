@@ -8,7 +8,7 @@ This policy defines how agents discover, propose, implement, and deliver WrightK
 evidence -> proposed Issue -> readiness -> implementation PR -> CI + independent review -> merge -> owner reviews -> owner releases
 ```
 
-Each stage has one kind of actor. Discovery agents propose; the owner decides readiness, except where [delegated](#readiness-is-the-owners-call); Engineer agents implement settled contracts; a reviewer of a different kind verifies; merging is [delegated](#delegated-merge) for small reversible changes; the owner reviews what merged and alone releases.
+Each stage has one kind of actor. Discovery agents propose; the owner decides readiness, except where [delegated](#readiness-is-the-owners-call); Engineer agents implement settled contracts; an independent reviewer verifies; merging is [delegated](#delegated-merge) for small reversible changes; the owner reviews what merged and alone releases.
 
 The loop runs unattended and the owner reviews in windows. Release is the gate that cannot be undone, so human attention concentrates there instead of on every PR.
 
@@ -41,7 +41,7 @@ Why: the owner settles scope and contract. For the delegated class the contract 
 
 ## Implementation boundaries
 
-- One Issue per agent run, and one open implementation PR per repository from the loop at a time.
+- One Issue per agent run. Do not start another Issue in a repository while one of your own PRs there has failing CI or unaddressed review findings. A delivered PR that is waiting for a reviewer does not block new work, and an implementer never waits for review: it delivers and moves on.
 - Several agents of different kinds may work the same queue, so claim an Issue before substantive work: check that no open PR or branch references it, then open a draft PR that references it as soon as the first commit is pushed. An Issue with such a PR is taken; pick another or stop. The claim lives in GitHub, not in any one agent's session, so it must survive that agent stopping, and the owner may close a stale claim.
 - Follow [Engineer preflight](issue-readiness.md#engineer-preflight) and [Delivery is part of completion](../AGENTS.md#delivery-is-part-of-completion). Verify against an authority independent of the change.
 - Work stays inside the owning repository; cross-repository effects follow the contract-first order in [`AGENTS.md`](../AGENTS.md#repository-routing).
@@ -58,12 +58,12 @@ An implementation PR may be merged without the owner when all of these hold:
 - It is small, in one repository, and reverts as a single commit.
 - It changes no public contract, schema, protocol, ADR, or documented compatibility exception, and does not need an owner decision.
 - Every required check passes, including the verification the Issue names, and the default branch is currently green.
-- A reviewer of a different agent kind from the implementer has reviewed it under [PR review](pr-review.md) and found nothing actionable.
+- An independent reviewer has reviewed it under [PR review](pr-review.md) and found nothing actionable. Independent means a different agent kind, or a fresh session of any kind that has no access to the implementer's context and reviews from the PR, its Issue, and the repository alone. The implementing session never counts as its own reviewer.
 - It is not a Release PR, and the repository is not paused.
 
 Bound the damage of a wrong merge: limit how many merges a run makes per repository, and stop when a default branch turns red. Record each delegated merge so the owner's review can find it and revert it.
 
-Why: reviewer independence comes from a different kind of agent plus an outside authority, not from a second pass by the same model. Small, reversible, single-repository changes keep a wrong merge cheap to undo, and a limit on how much can land unseen keeps later work from building on an error the owner has not seen.
+Why: independence comes from not sharing the implementer's context and from an outside authority to check against. A different kind of agent is the strongest form, but requiring it stalls a loop where only one kind is running, so a fresh session is accepted; the owner's review before release is the backstop for the blind spots a same-kind reviewer shares. A PR that no independent reviewer has reached waits for one in a later iteration or for the owner. Small, reversible, single-repository changes keep a wrong merge cheap to undo, and a limit on how much can land unseen keeps later work from building on an error the owner has not seen.
 
 A repository must enforce its required checks for this to mean anything; where it does not, delegated merge does not apply there.
 
