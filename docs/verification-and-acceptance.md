@@ -66,6 +66,10 @@ applicable:
 - the reason for any changed expected result or support classification;
 - the required local, CI, runtime, or workflow validation.
 
+A failing check on the default branch is a defect to fix at its cause, or to
+track in an Issue that names the cause, before more work ships on top of it.
+"It also fails on `main`" is not a baseline, and neither is "it passes alone".
+
 Tests must not be weakened, removed, broadly ignored, or reclassified solely to
 obtain a green CI result. Temporary command output, screenshots, benchmark
 dumps, and one-off reports are not durable tests and should not be committed.

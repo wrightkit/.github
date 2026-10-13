@@ -19,12 +19,11 @@ Review, as applicable:
 - contract continuity when replacing, hiding, or retiring a public or canonical boundary, as defined in [Contract continuity for boundary migrations](issue-readiness.md#contract-continuity-for-boundary-migrations);
 - test coverage when it is materially relevant to a current failure mode or contract, and whether material changes were verified against an independent reference rather than only tests written with the change;
 - necessity of newly added persistent mechanisms under the ablation rule in [`docs/engineering-quality.md`](engineering-quality.md);
-- newly added or materially affected explanatory comments and file/module headers, including whether the prose is functioning as a README for code whose responsibility, ownership, pipeline, or internal relationships are otherwise not self-explanatory;
+- newly added or materially affected comments and file/module headers, against [Prefer code over commentary](engineering-quality.md#prefer-code-over-commentary);
+- whether the change holds on the whole path, reaches the siblings of the defect, and re-derives what depends on it, per [Hold the change on the whole path](engineering-quality.md#hold-the-change-on-the-whole-path);
 - changes outside the approved scope that affect correctness or maintenance obligations.
 
 Architecture is a compliance boundary during review. Do not propose an alternative architecture when the PR follows the current approved one. If the Issue, documented contract, and current implementation disagree materially, identify the decision mismatch and route it to the appropriate owner rather than asking the Engineer to redesign it inside the PR.
-
-A comment is not independently authoritative proof that a placement or behavior is intentional. Do not treat an accurate explanatory header as sufficient proof of readability. If removing the prose makes a changed feature/module/file materially difficult to understand, require the smallest code-level correction needed to make the responsibility and behavior discoverable. Require comment removal when the prose merely restates implementation; retain only information that cannot reasonably be expressed by code structure and belongs with the source.
 
 ## Findings and output
 
