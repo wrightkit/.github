@@ -1,6 +1,6 @@
 # WrightKit CI platform
 
-WrightKit uses small, versioned reusable workflows for repeated organization
+WrightKit uses small reusable workflows for repeated organization
 contracts. Repository workflows remain the owners of triggers, path routing,
 matrices, job dependencies, and domain-specific validation.
 
@@ -15,11 +15,16 @@ matrices, job dependencies, and domain-specific validation.
   compatibility, corpus, conformance, packaging, or product-release jobs.
 - A **composite action** owns a repeated multi-step procedure only after the
   same stable procedure is used across repositories and extracting it removes
-  duplicated workflow steps. No composite action is required by the v1
-  contracts.
+  duplicated workflow steps. No composite action is currently required.
 
-Callers must reference a stable v1 tag or an explicitly pinned compatible SHA.
-They pass only declared inputs and explicitly named secrets; they must not use
+Callers of WrightKit's own reusable workflows may track `@main`, so a contract
+change reaches every repository without a pin bump; the workflow's inputs and
+outputs are the compatibility surface, and a breaking change updates its callers
+in the same rollout. Every third-party action is pinned to a full commit SHA,
+because it runs with the caller's credentials and a moved tag or branch would
+change what executes without a review.
+
+Callers pass only declared inputs and explicitly named secrets; they must not use
 arbitrary command hooks or `secrets: inherit` for the crate release workflow.
 
 The shared quality workflow is the prerequisite for repository-owned Rust

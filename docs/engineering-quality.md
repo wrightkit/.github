@@ -113,6 +113,17 @@ Source comments are not architecture contracts or independent checks of current 
 
 Why: explanatory comments are an unvalidated natural-language cache. They can become stale while still looking authoritative to humans and coding agents, and extensive explanatory prose can hide a codebase whose structure is not self-explanatory. WrightKit therefore treats the need for implementation-explaining prose as a maintenance signal and admits prose only when removing it would lose durable information that cannot be recovered reliably from the code.
 
+## Hold the change on the whole path
+
+A change is correct only if the operation it belongs to is correct, from user input or provider request to emitted output or edit, through callers, stored state, and side effects. A correct function does not make the operation correct.
+
+- **Reach every sibling.** Search for the same pattern: other builtins, languages, subcommands, branches of the same operation, and every caller of a changed predicate. Fix the siblings in the same change, or name in an Issue why one is not.
+- **Re-derive what is built on the change.** When a table, ordering, limit, name mapping, or timing changes, find every caller, snapshot, fixture, and expectation that assumed the old meaning, and run them.
+- **Cover the edges the change touches.** Numeric boundaries, empty and missing input, Unicode and locale text, path separators on each shipped platform, ordering, and concurrency or stale state. Pick by risk.
+- **A preview writes nothing.** A dry run, check, or plan has no filesystem, network, or state side effects.
+
+Why: a fix scoped to the reported case leaves the same defect in its neighbors, and a changed meaning leaves stale assumptions that fail later, far from the change.
+
 ## Keep issue work focused
 
 An issue implementation should touch only what the issue owns and what is clearly necessary to fulfill its contract. Keep unrelated cleanup, renaming, refactoring, and formatting separate unless the issue explicitly includes them, correctness requires them, or a bounded structural extraction is needed to keep the changed behavior in its coherent owning responsibility.
