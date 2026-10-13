@@ -29,6 +29,7 @@ Use this map of WrightKit's public repositories to identify the likely owner, th
 | WrightKit-wide reusable agent skills and procedures | `wrightkit/.agents` |
 | Optional user-facing agent skills for Workshop projects, such as the `wright` guide that Wright vendors | `wrightkit/skills` |
 | Conversion of the Workshop.code wiki into agent-friendly Markdown | `workshop-md-converter` |
+| Agent benchmark harness, public and held-out scenarios, and published benchmark results (private; pins the Wright release it measures) | `benchmark-suite` |
 
 Confirm current reality before making architectural assumptions. Repository ownership may evolve.
 
