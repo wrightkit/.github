@@ -59,6 +59,7 @@ owning feature's established test structure where practical.
 A PR that changes observable behavior should make the following reviewable when
 applicable:
 
+- the observable change for each affected area: its trigger and the behavior before and after, or a statement that a refactor preserves documented behavior, for the reviewer to verify against the diff;
 - the contract, expected output, or reference comparison defining the behavior;
 - the regression or capability being protected;
 - relevant positive and negative coverage;

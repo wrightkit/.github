@@ -45,6 +45,19 @@ Keep the explanation only as long as needed to establish the defect. Do not add 
 
 If there are no actionable findings, reply `LGTM` and approve the PR. Do not add a checklist or summary of categories inspected.
 
+## Recurring findings
+
+A finding names the policy rule it violates, linked, or states that no rule covers it.
+
+When the same class of defect is reported in three separate PRs, in one repository or across several, the reviewer who sees the third opens an Issue in `wrightkit/.github` that links the PRs and names the class. The Issue ends in one of two outcomes:
+
+- an existing policy gains or sharpens the rule that would have caught it, with its `Why`, in the policy that owns the concern, after checking that no existing rule already covers it; or
+- a recorded decision that the class is not policy material, such as a defect that belongs in one repository's tests or local guidance.
+
+The evidence stays in the Issue and the PR threads. A policy states the rule and its reason, not the incidents, counts, or dates that led to it.
+
+Why: repeated review findings show where policy is missing or not being read. Promoting them through an Issue turns repeated correction into one durable rule, while keeping policy limited to stable knowledge.
+
 ## Addressing review findings and handoff
 
 When an Engineer agent addresses PR review findings, the work is governed by the same scope discipline and contract boundaries as the original implementation. Pushing code is necessary but not sufficient: review-fix work is complete only when verified corrections are pushed, affected review threads are handled, and the PR is explicitly handed back to follow-up review.
