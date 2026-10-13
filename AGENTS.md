@@ -14,7 +14,7 @@ Paths here assume the workspace root, the directory that holds the `.github` and
 
 ## Repository routing
 
-Use this map to identify the likely owner, then confirm current ownership and read its `AGENTS.md` before substantial work.
+Use this map of WrightKit's public repositories to identify the likely owner, then confirm current ownership and read its `AGENTS.md` before substantial work.
 
 | Concern | Primary repository |
 | --- | --- |
@@ -28,6 +28,7 @@ Use this map to identify the likely owner, then confirm current ownership and re
 | Organization-wide shared policy, CI patterns, and GitHub governance | `wrightkit/.github` |
 | WrightKit-wide reusable agent skills and procedures | `wrightkit/.agents` |
 | Optional user-facing agent skills for Workshop projects, such as the `wright` guide that Wright vendors | `wrightkit/skills` |
+| Conversion of the Workshop.code wiki into agent-friendly Markdown | `workshop-md-converter` |
 
 Confirm current reality before making architectural assumptions. Repository ownership may evolve.
 

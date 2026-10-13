@@ -162,9 +162,3 @@ Each releasing repository should document only its concrete release contract:
 - explicit recovery steps for known partial states.
 
 Do not copy this policy verbatim into every repository. Link to it and keep repo-local docs focused on current reality.
-
-## Why this standard
-
-This standard incorporates lessons from the `workshop-rs` release-pipeline rework in August 2026. The repository accumulated failures while combining release-plz, repository-owned recovery logic, detached merge-commit execution, and generated `dist` workflow behavior. The stable direction reduced the topology to release-plz for version/registry/tag responsibilities and a small tag-triggered repository workflow for fixed-platform binary builds and GitHub Release creation.
-
-The durable lesson is not that WrightKit should always hand-write release workflows. It is that release tooling must reduce ownership and state complexity; when the abstraction becomes harder to reason about than the release contract, simplify or remove it.

@@ -1,6 +1,6 @@
 # WrightKit Rust CI standard
 
-This document defines the Rust CI composition behind WrightKit's versioned
+This document defines the Rust CI composition behind WrightKit's
 `rust-quality.yml` reusable workflow. It keeps toolchain provisioning and Cargo
 cache ownership as separate, visible workflow responsibilities.
 
@@ -59,7 +59,7 @@ For a pull-request or secondary job, use the same compatible `shared-key` and se
     toolchain: stable
 ```
 
-The toolchain reference and version must follow the repository's existing reproducibility policy. A repository may use a checked-in `rust-toolchain.toml`; the workflow still needs to show which components and targets are required.
+Pin third-party actions as defined in [CI platform](ci-platform.md). The toolchain version must follow the repository's existing reproducibility policy. A repository may use a checked-in `rust-toolchain.toml`; the workflow still needs to show which components and targets are required.
 
 ## Cargo locking
 
@@ -100,28 +100,3 @@ A gate is runtime-bound when its cost is the run time of a process it executes, 
 9. **A speed-up reports identical gate outputs before and after.** Give local and hosted timings separately, and state that local timings do not predict hosted ones.
 
 Why: a gate that fails for reasons unrelated to the change teaches reviewers to re-run and ignore it, and a gate whose time is spent in a process CI cannot rebuild cannot be made faster by changing how CI builds.
-
-## Pilot and migration gate
-
-`language-provider-protocol#8` is the first pilot for the bounded shared-cache policy. Its merge commit is [`05ce40a`](https://github.com/wrightkit/language-provider-protocol/commit/05ce40ad5b67b9f9aad584768e966ea0b4470040). The corresponding `main` CI run [32022937163](https://github.com/wrightkit/language-provider-protocol/actions/runs/32022937163) succeeded for both `rust` and `conformance` and created one `linux-ci` cache entry.
-
-The first `main` run recorded `No cache found` in both jobs, so it confirms a successful seed but not a subsequent restore. The pilot is not yet accepted as the reference pattern. Before migrating another repository, a later `main` run must show an actual restore or exact cache hit, and the repository should record:
-
-- the run and commit that seeded the cache;
-- the later run and job that restored it;
-- whether target caching reduced meaningful build work;
-- the resulting cache-family and writer count.
-
-The v1 reusable-workflow rollout uses the explicit composition above while
-preserving each repository's existing gates and release behavior. A local or
-PR pass does not establish the rollout: after the pinned workflow revision is
-available remotely, each migrated repository needs a real post-migration main
-or PR run showing the intended gate ordering and cache behavior. The cache
-pilot's seed and later restore remain separate validation checks.
-
-## References
-
-- [Swatinem/rust-cache](https://github.com/Swatinem/rust-cache)
-- [dtolnay/rust-toolchain](https://github.com/dtolnay/rust-toolchain)
-- [WrightKit issue #3](https://github.com/wrightkit/.github/issues/3)
-- [WrightKit issue #49](https://github.com/wrightkit/.github/issues/49), the audit behind the runtime-bound gate rules
