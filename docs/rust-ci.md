@@ -23,7 +23,7 @@ The toolchain action must not also be the cache owner. Keeping the two steps adj
 
 ## Preferred CI composition
 
-Use a dedicated toolchain step followed by one explicit cache step:
+Jobs that run their own Cargo commands use the `wrightkit/.github/.github/actions/setup-rust` composite action, which performs this composition with the cache settings below. Its inputs are `toolchain`, `components`, `targets`, `cache-shared-key` (empty installs without a cache), `cache-targets`, `cache-save` (true only for the `main` writer) and `workspaces`. The equivalent explicit steps are:
 
 ```yaml
 - name: Install Rust toolchain

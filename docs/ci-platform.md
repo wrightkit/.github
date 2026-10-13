@@ -15,7 +15,9 @@ matrices, job dependencies, and domain-specific validation.
   compatibility, corpus, conformance, packaging, or product-release jobs.
 - A **composite action** owns a repeated multi-step procedure only after the
   same stable procedure is used across repositories and extracting it removes
-  duplicated workflow steps. No composite action is currently required.
+  duplicated workflow steps. `.github/actions/setup-rust` owns installing a
+  toolchain and restoring the bounded Cargo cache, which every Rust repository
+  repeats before running its own commands.
 
 Callers of WrightKit's own reusable workflows may track `@main`, so a contract
 change reaches every repository without a pin bump; the workflow's inputs and

@@ -1,0 +1,55 @@
+name: Set up Rust
+description: Install a Rust toolchain and restore the bounded Cargo cache described in docs/rust-ci.md
+
+inputs:
+  toolchain:
+    description: Rust toolchain to install
+    required: false
+    default: stable
+  components:
+    description: Toolchain components, comma separated
+    required: false
+    default: ''
+  targets:
+    description: Additional Rust targets, comma separated
+    required: false
+    default: ''
+  cache-shared-key:
+    description: Stable logical cache family; an empty value installs the toolchain without a cache
+    required: false
+    default: ''
+  cache-targets:
+    description: Cache compiled target artifacts
+    required: false
+    default: 'true'
+  cache-save:
+    description: Save the cache at the end of the job; only the main-branch writer sets this to true
+    required: false
+    default: 'false'
+  workspaces:
+    description: Cargo workspaces and their target directories, in the form accepted by Swatinem/rust-cache
+    required: false
+    default: ''
+
+runs:
+  using: composite
+  steps:
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # master 2026-10-01
+      with:
+        toolchain: ${{ inputs.toolchain }}
+        components: ${{ inputs.components }}
+        targets: ${{ inputs.targets }}
+
+    - name: Restore Rust cache
+      if: inputs.cache-shared-key != ''
+      uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
+      with:
+        shared-key: ${{ inputs.cache-shared-key }}
+        workspaces: ${{ inputs.workspaces }}
+        cache-targets: ${{ inputs.cache-targets }}
+        cache-all-crates: false
+        cache-workspace-crates: false
+        cache-bin: false
+        save-if: ${{ inputs.cache-save }}
+        cache-on-failure: false

@@ -83,24 +83,16 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@7e38f4b43b4db5c8dd498af069a4f6196df1d067 # master 2026-10-01
+      - name: Set up Rust
+        uses: wrightkit/.github/.github/actions/setup-rust@main
         with:
           toolchain: ${{ inputs.toolchain }}
           components: clippy, rustfmt
           targets: ${{ inputs.targets }}
-
-      - name: Restore Rust cache
-        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
-        with:
-          shared-key: ${{ inputs.cache-shared-key }}
-          workspaces: ${{ inputs.working-directory }} -> target
+          cache-shared-key: ${{ inputs.cache-shared-key }}
           cache-targets: ${{ inputs.cache-targets }}
-          cache-all-crates: false
-          cache-workspace-crates: false
-          cache-bin: false
-          save-if: ${{ github.ref == 'refs/heads/main' }}
-          cache-on-failure: false
+          cache-save: ${{ github.ref == 'refs/heads/main' }}
+          workspaces: ${{ inputs.working-directory }} -> target
 
       - name: Check formatting
         run: cargo fmt --all -- --check
