@@ -30,6 +30,7 @@ contract relevant to the task.
 ## Agents and cloud execution
 
 - [Agent guidance](agent-guidance.md) — durable agent-instruction design.
+- [Engineering principles](principles/README.md) — index of named engineering judgments, how to name them in work, and when a constraint belongs in code instead.
 - [Codex Cloud](codex-cloud.md) — WrightKit shared-context bootstrap and cloud workspace routing.
 
 Repository-local documentation remains authoritative for repository-specific contracts. ADRs preserve
