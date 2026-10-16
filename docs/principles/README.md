@@ -15,6 +15,10 @@ Read this index before starting a multi-step task. Open a principle file only wh
 | [independent-authority](independent-authority.md) | the evidence that a change works comes from tests written with the change |
 | [query-dont-encode](query-dont-encode.md) | guidance or docs are about to record counts, versions, or current status |
 
+## Repository-local principles
+
+A judgment tied to one repository's domain lives in that repository's `docs/principles/`, in the same shape, and is routed from its `AGENTS.md`. This directory holds only judgment that applies across repositories. A repository principle is usually promoted from an entry in its `docs/LESSONS.md` whose prevention depends on a choice made while authoring; read the local index with this one.
+
 ## Using principles
 
 - **Before a multi-step task:** read the index. Skip it for single-step answers.
