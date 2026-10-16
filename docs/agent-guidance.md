@@ -14,6 +14,12 @@ Why: detailed rule inventories are brittle. They tend to turn examples, current 
 
 Use hard rules only when the boundary itself is non-negotiable, such as repository ownership, security, licensing, compatibility, branch safety, public contracts, or role authorization.
 
+## Distill principles; let code enforce what it can
+
+Capture recurring judgment as a short, named principle in [`principles/`](principles/README.md), not as a growing set of rules or a process script. Not every lesson becomes a rule: a constraint that a lint, type, schema, test, CI check, or API contract can express belongs in that deterministic mechanism, and the prose is dropped or reduced to the judgment the mechanism cannot carry.
+
+Why: deterministic code enforces the same way every time and fails loudly. Prose depends on being read and weighed, so spend it only where judgment is the point.
+
 ## Explain why
 
 Important guidance should explain the reason behind the rule: correctness, ownership, maintainability, reviewability, source attribution, compatibility, or another concrete project goal.

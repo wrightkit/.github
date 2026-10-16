@@ -41,6 +41,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 
 | Task concern | Load |
 | --- | --- |
+| Starting a multi-step task, or naming the engineering judgment behind a decision | [`docs/principles/README.md`](docs/principles/README.md) |
 | Writing or revising durable agent guidance, AGENTS or CLAUDE content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
 | Durable documentation layout, progressive disclosure, documentation synchronization, or drift audits | [`docs/documentation.md`](docs/documentation.md) |
 | Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
@@ -110,7 +111,7 @@ Why: a text-only turn ends the work until someone replies. In unattended worktre
 
 ## Final report
 
-End a task with a report a reviewer can act on without reading the session. Lead with what needs the reader: an open decision, a blocker, or an action that needs their authority; say so when nothing does. Then give the delivered state (PR, pushed commits, review handoff) or the local state if delivery stopped, the independent reference used for verification, and anything you could not confirm, with where you looked. Leave out a step-by-step account of the session.
+End a task with a report a reviewer can act on without reading the session. Lead with what needs the reader: an open decision, a blocker, or an action that needs their authority; say so when nothing does. Then give the delivered state (PR, pushed commits, review handoff) or the local state if delivery stopped, the independent reference used for verification, and anything you could not confirm, with where you looked. Leave out a step-by-step account of the session. For multi-step work, end with a `Principles Named or Used` section as defined in [`docs/principles/README.md`](docs/principles/README.md#using-principles).
 
 Why: the reader's first job is to unblock the work, and an unconfirmed claim listed among verified ones tends to be accepted as verified.
 
