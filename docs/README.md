@@ -12,7 +12,7 @@ contract relevant to the task.
 
 - [Documentation management](documentation.md) — documentation layout, progressive disclosure, synchronization, and drift audits.
 - [Engineering quality](engineering-quality.md) — implementation quality, simplicity, locality, readability, and durable-vs-dynamic knowledge.
-- [Issue readiness and implementation preflight](issue-readiness.md) — task readiness, verifiable outcomes, and public-boundary continuity.
+- [Issue readiness and implementation preflight](issue-readiness.md) — task readiness, verifiable outcomes, public-boundary continuity, and the issue closing boundary.
 - [PR review and review-fix handoff](pr-review.md) — one-pass review, findings, thread handling, and re-review.
 - [Testing policy](testing-policy.md) — testing entry point: core test principles, test organization, fixtures, and routing to the narrower testing documents.
   - [Compatibility and reference testing](compatibility-testing.md) — upstream-compiler structural convergence, raw Workshop/locale semantic compatibility, oracle gaps, and real-project regressions and corpora.
