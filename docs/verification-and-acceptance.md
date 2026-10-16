@@ -65,6 +65,7 @@ applicable:
 - relevant positive and negative coverage;
 - known limitations or remaining gaps;
 - the reason for any changed expected result or support classification;
+- the closing or non-closing Issue reference matching the scope the PR delivers, per [Closing an issue](issue-readiness.md#closing-an-issue);
 - the required local, CI, runtime, or workflow validation.
 
 A failing check on the default branch is a defect to fix at its cause, or to

@@ -44,7 +44,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Writing or revising durable agent guidance, AGENTS or CLAUDE content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
 | Durable documentation layout, progressive disclosure, documentation synchronization, or drift audits | [`docs/documentation.md`](docs/documentation.md) |
 | Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
-| Issue readiness, verifiable outcomes and task granularity, implementation preflight, and public/canonical boundary migration continuity | [`docs/issue-readiness.md`](docs/issue-readiness.md) |
+| Issue readiness, verifiable outcomes and task granularity, implementation preflight, the Issue closing boundary, and public/canonical boundary migration continuity | [`docs/issue-readiness.md`](docs/issue-readiness.md) |
 | One-pass PR review, review findings, review-fix thread handling, and follow-up review | [`docs/pr-review.md`](docs/pr-review.md) |
 | Tests, fixtures and other test data, snapshots, expected results, test organization, and support classifications (testing entry point; routes to the narrower testing documents below) | [`docs/testing-policy.md`](docs/testing-policy.md) |
 | OPY or DEL/OSTW structural compatibility with the upstream compiler, raw Workshop/locale semantic compatibility, oracle or differential comparisons, real-project regressions and corpora | [`docs/compatibility-testing.md`](docs/compatibility-testing.md) |
