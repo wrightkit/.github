@@ -118,9 +118,9 @@ Why: follow-up review verifies the correction. Re-running a fresh architectural 
 
 Specialist policy and skills are demand-driven, not mandatory review stages:
 
-- Route material test-quality or agent-generated-test questions to `.agents/skills/wrightkit-test-design-review/SKILL.md` and the canonical [testing policy](testing-policy.md).
-- Route material Rust ownership, API, error, async/concurrency, abstraction, semantic-placement, responsibility-growth, feature-locality, or metadata-driven behavior risk to `.agents/skills/wrightkit-rust-engineering-review/SKILL.md`.
-- Route substantial simplification, deletion, duplication, or post-migration entropy work to [`docs/entropy-policy.md`](entropy-policy.md) and `.agents/skills/wrightkit-reclaim-entropy/SKILL.md` when that work is inside the approved scope.
-- Route material changes requiring independent falsification or public boundary contract continuity verification to `.agents/skills/wrightkit-verify-change/SKILL.md` and [`docs/verification-and-acceptance.md`](verification-and-acceptance.md).
+- Route material test-quality or agent-generated-test questions to `.agents/skills/test-design-review/SKILL.md` and the canonical [testing policy](testing-policy.md).
+- Route material Rust ownership, API, error, async/concurrency, abstraction, semantic-placement, responsibility-growth, feature-locality, or metadata-driven behavior risk to `.agents/skills/rust-engineering-review/SKILL.md`.
+- Route substantial simplification, deletion, duplication, or post-migration entropy work to [`docs/entropy-policy.md`](entropy-policy.md) and `.agents/skills/reclaim-entropy/SKILL.md` when that work is inside the approved scope.
+- Route material changes requiring independent falsification or public boundary contract continuity verification to `.agents/skills/verify-change/SKILL.md` and [`docs/verification-and-acceptance.md`](verification-and-acceptance.md).
 
 Do not load every specialist route because a PR contains Rust, tests, or abstractions. The linked issue and the actual risk surface determine what is applicable.

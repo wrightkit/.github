@@ -57,10 +57,10 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Rust CI toolchain, caching, job composition, and runtime-bound gates (corpus, probe, benchmark, latency) | [`docs/rust-ci.md`](docs/rust-ci.md) |
 | Rust build artifact growth, dev/test profile configuration, ephemeral worktree lifecycle, and local storage management | [`docs/rust-build-artifacts.md`](docs/rust-build-artifacts.md) |
 | Release engineering, tagging, and artifact publication | [`docs/release-engineering.md`](docs/release-engineering.md) |
-| Entropy reclamation workflow | `.agents/skills/wrightkit-reclaim-entropy/SKILL.md` |
-| Rust architecture/API/concurrency/responsibility review | `.agents/skills/wrightkit-rust-engineering-review/SKILL.md` |
-| Test necessity/stability/duplication review | `.agents/skills/wrightkit-test-design-review/SKILL.md` |
-| Independent change verification | `.agents/skills/wrightkit-verify-change/SKILL.md` |
+| Entropy reclamation workflow | `.agents/skills/reclaim-entropy/SKILL.md` |
+| Rust architecture/API/concurrency/responsibility review | `.agents/skills/rust-engineering-review/SKILL.md` |
+| Test necessity/stability/duplication review | `.agents/skills/test-design-review/SKILL.md` |
+| Independent change verification | `.agents/skills/verify-change/SKILL.md` |
 
 ## Global invariants
 
@@ -120,7 +120,7 @@ Why: the reader's first job is to unblock the work, and an unconfirmed claim lis
 
 One-off command output, reports, screenshots, and temporary reproducers are not repository state merely because they helped with one task. Test data belongs in an existing feature-owned location only when it protects a durable contract or regression under [`docs/testing-policy.md`](docs/testing-policy.md).
 
-Verify material changes against an authority independent of the implementation, such as an accepted contract, a pinned upstream oracle, or a real project, not only against tests written with the change. Independence comes from that authority, not from another agent: do not spawn a verifier or reviewer agent to re-check your own work. The independent second pass is PR review or an assigned QA role, which may use `.agents/skills/wrightkit-verify-change/SKILL.md`.
+Verify material changes against an authority independent of the implementation, such as an accepted contract, a pinned upstream oracle, or a real project, not only against tests written with the change. Independence comes from that authority, not from another agent: do not spawn a verifier or reviewer agent to re-check your own work. The independent second pass is PR review or an assigned QA role, which may use `.agents/skills/verify-change/SKILL.md`.
 
 Why: a same-model agent re-reading the same change shares its blind spots and adds cost; a check against an outside authority catches a wrong expectation that both the implementation and its tests agree on.
 
