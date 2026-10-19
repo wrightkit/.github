@@ -14,6 +14,7 @@ Read this index before starting a multi-step task. Open a principle file only wh
 | [upstream-is-the-spec](upstream-is-the-spec.md) | OPY or DEL behavior could be "improved" away from the upstream compiler |
 | [independent-authority](independent-authority.md) | the evidence that a change works comes from tests written with the change |
 | [query-dont-encode](query-dont-encode.md) | guidance or docs are about to record counts, versions, or current status |
+| [source-text-is-the-truth](source-text-is-the-truth.md) | a tool changes a project through a structured model instead of through text |
 
 ## Repository-local principles
 
