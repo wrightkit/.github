@@ -21,6 +21,7 @@ Use this map of WrightKit's public repositories to identify the likely owner, th
 | Canonical Workshop semantics, catalog, locales, parsing, validation, Workshop representation and emission | `workshop-rs` |
 | OverPy-compatible language implementation | `opy-rs` |
 | DeltinScript / OSTW-compatible language implementation | `deltin-rs` |
+| Workshop runtime simulation (execution model, probe captures) | `runtime` |
 | Provider process/data protocol | `language-provider-protocol` |
 | User-facing tooling, orchestration, integration, analysis, and agent surfaces | `wright` |
 | Product website | `wrightkit.dev` |

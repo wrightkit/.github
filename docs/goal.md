@@ -59,10 +59,10 @@ These outcomes matter far more than reaching arbitrary targets for supported lan
 WrightKit is not intended to be:
 
 - a generic compiler framework
-- a full IDE or heavy UI product
+- a general-purpose IDE; UI belongs to `wright`, implements no Workshop semantics of its own, and any web editor builds on that same UI
 - Workshop project hosting or a GitHub replacement
 - a generic AI coding-agent framework
-- a game runtime simulator
+- a game-world simulator; the `runtime` repository models Workshop execution (scheduling, rule triggering, value evaluation), and physics, hit detection, and hero or ability simulation stay out of scope
 - a pure transpiler collection
 - a platform that judges gameplay balance or game-design quality
 
