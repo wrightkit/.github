@@ -4,7 +4,7 @@
 set -eu
 
 [ -f Cargo.toml ] || exit 0
-msrv="$(sed -n 's/^rust-version *= *"\([0-9.]*\)".*/\1/p' Cargo.toml | head -n 1)"
-[ -n "$msrv" ] || exit 0
+toolchain="$("$(dirname "$0")/msrv-toolchain.sh")"
+[ -n "$toolchain" ] || exit 0
 
-exec cargo "+$msrv" clippy --workspace --all-targets --all-features -- -D warnings
+exec cargo "$toolchain" clippy --workspace --all-targets --all-features -- -D warnings

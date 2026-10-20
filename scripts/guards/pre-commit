@@ -1,5 +1,5 @@
 #!/bin/sh
-# WrightKit-specific pre-commit checks. Generic checks (size, whitespace)
+# WrightKit pre-commit checks. Repository-independent checks (size, whitespace)
 # live in the global ~/.git-hooks/pre-commit.
 set -eu
 
@@ -10,6 +10,21 @@ scratch="$(git diff --cached --name-only --diff-filter=AMR |
 if [ -n "$scratch" ]; then
   printf 'pre-commit: scratch or runtime files staged; unstage them:\n%s\n' "$scratch" >&2
   status=1
+fi
+
+# Rust: fail here what the CI quality job would fail after the push.
+if [ -f Cargo.toml ]; then
+  here="$(cd "$(dirname "$0")" && pwd)"
+  toolchain="$("$here/msrv-toolchain.sh")"
+  staged="$(git diff --cached --name-only --diff-filter=AMR)"
+  if printf '%s\n' "$staged" | grep -q '\.rs$'; then
+    cargo $toolchain fmt --all -- --check >/dev/null 2>&1 ||
+      { echo 'pre-commit: rustfmt differences; run `cargo fmt --all`.' >&2; status=1; }
+  fi
+  if printf '%s\n' "$staged" | grep -q 'Cargo\.\(toml\|lock\)$'; then
+    cargo $toolchain update --workspace --locked --offline >/dev/null 2>&1 ||
+      { echo 'pre-commit: Cargo.lock does not match Cargo.toml; update and stage Cargo.lock.' >&2; status=1; }
+  fi
 fi
 
 exit "$status"
