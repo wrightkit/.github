@@ -33,13 +33,37 @@ class CommandRules(unittest.TestCase):
         for c in ["trash build", "git rm old.rs", "echo rmdir", "cargo fmt --all"]:
             self.allowed(c)
 
-    def test_blocks_hook_bypass_and_unsafe_push(self):
-        for c in ["git commit -n -m x", "git commit --no-verify -m x", "git push --force", "git push origin +topic",
-                  "git push -f origin x", "git push origin main", "git push origin HEAD:master"]:
+    def test_blocks_hook_bypass(self):
+        for c in ["git commit -n -m x", "git commit --no-verify -m x", "git commit -anm x", "git push --no-verify"]:
             self.blocked(c)
 
-    def test_allows_task_branch_push(self):
-        self.allowed("git push -u origin feat/commit-guards")
+    def test_blocks_force_push_to_default_branch(self):
+        for c in ["git push --force origin main", "git push -f origin master", "git push --force-with-lease origin HEAD:main",
+                  "git push origin +main", "git push origin +feat:refs/heads/main", "git push --mirror"]:
+            self.blocked(c)
+
+    def test_blocks_plain_push_to_default_branch(self):
+        for c in ["git push origin main", "git push origin HEAD:master", "git -C . push origin main"]:
+            self.blocked(c)
+
+    def test_allows_force_push_to_other_branches(self):
+        for c in ["git push --force origin next", "git push -f origin next", "git push --force-with-lease -u origin feat/x",
+                  "git push origin +next", "git push origin HEAD:next --force", "git push -u origin feat/commit-guards"]:
+            self.allowed(c)
+
+    def test_does_not_mistake_arguments_for_flags(self):
+        for c in ["git push -n origin next", "git push --dry-run origin next", 'git commit -m "fix -n handling"',
+                  'git commit -m "force push main notes"', "git log --oneline && git status"]:
+            self.allowed(c)
+
+    def test_force_push_follows_the_current_branch(self):
+        with tempfile.TemporaryDirectory(dir=os.getcwd()) as repo:
+            subprocess.run(["git", "init", "-q", "-b", "next", repo], check=True)
+            self.assertEqual(run(claude("Bash", {"command": "git push --force"}, cwd=repo)).returncode, 0)
+            self.assertEqual(run(claude("Bash", {"command": "git push --force origin HEAD"}, cwd=repo)).returncode, 0)
+            subprocess.run(["git", "-C", repo, "checkout", "-q", "-b", "main"], check=True)
+            self.assertEqual(run(claude("Bash", {"command": "git push --force"}, cwd=repo)).returncode, 2)
+            self.assertEqual(run(claude("Bash", {"command": "git push --force origin HEAD"}, cwd=repo)).returncode, 2)
 
     def test_other_agent_schemas(self):
         grok = {"hook_event_name": "PreToolUse", "toolName": "run_terminal_command", "toolInput": {"command": "rm -rf x"}}
