@@ -61,6 +61,12 @@ For a pull-request or secondary job, use the same compatible `shared-key` and se
 
 Pin third-party actions as defined in [CI platform](ci-platform.md). The toolchain version must follow the repository's existing reproducibility policy. A repository may use a checked-in `rust-toolchain.toml`; the workflow still needs to show which components and targets are required.
 
+### The requested toolchain is the one that runs
+
+A committed `rust-toolchain.toml` outranks the installed default, so installing a toolchain does not make jobs use it. The `setup-rust` action therefore exports `RUSTUP_TOOLCHAIN` set to its `toolchain` input for the rest of the job, then asserts that the active toolchain and, for an exact version, `rustc --version` match it. A mismatch fails the job with an error naming both. Jobs that provision Rust through `rust-quality.yml` get this automatically.
+
+A minimum-supported-Rust-version job exists only for a published library, and it must run the declared version through this mechanism. A repository that publishes no crates has no MSRV job and builds with one fixed toolchain.
+
 ## Cargo locking
 
 Commit the root `Cargo.lock` when the repository builds executables, runs CI tooling, or otherwise requires reproducible CI dependencies. Use `--locked` on every dependency-resolving CI command, including `cargo build`, `cargo check`, `cargo clippy`, `cargo test`, `cargo run`, and `cargo metadata`.

@@ -41,6 +41,25 @@ runs:
         components: ${{ inputs.components }}
         targets: ${{ inputs.targets }}
 
+    - name: Pin and assert toolchain
+      shell: bash
+      env:
+        REQUESTED: ${{ inputs.toolchain }}
+      run: |
+        # RUSTUP_TOOLCHAIN outranks a committed rust-toolchain.toml for every later step.
+        echo "RUSTUP_TOOLCHAIN=$REQUESTED" >> "$GITHUB_ENV"
+        export RUSTUP_TOOLCHAIN="$REQUESTED"
+        active="$(rustup show active-toolchain | cut -d' ' -f1)"
+        version="$(rustc --version)"
+        if [[ "$active" != "$REQUESTED"* ]]; then
+          echo "::error::Requested Rust toolchain '$REQUESTED' but '$active' is active ($version)."
+          exit 1
+        fi
+        if [[ "$REQUESTED" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ && "$version" != "rustc $REQUESTED "* ]]; then
+          echo "::error::Requested Rust $REQUESTED but rustc reports '$version'."
+          exit 1
+        fi
+
     - name: Restore Rust cache
       if: inputs.cache-shared-key != ''
       uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
