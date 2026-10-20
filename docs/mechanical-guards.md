@@ -10,7 +10,7 @@ A rule that a script can decide belongs in a script, not in a prompt. Rules that
 | --- | --- | --- | --- |
 | Global `pre-commit` | every commit, any repository on the machine | size limits, `git diff --cached --check` | `~/.git-hooks/pre-commit`; `~/.git-hooks/size-guard.sh` is a symlink to `scripts/guards/size-guard.sh` |
 | Workspace `pre-commit` / `pre-push` | commits and pushes in repositories beside this checkout | scratch files; for Rust, `rustfmt --check`, `Cargo.lock` agreement with `Cargo.toml`, and a clippy compile check on the declared `rust-version` | `scripts/guards/pre-commit`, `scripts/guards/pre-push`; a repository adds its own checks in `.githooks-local/pre-commit` |
-| Agent tool-call hook | before and after agent tool calls | `rm`, hook bypass, force or default-branch push, large reads, oversized writes | `scripts/guards/agent-hook.py` |
+| Agent tool-call hook | before and after agent tool calls | `rm`, hook bypass, any push to `main` or `master` (force-push gets its own message), force-push to other branches is allowed, large reads, oversized writes | `scripts/guards/agent-hook.py` |
 
 The git layer is the only one every agent and human passes through. The tool-call hook acts earlier and costs fewer tokens, but only for agents that support hooks. Register it with `scripts/guards/install-agent-hooks.py`; it covers Claude Code, Codex, and Devin, and Grok reads the Claude registration. Codex asks for hook trust on first start.
 
