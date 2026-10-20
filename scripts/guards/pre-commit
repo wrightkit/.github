@@ -1,0 +1,15 @@
+#!/bin/sh
+# WrightKit-specific pre-commit checks. Generic checks (size, whitespace)
+# live in the global ~/.git-hooks/pre-commit.
+set -eu
+
+status=0
+
+scratch="$(git diff --cached --name-only --diff-filter=AMR |
+  grep -E '(^|/)(\.review-[^/]*\.diff|\.scratch/|\.task-scratch/|\.tmp-[^/]*)|\.log$' || true)"
+if [ -n "$scratch" ]; then
+  printf 'pre-commit: scratch or runtime files staged; unstage them:\n%s\n' "$scratch" >&2
+  status=1
+fi
+
+exit "$status"

@@ -1,0 +1,10 @@
+#!/bin/sh
+# Compile-check on the declared MSRV so newer-toolchain syntax (for example
+# let-chains) fails locally instead of in the CI MSRV job.
+set -eu
+
+[ -f Cargo.toml ] || exit 0
+msrv="$(sed -n 's/^rust-version *= *"\([0-9.]*\)".*/\1/p' Cargo.toml | head -n 1)"
+[ -n "$msrv" ] || exit 0
+
+exec cargo "+$msrv" clippy --workspace --all-targets --all-features -- -D warnings
