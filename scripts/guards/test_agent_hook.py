@@ -44,8 +44,8 @@ class CommandRules(unittest.TestCase):
     def test_other_agent_schemas(self):
         grok = {"hook_event_name": "PreToolUse", "toolName": "run_terminal_command", "toolInput": {"command": "rm -rf x"}}
         self.blocked("", event=grok)
-        codex = claude("shell", {"command": "rm x"})
-        self.blocked("", event=codex)
+        for tool in ("shell", "exec"):
+            self.blocked("", event=claude(tool, {"command": "rm x"}))
 
 
 class ReadAndSize(unittest.TestCase):

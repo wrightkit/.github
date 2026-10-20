@@ -16,7 +16,7 @@ GUARDS = os.path.dirname(os.path.abspath(__file__))
 READ_MAX_BYTES = 40_000  # ~10k tokens at bytes / 4
 SKIP_READ_EXT = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".pdf", ".ipynb"}
 
-BASH = {"bash", "shell", "run_terminal_command", "execute_bash", "local_shell"}
+BASH = {"bash", "shell", "exec", "run_terminal_command", "execute_bash", "local_shell"}
 READ = {"read", "read_file"}
 WRITE = {"edit", "write", "multiedit", "search_replace", "notebookedit"}
 PATCH = {"apply_patch"}

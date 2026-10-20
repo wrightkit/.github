@@ -15,7 +15,7 @@ import sys
 HOME = os.path.expanduser("~")
 SCRIPT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "agent-hook.py")
 MARKER = "agent-hook.py"
-MATCHER = "Bash|Read|Edit|Write|MultiEdit|NotebookEdit|apply_patch|shell|run_terminal_command|read_file|search_replace"
+MATCHER = "Bash|Read|Edit|Write|MultiEdit|NotebookEdit|apply_patch|shell|exec|run_terminal_command|read_file|search_replace"
 # A missing script must not block tool calls: python exits 2 on a missing file.
 COMMAND = f"test -f '{SCRIPT}' || exit 0; exec python3 -I '{SCRIPT}'"
 TARGETS = {
