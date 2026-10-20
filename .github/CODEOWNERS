@@ -1,26 +1,14 @@
-# Human review is required for what binds agents: product intent, role and
-# review rules, CI gates, and the mechanical guards. Everything else is
-# unowned, so agents may review and merge it.
+# Human review is required for what binds every agent: product intent, the
+# review and acceptance rules, CI gates, and the mechanical guards.
+# AGENTS.md changes often, so it stays unowned. Other files stay unowned too,
+# so agents may review and merge them.
 /.github/CODEOWNERS @Teakowa
-
-# Product intent and agent routing
-/AGENTS.md @Teakowa
-/CLAUDE.md @Teakowa
-/docs/goal.md @Teakowa
-/docs/principles/ @Teakowa
-/docs/agent-guidance.md @Teakowa
-
-# Policies that define review, acceptance, compatibility, and release
-/docs/pr-review.md @Teakowa
-/docs/issue-readiness.md @Teakowa
-/docs/verification-and-acceptance.md @Teakowa
-/docs/testing-policy.md @Teakowa
-/docs/compatibility-testing.md @Teakowa
-/docs/robustness-testing.md @Teakowa
-/docs/release-engineering.md @Teakowa
-/docs/mechanical-guards.md @Teakowa
-
-# CI gates and the guards agents run under
 /.github/workflows/ @Teakowa
 /.github/actions/ @Teakowa
+/docs/goal.md @Teakowa
+/docs/principles/ @Teakowa
+/docs/pr-review.md @Teakowa
+/docs/verification-and-acceptance.md @Teakowa
+/docs/compatibility-testing.md @Teakowa
+/docs/release-engineering.md @Teakowa
 /scripts/guards/ @Teakowa
