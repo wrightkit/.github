@@ -25,6 +25,7 @@ Use this map of WrightKit's public repositories to identify the likely owner, th
 | Provider process/data protocol | `language-provider-protocol` |
 | User-facing tooling, orchestration, integration, analysis, and agent surfaces | `wright` |
 | Product website | `wrightkit.dev` |
+| GitHub Action that installs and caches the Wright CLI in consumer workflows (`wrightkit/setup-wright@v1`) | `setup-wright` |
 | Distribution, packaging, and release-artifact ownership | `wright` (`dist/`, `.github/workflows/release.yml`) for build/package/publish; `homebrew-tap` for the published Homebrew formula only |
 | Organization-wide shared policy, CI patterns, and GitHub governance | `wrightkit/.github` |
 | WrightKit-wide reusable agent skills and procedures | `wrightkit/.agents` |
