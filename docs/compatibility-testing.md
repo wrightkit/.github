@@ -31,6 +31,11 @@ accepted expected behavior and record the WrightKit result as a gap,
 unsupported boundary, or divergence as appropriate. Do not rewrite the
 expected result to the current failure merely to make the suite pass.
 
+A pinned oracle moves only through an explicit compatibility decision:
+dependency-update PRs against it, such as Dependabot bumps of the pinned
+OverPy package, are version notifications for manual review and are never
+auto-merged.
+
 ## Preserve real-project regressions and test data carefully
 
 Synthetic unit tests are necessary but are not sufficient for compatibility or
