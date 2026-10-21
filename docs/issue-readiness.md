@@ -24,6 +24,16 @@ Use the following semantic states:
 
 An issue can move back from `ready-for-implementation` when new contract information, architecture drift, current-code reality, or a scope change reopens a design, product, or dependency question. `ready-for-implementation` is not a permanent assertion that the Issue still matches the repository when implementation begins. It settles the contract, not whether a new persistent mechanism is necessary: establish its current requirement and apply the single simplification pass in [`docs/engineering-quality.md`](engineering-quality.md) once proposed or added mechanisms are concrete enough to assess. Do not hide an unresolved decision inside an apparently ready issue; name the decision and route it to its owner first.
 
+## Type, priority and selection order
+
+Every issue has a native GitHub issue type and, once it is planned, one priority label. An agent that picks work from the backlog follows this order, so the backlog needs no other ranking.
+
+- **Type.** `Bug` is an unexpected behavior of shipped or merged work. `Feature` is new capability. `Task` is other planned work such as chores, tests, dependency moves, and decisions. Use the type field, not a label.
+- **Priority.** `p0` main, CI or a release is broken, or users are blocked: drop everything. `p1` the critical path of the current roadmap line, or a bug that hits real workflows. `p2` normal planned work. `p3` chores and cleanup: start them only when nothing of higher priority is ready.
+- **Order.** Pick among issues that are ready (`ready-for-implementation`), unblocked (every native blocked-by issue is closed) and leaves (no open sub-issues). Sort by priority, then `Bug` before `Feature` and `Task`, then oldest first. An issue without a priority label is not scheduled yet.
+- **Structure.** Hierarchy uses native sub-issues; order and dependencies use native blocked-by relationships. A parent issue that only groups sub-issues is never picked.
+- **Escalation.** An agent that needs an owner decision labels the issue `needs-decision` or `needs-design`, states the exact question in a comment, and reports it in its final output. A broken shared gate, such as a failing CI check on every pull request, is `p0` and is reported at once.
+
 ## Minimum implementation contract
 
 An issue marked `ready-for-implementation` should make the following discoverable when applicable:
