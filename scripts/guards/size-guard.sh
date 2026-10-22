@@ -1,7 +1,9 @@
 #!/bin/sh
 # Context-size guard. A file may not exceed its line or token limit
 # (tokens ~ bytes / 4). A file already over a limit may shrink but not grow
-# compared with HEAD, so legacy files do not block unrelated work.
+# compared with HEAD, so legacy files do not block unrelated work. In a merge
+# commit, growth that the merged-in side made relative to the merge base is
+# allowed on top of HEAD, so merging a base branch is not blocked by its files.
 #
 # Usage: size-guard.sh --index              check files staged for commit
 #        size-guard.sh --worktree PATH...   check working-tree files
@@ -35,6 +37,15 @@ measure() {
 
 failures=0
 
+merge_head="$(git rev-parse -q --verify MERGE_HEAD 2>/dev/null || true)"
+merge_base=""
+[ -n "$merge_head" ] && merge_base="$(git merge-base HEAD "$merge_head" 2>/dev/null || true)"
+
+# Prints "lines tokens" of path at rev, or "0 0" when absent.
+measure_at() { # rev path
+  if git cat-file -e "$1:$2" 2>/dev/null; then git show "$1:$2" | measure; else echo "0 0"; fi
+}
+
 check() { # new_path old_path
   new="$1"; old="$2"
   is_checked "$new" || return 0
@@ -56,6 +67,11 @@ check() { # new_path old_path
   if git cat-file -e "HEAD:$old" 2>/dev/null; then
     set -- $(git show "HEAD:$old" | measure)
     old_l="$1"; old_t="$2"
+    if [ -n "$merge_base" ]; then
+      set -- $(measure_at "$merge_head" "$new") $(measure_at "$merge_base" "$new")
+      [ "$1" -gt "$3" ] && old_l=$((old_l + $1 - $3))
+      [ "$2" -gt "$4" ] && old_t=$((old_t + $2 - $4))
+    fi
     # Over a limit is allowed only while not larger than HEAD.
     if { [ "$lines" -le "$max_l" ] || [ "$lines" -le "$old_l" ]; } &&
        { [ "$tokens" -le "$max_t" ] || [ "$tokens" -le "$old_t" ]; }; then
