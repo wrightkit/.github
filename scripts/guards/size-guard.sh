@@ -37,13 +37,24 @@ measure() {
 
 failures=0
 
-merge_head="$(git rev-parse -q --verify MERGE_HEAD 2>/dev/null || true)"
+# An octopus merge leaves MERGE_HEAD holding several lines; the credit
+# below applies to an ordinary two-head merge only, so a multi-line value
+# is ignored and the strict HEAD comparison stands (fails safe).
+merge_head=""
+merge_head_file="$(git rev-parse --git-path MERGE_HEAD 2>/dev/null || true)"
+if [ -f "$merge_head_file" ] && [ "$(wc -l < "$merge_head_file" | tr -d ' ')" = "1" ]; then
+  merge_head="$(git rev-parse -q --verify MERGE_HEAD 2>/dev/null || true)"
+fi
 merge_base=""
 [ -n "$merge_head" ] && merge_base="$(git merge-base HEAD "$merge_head" 2>/dev/null || true)"
 
-# Prints "lines tokens" of path at rev, or "0 0" when absent.
+# Prints "lines tokens" of path at rev, or "0 0" when absent or unreadable.
 measure_at() { # rev path
-  if git cat-file -e "$1:$2" 2>/dev/null; then git show "$1:$2" | measure; else echo "0 0"; fi
+  if git cat-file -e "$1:$2" 2>/dev/null; then
+    git show "$1:$2" 2>/dev/null | measure || echo "0 0"
+  else
+    echo "0 0"
+  fi
 }
 
 check() { # new_path old_path
