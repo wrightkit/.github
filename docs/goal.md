@@ -12,7 +12,7 @@ WrightKit is a tooling-first development toolchain for the Overwatch Workshop. I
 
 1. **Wright is the primary user product.** Developers interact with `wright`; `workshop-rs`, `opy-rs`, and `deltin-rs` are independently usable language and semantic engines. Users should not need to understand the repository layout, intermediate representations, or provider protocols to use the toolchain. Missing semantics belong in their owning implementation, not papered over inside `wright`.
 
-2. **Tooling comes first; compilation supports it.** The primary value of WrightKit lies in diagnostics, static analysis, semantic navigation, validated edits, editor and CI integrations, and cost analysis. Compilation, conversion, and reconstruction exist to enable those workflows across languages, not to turn the project into a transpiler collection. The same tooling backs an offline environment: a structured editor in `wright`, and a headless Workshop runtime simulation in `athena` that checks scripts against recorded client behavior. The editor edits native Workshop projects only; OPY and DEL projects compile to Workshop script first, and the environment shows and simulates that output without editing it back. The semantic core stays buildable for WebAssembly so the same environment can run in the browser.
+2. **Tooling comes first; compilation supports it.** The primary value of WrightKit lies in diagnostics, static analysis, semantic navigation, validated edits, editor and CI integrations, and cost analysis. Compilation, conversion, and reconstruction exist to enable those workflows across languages, not to turn the project into a transpiler collection. The same tooling backs an offline environment: a structured editor, and a headless Workshop runtime simulation in `athena` that checks scripts against recorded client behavior. The editor is an experiment aimed at players who write native Workshop: a web application in its own repository, served at `web.wrightkit.dev`, that runs a WebAssembly build of the `wright` core and makes no stability promise. The editor edits native Workshop projects only; OPY and DEL projects compile to Workshop script first, and the environment shows and simulates that output without editing it back. The semantic core stays buildable for WebAssembly so the same environment can run in the browser.
 
 3. **Real workflows take priority over symmetric feature matrices.** Reliability in actual projects matters more than nominal parity between languages, raw feature counts, or test totals. Different languages can receive different levels of effort depending on real-world adoption. Compatibility suites and corpora exist to expose failures that affect users and tooling, not to check off inventory lists.
 
@@ -59,7 +59,7 @@ These outcomes matter far more than reaching arbitrary targets for supported lan
 WrightKit is not intended to be:
 
 - a generic compiler framework
-- a general-purpose IDE; UI belongs to `wright`, implements no Workshop semantics of its own, and any web editor builds on that same UI
+- a general-purpose IDE; the web editor implements no Workshop semantics of its own and reaches them only through the `wright` core it hosts
 - Workshop project hosting or a GitHub replacement
 - a generic AI coding-agent framework
 - a game-world simulator; the `athena` repository models Workshop execution (scheduling, rule triggering, value evaluation), and physics, hit detection, and hero or ability simulation stay out of scope
