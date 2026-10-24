@@ -48,7 +48,7 @@ jobs:
     if: github.repository_owner == 'wrightkit'
     needs: package-preflight
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 100
     permissions:
       checks: read
     steps:
@@ -60,7 +60,7 @@ jobs:
           set -euo pipefail
           repo="${{ github.repository }}"
           sha="${{ github.sha }}"
-          deadline=$(( SECONDS + 2400 ))
+          deadline=$(( SECONDS + 5400 ))
           pending_file=$(mktemp)
           trap 'rm -f "$pending_file"' EXIT
           if [ "$REQUIRED_CHECK_RUNS" != "${REQUIRED_CHECK_RUNS//$'\n'/,}" ]; then
@@ -90,7 +90,7 @@ jobs:
             keep=""
             while IFS= read -r name; do
               [ -z "$name" ] && continue
-              if ! out=$(gh api "repos/$repo/commits/$sha/check-runs" -f "check_name=$name" \
+              if ! out=$(gh api --method GET "repos/$repo/commits/$sha/check-runs" -f "check_name=$name" \
                 --jq '(.check_runs | sort_by(.id) | last) // {status: "missing", conclusion: "", html_url: ""} | "\(.status) \(.conclusion // "-") \(.html_url // "-")"' 2>&1); then
                 echo "check-runs API call failed for '$name': $out" >&2
                 exit 1
