@@ -54,6 +54,26 @@ provides the second pass, not an ad-hoc verifier agent.
 When a new development failure escapes existing tests, add a regression in the
 owning feature's established test structure where practical.
 
+## What a passing check proves
+
+A green run validates only the cases and surfaces it actually exercised.
+
+- **A tolerated residual validates only what was checked.** Accepting one
+  difference, skipping one case, or tolerating one residual does not validate
+  unchecked siblings or descendants of that case. A review or approval that
+  relies on a partial check names the uncovered remainder rather than treating
+  the green run as complete.
+- **A source-dependent result is valid only in matching context.** A
+  before/after, baseline, snapshot, or fixture comparison counts only when
+  document, project, revision, and configuration match the compared run and
+  the compared state is valid. After a failed refresh, reload, or
+  regeneration, re-establish that validity before reading the comparison.
+- **A reference-backed verdict requires an executed comparison.** Recording
+  reference metadata — version, path, checksum, or an expected block — is not
+  evidence. The case must actually run, and the expected data must influence
+  the result: a plausible wrong implementation under that expected data must
+  be able to fail the check.
+
 ## Pull request expectations
 
 A PR that changes observable behavior should make the following reviewable when

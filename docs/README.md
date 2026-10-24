@@ -10,6 +10,7 @@ contract relevant to the task.
 
 ## Engineering policy
 
+- [Coding standards (reviewer entry point)](../CODING_STANDARDS.md) — routes reviewers to the owning policy and lists the recurring judgment criteria.
 - [Documentation management](documentation.md) — documentation layout, progressive disclosure, synchronization, and drift audits.
 - [Engineering quality](engineering-quality.md) — implementation quality, simplicity, locality, readability, and durable-vs-dynamic knowledge.
 - [Issue readiness and implementation preflight](issue-readiness.md) — task readiness, verifiable outcomes, public-boundary continuity, and the issue closing boundary.

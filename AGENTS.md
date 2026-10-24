@@ -44,6 +44,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 
 | Task concern | Load |
 | --- | --- |
+| Reviewing a PR, or looking up which policy owns a coding-standards judgment | [`CODING_STANDARDS.md`](CODING_STANDARDS.md) |
 | Starting a multi-step task, or naming the engineering judgment behind a decision | [`docs/principles/README.md`](docs/principles/README.md) |
 | Writing or revising durable agent guidance, AGENTS or CLAUDE content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
 | Durable documentation layout, progressive disclosure, documentation synchronization, or drift audits | [`docs/documentation.md`](docs/documentation.md) |
