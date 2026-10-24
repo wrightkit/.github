@@ -67,6 +67,8 @@ Publication for a release revision must not run ahead of the authoritative CI re
 
 A required-checks gate inside the release workflow is the encoded form; a Release-PR merge that already requires green CI is the implicit form. Prefer the encoded form where the publication mechanism permits it, and record which form a repository uses in its release documentation.
 
+The shared `release-plz-crates.yml` carries the encoded form: callers declare `required-check-runs`, a comma-separated list of check-run names that must conclude `success` on the release revision before crates publication and tag creation run. The gate polls the check-runs API and fails on any non-success conclusion rather than publishing ahead of CI. Callers must grant `checks: read` on the reusable-workflow call for the gate to read their check runs; the release repository itself needs no extra credential.
+
 ### Generated workflows have exclusive ownership
 
 If a tool generates a workflow and verifies that generated file against its configuration, choose one ownership model:
