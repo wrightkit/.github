@@ -18,7 +18,10 @@ structural convergence with the established upstream compiler, as defined in
 canonical Workshop programs parsed by `workshop-rs`; never compare text diffs,
 line counts, or text-pattern counts. Formatting, whitespace, and comments are
 not criteria. A structural difference fails unless it is a recorded, approved
-exception in the owning repository.
+exception in the owning repository. An exception binds the specific approved
+behavior and the authority that approved it — not a path, file name, or broad
+failure category; a new difference under an old path-shaped exception is not
+covered.
 
 For raw Workshop, locale, and interoperability testing without an upstream
 compiler oracle, observable semantic compatibility remains the correctness

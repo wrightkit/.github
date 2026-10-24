@@ -86,6 +86,8 @@ Every capability under the previous accepted contract must fall into one of thre
 
 Tests or checks exercising only retired, private, hidden, or compatibility-only paths are insufficient to prove that a replacement boundary is complete. Passing legacy or compatibility suites does not compensate for missing capabilities on the claimed canonical contract.
 
+The surfaces a boundary can carry include, where applicable: public construction, mutation, and serialization/deserialization paths, where mutation and deserialization must uphold the invariants construction establishes; diagnostic codes, severities, and ordering; metrics and the meaning of their fields; source mappings back to inputs; and refusal or typed-error behavior. A migration that verifies only the success path while silently changing a diagnostic code, a metric's meaning, or a refusal classification has not preserved the contract.
+
 Why: migrating a boundary can leave legacy or compatibility adapters green while the new canonical entry point silently drops existing capabilities. Contract continuity ensures that replacements are verified at the surface where future consumers and tools will actually interact with the capability.
 
 ## Engineer preflight

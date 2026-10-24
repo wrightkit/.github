@@ -126,6 +126,8 @@ A change is correct only if the operation it belongs to is correct, from user in
 - **Reach every sibling.** Search for the same pattern: other builtins, languages, subcommands, branches of the same operation, and every caller of a changed predicate. Fix the siblings in the same change, or name in an Issue why one is not.
 - **Re-derive what is built on the change.** When a table, ordering, limit, name mapping, or timing changes, find every caller, snapshot, fixture, and expectation that assumed the old meaning, and run them.
 - **Cover the edges the change touches.** Numeric boundaries, empty and missing input, Unicode and locale text, path separators on each shipped platform, ordering, and concurrency or stale state. Pick by risk.
+- **An optimization preserves effective behavior.** A transform, fold, or reordering keeps the effective source scope, evaluation count and order, and side effects of its input; a program-final optimization state must not change earlier scoped behavior.
+- **A measurement keeps its meaning.** A before/after metric comparison is valid only while the field measures the same quantity; repurposing an unchanged field name for a different measure invalidates the comparison.
 - **A preview writes nothing.** A dry run, check, or plan has no filesystem, network, or state side effects.
 
 Why: a fix scoped to the reported case leaves the same defect in its neighbors, and a changed meaning leaves stale assumptions that fail later, far from the change.
