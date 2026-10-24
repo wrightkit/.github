@@ -63,6 +63,10 @@ jobs:
           deadline=$(( SECONDS + 2400 ))
           pending_file=$(mktemp)
           trap 'rm -f "$pending_file"' EXIT
+          if [ "$REQUIRED_CHECK_RUNS" != "${REQUIRED_CHECK_RUNS//$'\n'/,}" ]; then
+            echo "required-check-runs must be a single comma-separated line" >&2
+            exit 1
+          fi
           IFS=',' read -r -a names <<< "$REQUIRED_CHECK_RUNS"
           count=0
           for raw in "${names[@]}"; do
