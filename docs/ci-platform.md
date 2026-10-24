@@ -24,7 +24,8 @@ change reaches every repository without a pin bump; the workflow's inputs and
 outputs are the compatibility surface, and a breaking change updates its callers
 in the same rollout. Every third-party action is pinned to a full commit SHA,
 because it runs with the caller's credentials and a moved tag or branch would
-change what executes without a review.
+change what executes without a review. GitHub-owned `actions/*` actions count
+as third-party for this mandate: their tags move the same way.
 
 Callers pass only declared inputs and explicitly named secrets; they must not use
 arbitrary command hooks or `secrets: inherit` for the crate release workflow.
