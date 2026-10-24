@@ -26,6 +26,7 @@ contract relevant to the task.
 - [Rust CI](rust-ci.md) — Rust job composition, caching, toolchains, and runtime-bound gates.
 - [Rust build artifacts](rust-build-artifacts.md) — local/worktree build storage.
 - [Release engineering](release-engineering.md) — tagging, packaging, and publication.
+- [CI/release reuse audit, October 2026](ci-release-audit-2026-10.md) — point-in-time evidence and follow-up routing for `wrightkit/.github#49`; contracts remain in the documents above.
 
 ## Agents and cloud execution
 
