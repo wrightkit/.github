@@ -17,7 +17,7 @@ on:
         description: Optional crates.io token passed by callers without a release environment secret
         required: false
       CARGO_REGISTRY_TOKEN:
-        description: Crates.io token resolved from the release environment when the caller does not pass one
+        description: Crates.io token resolved from the release environment, preferred over cargo-registry-token
         required: false
 
 jobs:
