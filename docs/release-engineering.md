@@ -61,6 +61,12 @@ Do not introduce a draft/published state machine unless the repository actually 
 
 Downstream distribution channels such as Homebrew, npm, Scoop, WinGet, or other package registries should not point users at assets that are not yet publicly available.
 
+### Gate publication on the release revision's verified CI result
+
+Publication for a release revision must not run ahead of the authoritative CI result for that revision. Crates.io publication, tag-triggered binary distribution, R2 object publication, and mutable pointer updates all follow the same rule.
+
+A required-checks gate inside the release workflow is the encoded form; a Release-PR merge that already requires green CI is the implicit form. Prefer the encoded form where the publication mechanism permits it, and record which form a repository uses in its release documentation.
+
 ### Generated workflows have exclusive ownership
 
 If a tool generates a workflow and verifies that generated file against its configuration, choose one ownership model:
@@ -98,6 +104,8 @@ Publication jobs must not race each other.
 Use a stable concurrency group for release publication and set `cancel-in-progress: false` unless the repository has a specific safe cancellation contract. A newer commit arriving on `main` must not cancel a crates.io publication or a tag-triggered release already in progress.
 
 Do not allow duplicate jobs for the same canonical tag.
+
+A mutable `latest` pointer — an R2 `latest/version` object or GitHub's "latest" release flag — must never regress. Serialize the promotion step per repository or guard the write by version order, so an older release finishing later cannot overwrite a newer one. Per-tag concurrency groups alone do not provide this across different tags.
 
 ## Validation standard
 

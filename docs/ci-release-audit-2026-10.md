@@ -3,20 +3,23 @@
 Point-in-time audit of CI work reuse and release publication ordering across
 WrightKit's actively developed Rust repositories, per `wrightkit/.github#49`.
 
-Evidence was recorded from repository state on 2026-10-25:
+Evidence was recorded on 2026-10-25 from each repository's `main` HEAD:
 
-- `wright` — `.github/workflows/ci.yml` (724 lines), `release.yml` (645),
-  `release-please.yml` (53); `release-please-config.json`; workspace
-  `rust-version 1.97.1`, `rust-toolchain.toml channel 1.97.1`, version `0.38.1`.
-- `workshop-rs` — `ci.yml` (170), `release.yml` (124), `release-plz.yml` (18);
-  `release-plz.toml`; `rust-version 1.88.0`, version `1.25.3`.
-- `opy-rs` — `ci.yml` (157), `release-plz.yml` (308); `release-plz.toml`;
-  `rust-toolchain.toml channel stable`, `rust-version 1.88.0`, version `0.3.25`.
-- `athena` — `ci.yml` (41), `release-please.yml` (57);
+- `wright` @ `5449213d` — `.github/workflows/ci.yml` (724 lines),
+  `release.yml` (645), `release-please.yml` (53); `release-please-config.json`;
+  workspace `rust-version 1.97.1`, `rust-toolchain.toml channel 1.97.1`,
+  version `0.38.1`.
+- `workshop-rs` @ `660b365` — `ci.yml` (170), `release.yml` (124),
+  `release-plz.yml` (18); `release-plz.toml`; `rust-version 1.88.0`, version
+  `1.25.3`.
+- `opy-rs` @ `67b7815` — `ci.yml` (157), `release-plz.yml` (308);
+  `release-plz.toml`; `rust-toolchain.toml channel stable`,
+  `rust-version 1.88.0`, version `0.3.25`.
+- `athena` @ `40d450d` — `ci.yml` (41), `release-please.yml` (57);
   `release-please-config.json` publishing `athena-sim` `0.2.0` as tag + draft
   GitHub Release only (`publish = false` on all crates).
-- `wrightkit/.github` — shared `rust-quality.yml`, `release-plz-crates.yml`,
-  `setup-rust` composite action.
+- `wrightkit/.github` @ `af134bf` — shared `rust-quality.yml`,
+  `release-plz-crates.yml`, `setup-rust` composite action.
 
 `deltin-rs` is excluded by owner direction (2026-10-20 comment on
 `wrightkit/.github#49`: paused until it resumes). `athena` is included per the
@@ -73,19 +76,18 @@ interchangeable merely because they share a commit.
 
 ### Release publication ordering
 
-`release-engineering.md` already requires: canonical tag triggers binary
+`release-engineering.md` requires: canonical tag triggers binary
 distribution, one owner per external transition, GitHub Release created once
-after the complete artifact set, downstream channels only after public assets.
+after the complete artifact set, downstream channels only after public
+assets. This audit adds two rules there:
 
-This audit adds two recorded expectations:
-
-1. Publication for a release revision must not run ahead of the authoritative
-   CI result for that revision. The Release-PR merge gate (branch protection +
-   required checks) is the current structural enforcement; it is implicit, not
-   encoded in the workflows, and is flagged where verification was impossible.
-2. A mutable `latest` pointer (R2 or GitHub "latest") must never regress:
-   promotion is serialized per repository or guarded so an older version cannot
-   overwrite a newer one when runs interleave.
+- *Gate publication on the release revision's verified CI result* —
+  publication must not run ahead of the revision's authoritative CI result;
+  an encoded required-checks gate is preferred over the implicit Release-PR
+  merge gate.
+- *`latest` pointers never regress* — mutable `latest` promotion is
+  serialized per repository or version-guarded; per-tag concurrency groups
+  alone do not provide this.
 
 ## Findings by repository
 
@@ -126,9 +128,10 @@ Duplicated or reusable work in `ci.yml`:
 - `wright-cli-build` (ci.yml:110–145) is the designated producer: debug,
   default features, `cargo build --locked -p wright-cli`, uploads
   `wright-cli-linux-stable-debug`. Consumers `workshop-integration`,
-  `opy-integration` (partially), `cli-behavior`, `metrics-shard`,
-  `metrics-drift`, `metrics-latency` download it — the producer/consumer
-  contract is mostly realized.
+  `opy-integration` (partially), `cli-behavior`, `metrics-shard`, and
+  `metrics-latency` download it — the producer/consumer contract is mostly
+  realized. (`metrics-drift` consumes only `metrics-shard-*` JSON artifacts,
+  not the CLI binary.)
 - `benchmark` (ci.yml:353–382) runs `cargo build --locked -p wright-bench`
   with the same build identity (ubuntu, 1.97.1, dev profile, default features)
   but does not consume the producer. One producer building
@@ -149,18 +152,22 @@ Duplicated or reusable work in `ci.yml`:
 
 Duplicated or reusable work in `release.yml`:
 
-- `build` (x4 targets, ci.yml:153–248), `core-package` (250–306), and
-  `release-metrics` (406–439) each compile `wright-cli` in release mode.
-  `release-metrics` builds `--release -p wright-cli` with no `--target` and no
-  `ui` feature — a third, genuinely distinct identity (linux host vs 4 targets;
-  no ui feature vs ui). It could consume the already-built linux archive's
-  binary only if identities matched; they do not, so the rebuild is justified —
-  but the job is a candidate for co-location inside `build`'s linux leg.
-- Cache steps exist on release/tag jobs with families that are never written
-  (`release-<target>-stable-release`, `release-wasm-core`,
-  `release-metrics-stable`; release.yml:195–202, 272–279, 420–424) —
-  permanently cold restores, and contrary to "omit the cache step entirely"
-  for release jobs (`rust-ci.md:20,92`).
+- `build` (x4 targets, release.yml:153–248) compiles `wright-cli`/`wright-lsp`
+  per target; `core-package` (250–306) builds `wright-wasm` for
+  `wasm32-unknown-unknown`; `release-metrics` (406–439) builds
+  `--release -p wright-cli` with no `--target` and no `ui` feature — a third,
+  genuinely distinct identity from `build`'s linux leg (no ui feature vs ui).
+  The rebuild is justified by identity — but `release-metrics` is a candidate
+  for co-location inside `build`'s linux leg since it shares the toolchain and
+  profile.
+- Cache steps exist on release/tag jobs contrary to "omit the cache step
+  entirely" (`rust-ci.md:20,92`). Families `release-<target>-stable-release`
+  and `release-wasm-core` are written by every **nightly** `workflow_run` and
+  main-branch dispatch (`cache-save: github.ref == 'refs/heads/main'`,
+  release.yml:195–202, 272–279) but never on the tag-push releases that are
+  their stated purpose — the cache accelerates a run class that does not need
+  it, while the release-class runs always restore cold. `release-metrics`'s
+  `release-metrics-stable` family (420–424) is never written at all.
 
 Release ordering (`release.yml`):
 
@@ -272,7 +279,8 @@ Release ordering (`release-plz.yml`):
   only `opy-rs` and `opy-cli` as publishable. `cargo publish --workspace
   --dry-run` in the shared preflight will attempt it.
 - `aarch64-apple-darwin` builds on `macos-14` (release-plz.yml:58) while
-  wright/workshop-rs use `macos-15` — matrix drift, not a contract issue.
+  wright uses `macos-15` and workshop-rs uses `macos-latest`/`macos-15-intel`
+  — matrix drift, not a contract issue.
 - No `timeout-minutes` on any repo-owned job in `ci.yml` or `release-plz.yml`.
 
 ### `athena`
@@ -312,11 +320,12 @@ Release ordering (`release-plz.yml`):
   workspace intermediate state beats rebuilding workspaces that finish
   compile in tens of seconds on cache hits. A measurement follow-up is
   unnecessary unless a job's own timing changes that calculus.
-- **Same-revision CI gating for publication:** recorded as the contract.
-  Today it is enforced only implicitly through Release-PR merge protection;
-  the reusable `release-plz-crates.yml` is the right place to encode it for
-  crate-publishers, and `wright/release.yml` needs its own gate because it
-  predates that workflow.
+- **Same-revision CI gating for publication:** now a written rule in
+  `release-engineering.md`. Today it is enforced only implicitly through
+  Release-PR merge protection; the reusable `release-plz-crates.yml` is the
+  right place to encode it for crate-publishers (CI-P2), and
+  `wright/release.yml` needs its own gate because it predates that workflow
+  (W-P2).
 - **Release ordering gaps (latest regression, unprotected publication,
   timeouts, dead caches):** repository-local follow-ups; none weakens gates.
 
@@ -348,10 +357,12 @@ filed):
     `environment: release` on `publish-r2`/`advance-latest`/`publish-tap`;
     monotonic guard or serialized promotion for `latest`.
   - W-P3 → `wrightkit/wright#986`: hygiene — remove `cli-behavior`'s unused
-    Rust setup and the dead `linux-wasm-stable-release`/`release-*` cache
-    families; pin `release-please.yml` lock sync to 1.97.1; record the real
-    toolchain in `package-release.py`; tighten the `release-assets` glob;
-    collapse the dead `opy`/`lpp`/`cli` filter aliases.
+    Rust setup; drop the `linux-wasm-stable-release` and `release-*` cache
+    steps/families (release jobs must omit caching; the families only ever
+    populate on nightly/dispatch runs, never on tag releases); pin
+    `release-please.yml` lock sync to 1.97.1; record the real toolchain in
+    `package-release.py`; tighten the `release-assets` glob; collapse the
+    dead `opy`/`lpp`/`cli` filter aliases.
 - `wrightkit/workshop-rs`
   - S-P1 → `wrightkit/workshop-rs#574`: decide and document whether
     `real-project-scenarios` deliberately re-executes tests covered by
