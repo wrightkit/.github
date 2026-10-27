@@ -61,6 +61,7 @@ Load policy documents only when their concern is relevant. Do not preload all of
 | Rust build artifact growth, dev/test profile configuration, ephemeral worktree lifecycle, and local storage management | [`docs/rust-build-artifacts.md`](docs/rust-build-artifacts.md) |
 | Mechanical guards: git hooks, the agent tool-call hook, file size limits, and registering them in agents | [`docs/mechanical-guards.md`](docs/mechanical-guards.md) |
 | Release engineering, tagging, and artifact publication | [`docs/release-engineering.md`](docs/release-engineering.md) |
+| Orchestrating Issues through implementer and reviewer sessions to merge | `.agents/skills/orchestrate-issues/SKILL.md` |
 | Entropy reclamation workflow | `.agents/skills/reclaim-entropy/SKILL.md` |
 | Rust architecture/API/concurrency/responsibility review | `.agents/skills/rust-engineering-review/SKILL.md` |
 | Test necessity/stability/duplication review | `.agents/skills/test-design-review/SKILL.md` |
