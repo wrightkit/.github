@@ -20,6 +20,7 @@ contract relevant to the task.
   - [Robustness testing](robustness-testing.md) — adversarial input and fuzzing.
   - [Verification and acceptance](verification-and-acceptance.md) — verification boundaries, merge-time CI acceptance, independent verification, and PR expectations.
 - [Entropy policy](entropy-policy.md) — removal, consolidation, and post-wave cleanup.
+- [Lessons](LESSONS.md) — short queue of recurring failure classes from merged work, each with its prevention action.
 
 ## CI and release
 
