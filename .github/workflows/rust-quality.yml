@@ -97,7 +97,7 @@ jobs:
           targets: ${{ inputs.targets }}
           cache-shared-key: ${{ inputs.cache-shared-key }}
           cache-targets: ${{ inputs.cache-targets }}
-          cache-save: ${{ github.ref == 'refs/heads/main' }}
+          cache-save: true # TEMP: seed in the PR to measure
           workspaces: ${{ inputs.working-directory }} -> target
 
       - name: Check formatting
