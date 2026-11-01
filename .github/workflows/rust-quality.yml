@@ -68,10 +68,16 @@ on:
         required: false
         type: boolean
         default: true
+      skip:
+        description: Skip the job, for a change that touches no code; a skipped job still reports its check name as passing
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   rust-quality:
     name: Quality
+    if: ${{ !inputs.skip }}
     runs-on: ${{ inputs.runs-on }}
     timeout-minutes: ${{ inputs.timeout-minutes }}
     permissions:

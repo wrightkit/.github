@@ -11,6 +11,10 @@ on:
     paths:
       - ".github/workflows/**"
 
+concurrency:
+  group: actionlint-${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   actionlint:
     name: Lint workflows
@@ -18,9 +22,28 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: read
+    env:
+      # Bump both values together; the checksum is in the release's
+      # actionlint_<version>_checksums.txt.
+      ACTIONLINT_VERSION: 1.7.12
+      ACTIONLINT_SHA256: 8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8
     steps:
-      - name: Check out repository
+      - name: Check out workflows
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: .github
+
+      # The prebuilt release binary replaces the rhysd/actionlint Docker
+      # action, which rebuilt its image on every run. The runner image
+      # already provides shellcheck, which actionlint uses for `run:` scripts.
+      - name: Install actionlint
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/actionlint.tar.gz"
+          curl -fsSL --retry 3 -o "$archive" \
+            "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz"
+          echo "${ACTIONLINT_SHA256}  ${archive}" | sha256sum --check --strict
+          tar -xzf "$archive" -C "$RUNNER_TEMP" actionlint
 
       - name: Run actionlint
-        uses: rhysd/actionlint@914e7df21a07ef503a81201c76d2b11c789d3fca # v1.7.12
+        run: '"$RUNNER_TEMP/actionlint" -color'
