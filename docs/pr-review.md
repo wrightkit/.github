@@ -21,6 +21,7 @@ Review, as applicable:
 - necessity of newly added persistent mechanisms under the ablation rule in [`docs/engineering-quality.md`](engineering-quality.md);
 - newly added or materially affected comments and file/module headers, against [Prefer code over commentary](engineering-quality.md#prefer-code-over-commentary);
 - whether the change holds on the whole path, reaches the siblings of the defect, and re-derives what depends on it, per [Hold the change on the whole path](engineering-quality.md#hold-the-change-on-the-whole-path);
+- each run the PR body claims, which stays unverified until it reproduces on the head under review, per [Pull request expectations](verification-and-acceptance.md#pull-request-expectations);
 - changes outside the approved scope that affect correctness or maintenance obligations.
 
 Architecture is a compliance boundary during review. Do not propose an alternative architecture when the PR follows the current approved one. If the Issue, documented contract, and current implementation disagree materially, identify the decision mismatch and route it to the appropriate owner rather than asking the Engineer to redesign it inside the PR.
