@@ -88,6 +88,10 @@ applicable:
 - the closing or non-closing Issue reference matching the scope the PR delivers, per [Closing an issue](issue-readiness.md#closing-an-issue);
 - the required local, CI, runtime, or workflow validation.
 
+Every run that a PR body claims was executed on the PR's current head. A push that changes behavior after the run makes the claim stale. Re-run the check on the new head, or remove the claim.
+
+Why: a reviewer reads the claim as evidence about the head under review, and a run on an older head says nothing about the code now in the PR.
+
 A failing check on the default branch is a defect to fix at its cause, or to
 track in an Issue that names the cause, before more work ships on top of it.
 "It also fails on `main`" is not a baseline, and neither is "it passes alone".
