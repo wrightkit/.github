@@ -8,8 +8,15 @@ import unittest
 HOOK = os.path.join(os.path.dirname(os.path.abspath(__file__)), "agent-hook.py")
 
 
-def run(event):
-    return subprocess.run([sys.executable, "-I", HOOK], input=json.dumps(event), capture_output=True, text=True)
+def run(event, gh_merged=False):
+    """Run the hook with a stub `gh` so no test reaches GitHub."""
+    with tempfile.TemporaryDirectory() as stub:
+        gh = os.path.join(stub, "gh")
+        with open(gh, "w") as f:
+            f.write('#!/bin/sh\ncase "$*" in *"--state merged"*) [ "$MERGED" = 1 ] && echo 7;; *"--state open"*) echo 0;; esac\n')
+        os.chmod(gh, 0o755)
+        env = {**os.environ, "PATH": stub + os.pathsep + os.environ["PATH"], "MERGED": "1" if gh_merged else "0"}
+        return subprocess.run([sys.executable, "-I", HOOK], input=json.dumps(event), capture_output=True, text=True, env=env)
 
 
 def claude(tool, tool_input, event="PreToolUse", cwd="."):
@@ -51,6 +58,13 @@ class CommandRules(unittest.TestCase):
                   "git push origin +next", "git push origin HEAD:next --force", "git push -u origin feat/commit-guards"]:
             self.allowed(c)
 
+    def test_blocks_push_of_a_merged_pr_branch(self):
+        event = claude("Bash", {"command": "git push -u origin feat/x"})
+        result = run(event, gh_merged=True)
+        self.assertEqual(result.returncode, 2)
+        self.assertIn("already merged", result.stderr)
+        self.assertEqual(run(event).returncode, 0)
+
     def test_does_not_mistake_arguments_for_flags(self):
         for c in ["git push -n origin next", "git push --dry-run origin next", 'git commit -m "fix -n handling"',
                   'git commit -m "force push main notes"', "git log --oneline && git status"]:
@@ -70,6 +84,29 @@ class CommandRules(unittest.TestCase):
         self.blocked("", event=grok)
         for tool in ("shell", "exec"):
             self.blocked("", event=claude(tool, {"command": "rm x"}))
+
+
+class MergedBranchGuard(unittest.TestCase):
+    GUARD = os.path.join(os.path.dirname(HOOK), "merged-branch-guard.sh")
+
+    def guard(self, open_prs, merged_pr, branch="feat/x", gh=True):
+        with tempfile.TemporaryDirectory() as stub:
+            if gh:
+                path = os.path.join(stub, "gh")
+                with open(path, "w") as f:
+                    f.write(f'#!/bin/sh\ncase "$*" in *"--state merged"*) echo "{merged_pr}";; *"--state open"*) echo {open_prs};; esac\n')
+                os.chmod(path, 0o755)
+            env = {**os.environ, "PATH": stub + os.pathsep + "/usr/bin:/bin"}
+            return subprocess.run([self.GUARD, branch], capture_output=True, text=True, env=env).returncode
+
+    def test_blocks_only_merged_branch_without_open_pr(self):
+        self.assertEqual(self.guard(0, 7), 1)
+        self.assertEqual(self.guard(1, 7), 0)
+        self.assertEqual(self.guard(0, ""), 0)
+        self.assertEqual(self.guard(0, 7, branch="main"), 0)
+
+    def test_fails_open_without_gh(self):
+        self.assertEqual(self.guard(0, 7, gh=False), 0)
 
 
 class ReadAndSize(unittest.TestCase):
