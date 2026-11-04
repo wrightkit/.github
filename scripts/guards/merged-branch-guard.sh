@@ -1,14 +1,15 @@
 #!/bin/sh
 # Merged-branch guard. Refuse to push a branch whose pull request is already
 # merged: such commits reach neither the PR nor the default branch.
-# A branch with an open pull request passes. Fails open when `gh` is missing
-# or cannot reach GitHub, so offline work is not blocked.
+# A branch with an open pull request passes, and so do main, master, and next:
+# next is long-lived and merges into main repeatedly. Fails open when `gh` is
+# missing or cannot reach GitHub, so offline work is not blocked.
 #
 # Usage: merged-branch-guard.sh [BRANCH]   (default: the current branch)
 set -u
 
 branch="${1:-$(git branch --show-current 2>/dev/null)}"
-case "$branch" in '' | main | master) exit 0 ;; esac
+case "$branch" in '' | main | master | next) exit 0 ;; esac
 command -v gh >/dev/null 2>&1 || exit 0
 
 open="$(gh pr list --head "$branch" --state open --json number --jq length 2>/dev/null)" || exit 0
