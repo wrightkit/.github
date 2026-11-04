@@ -149,6 +149,12 @@ def check_git(command, cwd):
                 deny(f"blocked: Do not force-push {', '.join(sorted(on_default))}.")
             if on_default or "--mirror" in args:
                 deny("blocked: Do not push to the default branch. Push a task branch and open a PR.")
+            for branch in push_targets(args, cwd, directory):
+                where = os.path.join(cwd, directory) if directory else cwd
+                guard = subprocess.run([os.path.join(GUARDS, "merged-branch-guard.sh"), branch or ""],
+                                       cwd=where, capture_output=True, text=True)
+                if guard.returncode != 0:
+                    deny(f"blocked: {guard.stderr.strip()}")
 
 
 def check_command(command, cwd="."):
