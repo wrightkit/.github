@@ -103,7 +103,8 @@ class MergedBranchGuard(unittest.TestCase):
         self.assertEqual(self.guard(0, 7), 1)
         self.assertEqual(self.guard(1, 7), 0)
         self.assertEqual(self.guard(0, ""), 0)
-        self.assertEqual(self.guard(0, 7, branch="main"), 0)
+        for long_lived in ("main", "master", "next"):
+            self.assertEqual(self.guard(0, 7, branch=long_lived), 0)
 
     def test_fails_open_without_gh(self):
         self.assertEqual(self.guard(0, 7, gh=False), 0)
