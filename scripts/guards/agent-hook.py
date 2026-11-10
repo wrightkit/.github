@@ -26,12 +26,8 @@ GIT_VALUE_OPTIONS = {"-C", "-c", "--git-dir", "--work-tree", "--namespace"}
 PUSH_VALUE_OPTIONS = {"--repo", "-o", "--push-option", "--receive-pack", "--exec"}
 COMMIT_VALUE_OPTIONS = {"-m", "--message", "-F", "--file", "-C", "-c", "--author", "--date"}
 
-CMD_START = r"(?:^|[;&|(]\s*|\bsudo\s+|\bxargs\s+|\bexec\s+)"
-COMMAND_RULES = [
-    (re.compile(CMD_START + r"rm\b"), "Never use `rm`. Move files to the Trash with `trash <path>`."),
-    (re.compile(CMD_START + r"unlink\b|\bfind\b[^;&|]*-delete\b|\bgit\s+clean\b"),
-     "Permanent deletion is not allowed. Use `trash <path>`."),
-]
+WRAPPERS = {"sudo", "xargs", "exec", "env", "command", "nohup", "time"}
+HEREDOC = re.compile(r"<<-?\s*(['\"]?)(\w+)\1[^\n]*\n.*?^\s*\2$", re.M | re.S)
 
 
 def pick(d, *keys):
@@ -63,23 +59,47 @@ def repo_relative(path, cwd):
     return root, os.path.relpath(os.path.realpath(path), os.path.realpath(root))
 
 
-def git_commands(command):
-    """Yield (subcommand, args, directory) for each git call in a shell command."""
-    lexer = shlex.shlex(command, posix=True, punctuation_chars=True)
+def shell_segments(command):
+    """Split a shell command into argv lists, one per simple command.
+
+    Heredoc bodies and quoted strings are data, so only real command words
+    reach the rules below.
+    """
+    lexer = shlex.shlex(HEREDOC.sub("", command), posix=True, punctuation_chars=";&|()\n")
     lexer.whitespace_split = True
+    lexer.whitespace = " \t\r"
     try:
         tokens = list(lexer)
     except ValueError:
-        return
+        return []
     segments, current = [], []
     for token in tokens:
-        if set(token) <= set(";&|()"):
+        if set(token) <= set(";&|()\n"):
             segments.append(current)
             current = []
         else:
             current.append(token)
     segments.append(current)
-    for seg in segments:
+    return segments
+
+
+def deletion_message(seg):
+    i = 0
+    while i < len(seg) and (seg[i] in WRAPPERS or re.fullmatch(r"\w+=.*", seg[i])):
+        i += 1
+    if i >= len(seg):
+        return None
+    word, rest = os.path.basename(seg[i]), seg[i + 1:]
+    if word == "rm":
+        return "Never use `rm`. Move files to the Trash with `trash <path>`."
+    if word == "unlink" or (word == "find" and "-delete" in rest) or (word == "git" and "clean" in rest):
+        return "Permanent deletion is not allowed. Use `trash <path>`."
+    return None
+
+
+def git_commands(command):
+    """Yield (subcommand, args, directory) for each git call in a shell command."""
+    for seg in shell_segments(command):
         if "git" not in seg:
             continue
         i, directory = seg.index("git") + 1, None
@@ -158,8 +178,9 @@ def check_git(command, cwd):
 
 
 def check_command(command, cwd="."):
-    for pattern, message in COMMAND_RULES:
-        if pattern.search(command):
+    for seg in shell_segments(command):
+        message = deletion_message(seg)
+        if message:
             deny(f"blocked: {message}")
     check_git(command, cwd)
 
