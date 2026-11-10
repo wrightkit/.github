@@ -40,6 +40,15 @@ class CommandRules(unittest.TestCase):
         for c in ["trash build", "git rm old.rs", "echo rmdir", "cargo fmt --all"]:
             self.allowed(c)
 
+    def test_blocks_deletion_after_newline_or_in_subshell(self):
+        for c in ["echo a\nrm x", "(cd build; rm x)", "FOO=1 rm x", "xargs rm", "/bin/rm x"]:
+            self.blocked(c)
+
+    def test_allows_deletion_words_in_quotes_and_heredocs(self):
+        for c in ["grep 'git clean' notes.md", 'python3 -c "import re; re.compile(\'rm -r\')"',
+                  "cat <<'E'\nrm x\ngit clean -fd\nE", "echo unlink", "git log --grep=clean"]:
+            self.allowed(c)
+
     def test_blocks_hook_bypass(self):
         for c in ["git commit -n -m x", "git commit --no-verify -m x", "git commit -anm x", "git push --no-verify"]:
             self.blocked(c)
