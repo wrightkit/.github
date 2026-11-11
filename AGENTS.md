@@ -1,14 +1,8 @@
 # WrightKit Workspace Agent Routing
 
-This file is the workspace-level agent routing entry point for the WrightKit organization.
-
-This file carries durable organization constraints and routing; it is not a technical manual or a second copy of the product goal.
-
 Repository-local `AGENTS.md` files specialize contracts for their own repository. They must not duplicate shared policy, but they may add stricter or domain-specific requirements that take precedence locally.
 
-The user request and linked Issue, when present, set task scope. [`docs/goal.md`](docs/goal.md) resolves project-direction tradeoffs. Identify the owning repository, read its linked Issue and nearest `AGENTS.md` when present, then load only relevant policy or skills. Before editing, also read the Issue's comments, its parent Issue, and linked or referenced Issues and PRs, even when the request does not mention them; decisions and corrections often live there rather than in the Issue body. A short request such as `implement #123` is sufficient when the Issue and repository provide the needed context. Substantive behavior work also needs a verifiable outcome: before editing, identify the tests or checks that will decide completion, as defined in [`docs/issue-readiness.md`](docs/issue-readiness.md#verifiable-outcomes). The Issue's acceptance criteria and [Delivery is part of completion](#delivery-is-part-of-completion) define when the work is done; [When to stop](#when-to-stop) defines when to ask before then.
-
-No proprietary include syntax is required. Tool-specific entry files such as [`CLAUDE.md`](CLAUDE.md) load this file and add only guidance specific to that tool; they do not override it.
+The user request and linked Issue, when present, set task scope. [`docs/goal.md`](docs/goal.md) resolves project-direction tradeoffs. Decisions and corrections often live in the Issue's comments, its parent Issue, and linked or referenced Issues and PRs rather than in the Issue body. A short request such as `implement #123` is sufficient when the Issue and repository provide the needed context. Substantive behavior work also needs a verifiable outcome: before editing, identify the tests or checks that will decide completion, as defined in [`docs/issue-readiness.md`](docs/issue-readiness.md#verifiable-outcomes). The Issue's acceptance criteria and [Delivery is part of completion](#delivery-is-part-of-completion) define when the work is done; [When to stop](#when-to-stop) defines when to ask before then.
 
 Paths here assume the workspace root, the directory that holds the `.github` and `.agents` checkouts: `docs/` links resolve to `.github/docs/`, and `.agents/skills/` paths resolve from that root.
 
@@ -71,10 +65,9 @@ Load policy documents only when their concern is relevant. Do not preload all of
 
 These rules always apply regardless of repository:
 
-- Use [`docs/goal.md`](docs/goal.md) to resolve product-direction tradeoffs; do not duplicate or silently redefine its intent in repository-local guidance.
+- Do not duplicate or silently redefine the intent of [`docs/goal.md`](docs/goal.md) in repository-local guidance.
 - Respect repository ownership boundaries: modify authoritative contracts in their owning repository, integrate cross-repository changes separately in consumers, and never bypass ownership for implementation convenience.
 - Durable documentation belongs under `docs/` and follows [`docs/documentation.md`](docs/documentation.md). When supported behavior, a public contract, architecture, ownership, workflow, or operational procedure changes, update the owning documentation in the same change when applicable; review must check this explicitly.
-- Do not introduce complex abstractions only for hypothetical future needs.
 - Keep source attribution, pinned reference identity, and related decision history where a semantic, compatibility, or regression workflow requires them.
 - Do not silently weaken diagnostics, tests, compatibility expectations, validation, or error handling to make CI pass.
 - When replacing, hiding, or retiring a public or canonical boundary (API, model, IR, or protocol), verify surviving accepted contracts through the replacement boundary itself, as defined in [Contract continuity for boundary migrations](docs/issue-readiness.md#contract-continuity-for-boundary-migrations).

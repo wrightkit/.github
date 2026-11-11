@@ -99,3 +99,17 @@ A reusable skill should normally contain only the context needed to perform its 
 This is guidance, not a required section template. Omit structure that does not help the task.
 
 Why: procedural detail is valuable when ordering matters, but excessive instructions compete with the repository material the agent needs to inspect and reason about.
+
+## Entry file roles
+
+### [`AGENTS.md`](../AGENTS.md)
+
+This file is the workspace-level agent routing entry point for the WrightKit organization.
+
+This file carries durable organization constraints and routing; it is not a technical manual or a second copy of the product goal.
+
+No proprietary include syntax is required. Tool-specific entry files such as [`CLAUDE.md`](../CLAUDE.md) load this file and add only guidance specific to that tool; they do not override it.
+
+### [`CLAUDE.md`](../CLAUDE.md)
+
+The two imported files are the shared contract for every agent. This file adds only what is specific to Claude Code and current Claude models, following [`docs/agent-guidance.md`](agent-guidance.md). Where anything here seems to differ, `AGENTS.md` and the policy it routes to take precedence.

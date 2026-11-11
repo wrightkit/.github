@@ -157,5 +157,46 @@ class ReadAndSize(unittest.TestCase):
         self.assertEqual(run(claude("apply_patch", {"patch": patch}, event="PostToolUse")).returncode, 2)
 
 
+class PolicyInjection(unittest.TestCase):
+    def setUp(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        old = os.environ.get("TMPDIR")
+        os.environ["TMPDIR"] = tmp.name
+        self.addCleanup(lambda: os.environ.__setitem__("TMPDIR", old) if old else os.environ.pop("TMPDIR"))
+
+    def context(self, tool, tool_input, session="s1"):
+        event = {**claude(tool, tool_input), "session_id": session}
+        result = run(event)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return json.loads(result.stdout)["hookSpecificOutput"]["additionalContext"] if result.stdout else ""
+
+    def test_edit_triggers_owning_policy(self):
+        cases = [("/w/opy-rs/AGENTS.md", "agent-guidance.md"), ("/w/x/tests/a.rs", "testing-policy.md"),
+                 ("/w/x/src/a.snap", "testing-policy.md"), ("/w/x/.github/workflows/ci.yml", "rust-ci.md"),
+                 ("/w/.github/scripts/guards/pre-push", "mechanical-guards.md")]
+        for i, (path, doc) in enumerate(cases):
+            self.assertIn(f".github/docs/{doc}", self.context("Edit", {"file_path": path}, session=f"e{i}"), path)
+
+    def test_command_triggers_owning_policy(self):
+        cases = [("gh pr review 5 --approve", "pr-review.md"), ("rtk gh pr comment 5 -b x", "pr-review.md"),
+                 ("git tag v1.0.0", "release-engineering.md"), ("gh release create v1", "release-engineering.md")]
+        for i, (command, doc) in enumerate(cases):
+            self.assertIn(f".github/docs/{doc}", self.context("Bash", {"command": command}, session=f"c{i}"), command)
+
+    def test_unrelated_actions_inject_nothing(self):
+        self.assertEqual(self.context("Edit", {"file_path": "/w/x/src/lib.rs"}), "")
+        self.assertEqual(self.context("Bash", {"command": "echo 'gh pr review'"}), "")
+
+    def test_injects_once_per_session(self):
+        self.assertNotEqual(self.context("Edit", {"file_path": "/w/a/AGENTS.md"}), "")
+        self.assertEqual(self.context("Edit", {"file_path": "/w/b/SKILL.md"}), "")
+        self.assertNotEqual(self.context("Edit", {"file_path": "/w/b/SKILL.md"}, session="s2"), "")
+
+    def test_codex_patch_triggers_policy(self):
+        patch = "*** Begin Patch\n*** Update File: /w/x/tests/a.rs\n+x\n*** End Patch"
+        self.assertIn("testing-policy.md", self.context("apply_patch", {"patch": patch}))
+
+
 if __name__ == "__main__":
     unittest.main()
