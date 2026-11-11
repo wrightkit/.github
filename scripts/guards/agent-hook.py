@@ -12,6 +12,7 @@ import re
 import shlex
 import subprocess
 import sys
+import tempfile
 
 GUARDS = os.path.dirname(os.path.abspath(__file__))
 READ_MAX_BYTES = 40_000  # ~10k tokens at bytes / 4
@@ -221,6 +222,53 @@ def check_written(paths, cwd):
             deny(result.stderr.strip() or f"size-guard failed for {rel}", post=True)
 
 
+DOCS = os.path.normpath(os.path.join(GUARDS, "..", "..", "docs"))
+POLICY_FOR_PATH = [
+    ("agent-guidance.md", lambda p: os.path.basename(p) in {"AGENTS.md", "CLAUDE.md", "SKILL.md"}),
+    ("testing-policy.md", lambda p: bool({"tests", "fixtures"} & set(p.split("/"))) or p.endswith(".snap")),
+    ("rust-ci.md", lambda p: "/.github/workflows/" in p),
+    ("mechanical-guards.md", lambda p: "/scripts/guards/" in p or "/.git-hooks/" in p),
+]
+POLICY_FOR_COMMAND = [
+    ("pr-review.md", lambda a: a[:3] in (["gh", "pr", "review"], ["gh", "pr", "comment"])),
+    ("release-engineering.md", lambda a: a[:2] in (["git", "tag"], ["gh", "release"])),
+]
+
+
+def policies_for_paths(paths, cwd):
+    full = [os.path.abspath(os.path.join(cwd, p)) for p in paths if p]
+    return [doc for doc, match in POLICY_FOR_PATH if any(match(p) for p in full)]
+
+
+def policies_for_command(command):
+    docs = []
+    for seg in shell_segments(command):
+        while seg and (seg[0] in WRAPPERS | {"rtk"} or re.fullmatch(r"\w+=.*", seg[0])):
+            seg = seg[1:]
+        docs += [doc for doc, match in POLICY_FOR_COMMAND if seg and match([os.path.basename(seg[0])] + seg[1:])]
+    return docs
+
+
+def inject(docs, event):
+    """Add each policy document to the agent's context once per session."""
+    session = re.sub(r"\W", "_", str(pick(event, "session_id", "sessionId") or ""))
+    state = os.path.join(tempfile.gettempdir(), "wrightkit-agent-hook", session) if session else None
+    seen = set(open(state).read().split()) if state and os.path.exists(state) else set()
+    new = [d for d in dict.fromkeys(docs) if d not in seen and os.path.isfile(os.path.join(DOCS, d))]
+    if not new:
+        return
+    parts = []
+    for doc in new:
+        with open(os.path.join(DOCS, doc), encoding="utf-8") as f:
+            parts.append(f"WrightKit policy for this action: .github/docs/{doc} (added once per session)\n\n{f.read()}")
+    sys.stdout.write(json.dumps({"hookSpecificOutput": {
+        "hookEventName": "PreToolUse", "additionalContext": "\n\n".join(parts)}}))
+    if state:
+        os.makedirs(os.path.dirname(state), exist_ok=True)
+        with open(state, "a") as f:
+            f.write("".join(d + "\n" for d in new))
+
+
 def main():
     try:
         event = json.load(sys.stdin)
@@ -233,9 +281,17 @@ def main():
 
     if name == "PreToolUse":
         if tool in BASH:
-            check_command(str(pick(tool_input, "command", "cmd") or ""), cwd)
+            command = str(pick(tool_input, "command", "cmd") or "")
+            check_command(command, cwd)
+            inject(policies_for_command(command), event)
         elif tool in READ:
             check_read(tool_input, cwd)
+        elif tool in WRITE:
+            path = pick(tool_input, "file_path", "filePath", "path", "notebook_path")
+            inject(policies_for_paths([path], cwd), event)
+        elif tool in PATCH:
+            patch = pick(tool_input, "patch", "input", "command")
+            inject(policies_for_paths(patch_paths(patch) if isinstance(patch, str) else [], cwd), event)
     elif name == "PostToolUse":
         if tool in WRITE:
             path = pick(tool_input, "file_path", "filePath", "path", "notebook_path")
