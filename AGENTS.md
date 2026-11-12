@@ -8,58 +8,53 @@ Paths here assume the workspace root, the directory that holds the `.github` and
 
 ## Repository routing
 
-Use this map of WrightKit's public repositories to identify the likely owner, then confirm current ownership and read its `AGENTS.md` before substantial work.
+Use this map to identify the likely owner, then confirm current ownership and read its `AGENTS.md` before substantial work.
 
 | Concern | Primary repository |
 | --- | --- |
-| Canonical Workshop semantics, catalog, locales, parsing, validation, Workshop representation and emission | `workshop-rs` |
+| Canonical Workshop semantics, catalog, locales, parsing, validation, representation, emission | `workshop-rs` |
 | OverPy-compatible language implementation | `opy-rs` |
 | DeltinScript / OSTW-compatible language implementation | `deltin-rs` |
 | Workshop runtime simulation (execution model, probe captures) | `athena` |
 | Provider process/data protocol | `language-provider-protocol` |
-| User-facing tooling, orchestration, integration, analysis, and agent surfaces | `wright` |
+| User-facing tooling, orchestration, integration, analysis, agent surfaces | `wright` |
 | Product website | `wrightkit.dev` |
-| Experimental web editor for native Workshop (`web.wrightkit.dev`), hosting a WebAssembly build of the Wright core; owns no Workshop semantics | `editor` (planned) |
-| GitHub Action that installs and caches the Wright CLI in consumer workflows (`wrightkit/setup-wright@v1`) | `setup-wright` |
-| Distribution, packaging, and release-artifact ownership | `wright` (`dist/`, `.github/workflows/release.yml`) for build/package/publish; `homebrew-tap` for the published Homebrew formula only |
-| Organization-wide shared policy, CI patterns, and GitHub governance | `wrightkit/.github` |
-| WrightKit-wide reusable agent skills and procedures | `wrightkit/.agents` |
-| Optional user-facing agent skills for Workshop projects, such as the `wright` guide that Wright vendors | `wrightkit/skills` |
-| Conversion of the Workshop.code wiki into agent-friendly Markdown | `workshop-md-converter` |
-| Agent benchmark harness, public and held-out scenarios, and published benchmark results (private; pins the Wright release it measures) | `benchmark-suite` |
+| Experimental web editor for native Workshop; owns no Workshop semantics | `editor` (planned) |
+| GitHub Action that installs and caches the Wright CLI | `setup-wright` |
+| Build, packaging, release artifacts | `wright` (`dist/`, `.github/workflows/release.yml`); `homebrew-tap` holds only the published Homebrew formula |
+| Shared policy, CI patterns, GitHub governance | `wrightkit/.github` |
+| Reusable agent skills and procedures for WrightKit work | `wrightkit/.agents` |
+| Optional user-facing agent skills for Workshop projects, such as the vendored `wright` guide | `wrightkit/skills` |
+| Workshop.code wiki to agent-friendly Markdown | `workshop-md-converter` |
+| Agent benchmark harness, scenarios, published results (private) | `benchmark-suite` |
 
-Confirm current reality before making architectural assumptions. Repository ownership may evolve.
-
-For cross-repository work, read each affected repository's guidance, change the authoritative contract in its owning repository, integrate consumers separately, and verify the contract across the boundary.
+For cross-repository work, read each affected repository's guidance and verify the contract across the boundary.
 
 ## Policy routing
 
-Load policy documents only when their concern is relevant. Do not preload all of them.
+Load a document only when its concern is relevant. Do not preload them. Paths without a directory are under `docs/`.
 
 | Task concern | Load |
 | --- | --- |
-| Reviewing a PR, or looking up which policy owns a coding-standards judgment | [`CODING_STANDARDS.md`](CODING_STANDARDS.md) |
-| Starting a multi-step task, or naming the engineering judgment behind a decision | [`docs/principles/README.md`](docs/principles/README.md) |
-| Writing or revising durable agent guidance, AGENTS or CLAUDE content, or reusable skills | [`docs/agent-guidance.md`](docs/agent-guidance.md) |
-| Durable documentation layout, progressive disclosure, documentation synchronization, or drift audits | [`docs/documentation.md`](docs/documentation.md) |
-| Implementation design, scope discipline, demonstrated abstractions, simple/idiomatic Rust, responsibility locality, and stable-vs-dynamic documentation | [`docs/engineering-quality.md`](docs/engineering-quality.md) |
-| Issue readiness, verifiable outcomes and task granularity, implementation preflight, the Issue closing boundary, and public/canonical boundary migration continuity | [`docs/issue-readiness.md`](docs/issue-readiness.md) |
-| One-pass PR review, review findings, review-fix thread handling, and follow-up review | [`docs/pr-review.md`](docs/pr-review.md) |
-| Tests, fixtures and other test data, snapshots, expected results, test organization, and support classifications (testing entry point; routes to the narrower testing documents below) | [`docs/testing-policy.md`](docs/testing-policy.md) |
-| OPY or DEL/OSTW structural compatibility with the upstream compiler, raw Workshop/locale semantic compatibility, oracle or differential comparisons, real-project regressions and corpora | [`docs/compatibility-testing.md`](docs/compatibility-testing.md) |
-| Robustness against malformed, extreme, or adversarial input, and fuzzing | [`docs/robustness-testing.md`](docs/robustness-testing.md) |
-| Verification boundaries and merge-time CI acceptance, independent verification, behavior-changing PR evidence | [`docs/verification-and-acceptance.md`](docs/verification-and-acceptance.md) |
-| Code entropy, dead code, redundancy, over-engineering, mutable-inventory documentation | [`docs/entropy-policy.md`](docs/entropy-policy.md) |
-| CI failure triage across job surfaces (Rust quality vs. LPP integration vs. differential/compatibility vs. dist/release) | Classify by surface: local/quality gates fix in place; LPP integration check protocol commit first; differential/compatibility triage under [`docs/compatibility-testing.md`](docs/compatibility-testing.md) |
-| Rust CI toolchain, caching, job composition, and runtime-bound gates (corpus, probe, benchmark, latency) | [`docs/rust-ci.md`](docs/rust-ci.md) |
-| Rust build artifact growth, dev/test profile configuration, ephemeral worktree lifecycle, and local storage management | [`docs/rust-build-artifacts.md`](docs/rust-build-artifacts.md) |
-| Mechanical guards: git hooks, the agent tool-call hook, file size limits, and registering them in agents | [`docs/mechanical-guards.md`](docs/mechanical-guards.md) |
-| Release engineering, tagging, and artifact publication | [`docs/release-engineering.md`](docs/release-engineering.md) |
-| Orchestrating Issues through implementer and reviewer sessions to merge | `.agents/skills/orchestrate-issues/SKILL.md` |
-| Entropy reclamation workflow | `.agents/skills/reclaim-entropy/SKILL.md` |
-| Rust architecture/API/concurrency/responsibility review | `.agents/skills/rust-engineering-review/SKILL.md` |
-| Test necessity/stability/duplication review | `.agents/skills/test-design-review/SKILL.md` |
-| Independent change verification | `.agents/skills/verify-change/SKILL.md` |
+| Product direction, scope, non-goals, or a choice between competing technical approaches | [`goal.md`](docs/goal.md) |
+| PR review; which policy owns a coding-standards judgment | [`CODING_STANDARDS.md`](CODING_STANDARDS.md) (repository root) |
+| Start of a multi-step task; naming the judgment behind a decision | [`principles/README.md`](docs/principles/README.md) |
+| Agent guidance, `AGENTS.md` or `CLAUDE.md` content, skills | [`agent-guidance.md`](docs/agent-guidance.md) |
+| Documentation layout, synchronization, drift audits | [`documentation.md`](docs/documentation.md) |
+| Implementation design, scope discipline, abstractions, idiomatic Rust, responsibility locality | [`engineering-quality.md`](docs/engineering-quality.md) |
+| Issue readiness, verifiable outcomes, preflight, closing boundary, boundary migration continuity | [`issue-readiness.md`](docs/issue-readiness.md) |
+| PR review findings, review-fix threads, follow-up review | [`pr-review.md`](docs/pr-review.md) |
+| Tests, fixtures, snapshots, expected results, support classifications (entry point for the three rows below) | [`testing-policy.md`](docs/testing-policy.md) |
+| Upstream structural compatibility, raw Workshop/locale compatibility, oracle or differential comparisons, real-project regressions, corpora | [`compatibility-testing.md`](docs/compatibility-testing.md) |
+| Malformed, extreme, or adversarial input; fuzzing | [`robustness-testing.md`](docs/robustness-testing.md) |
+| Verification boundaries, merge-time CI acceptance, behavior-changing PR evidence | [`verification-and-acceptance.md`](docs/verification-and-acceptance.md) |
+| Dead code, redundancy, over-engineering, mutable-inventory documentation | [`entropy-policy.md`](docs/entropy-policy.md) |
+| CI failure triage | Classify by job surface: fix local/quality gates in place; for LPP integration, check the protocol commit first; triage differential/compatibility under [`compatibility-testing.md`](docs/compatibility-testing.md) |
+| Rust CI toolchain, caching, job composition, runtime-bound gates | [`rust-ci.md`](docs/rust-ci.md) |
+| Rust build artifact growth, dev/test profiles, worktree lifecycle, local storage | [`rust-build-artifacts.md`](docs/rust-build-artifacts.md) |
+| Git hooks, the agent tool-call hook, file size limits | [`mechanical-guards.md`](docs/mechanical-guards.md) |
+| Releases, tags, artifact publication | [`release-engineering.md`](docs/release-engineering.md) |
+| Procedures: Issue orchestration, entropy reclamation, Rust engineering review, test design review, independent change verification | `.agents/skills/<name>/SKILL.md`: `orchestrate-issues`, `reclaim-entropy`, `rust-engineering-review`, `test-design-review`, `verify-change` |
 
 ## Global invariants
 

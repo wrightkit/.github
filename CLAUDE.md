@@ -1,6 +1,5 @@
 # WrightKit for Claude Code
 
-@docs/goal.md
 @AGENTS.md
 
 ## Long runs

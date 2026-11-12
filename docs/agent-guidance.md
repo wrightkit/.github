@@ -112,4 +112,4 @@ No proprietary include syntax is required. Tool-specific entry files such as [`C
 
 ### [`CLAUDE.md`](../CLAUDE.md)
 
-The two imported files are the shared contract for every agent. This file adds only what is specific to Claude Code and current Claude models, following [`docs/agent-guidance.md`](agent-guidance.md). Where anything here seems to differ, `AGENTS.md` and the policy it routes to take precedence.
+The imported `AGENTS.md` is the shared contract for every agent. This file adds only what is specific to Claude Code and current Claude models, following [`docs/agent-guidance.md`](agent-guidance.md). Where anything here seems to differ, `AGENTS.md` and the policy it routes to take precedence.
