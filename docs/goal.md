@@ -1,6 +1,6 @@
 # GOAL: what WrightKit is for
 
-Context: for humans and agents working anywhere in WrightKit. Read this before `AGENTS.md`.
+Context: for humans and agents working anywhere in WrightKit. Read it when a task involves a product-direction or scope tradeoff.
 
 This document states what WrightKit is for. `AGENTS.md` covers workflow routing and repository policy. Architecture documents and ADRs define technical contracts; issues and pull requests track active work. When competing technical choices come up, use these goals to decide.
 
