@@ -58,9 +58,9 @@ class CommandRules(unittest.TestCase):
                   "git push origin +main", "git push origin +feat:refs/heads/main", "git push --mirror"]:
             self.blocked(c)
 
-    def test_blocks_plain_push_to_default_branch(self):
+    def test_leaves_plain_push_to_default_branch_to_the_git_gate(self):
         for c in ["git push origin main", "git push origin HEAD:master", "git -C . push origin main"]:
-            self.blocked(c)
+            self.allowed(c)
 
     def test_allows_force_push_to_other_branches(self):
         for c in ["git push --force origin next", "git push -f origin next", "git push --force-with-lease -u origin feat/x",
@@ -117,6 +117,73 @@ class MergedBranchGuard(unittest.TestCase):
 
     def test_fails_open_without_gh(self):
         self.assertEqual(self.guard(0, 7, gh=False), 0)
+
+
+class MainPushGuard(unittest.TestCase):
+    GUARD = os.path.join(os.path.dirname(HOOK), "main-push-guard.sh")
+    ZERO = "0" * 40
+
+    def setUp(self):
+        self.dir = tempfile.TemporaryDirectory()
+        self.addCleanup(self.dir.cleanup)
+        self.git("init", "-q", "-b", "main")
+        self.base = self.commit("base")
+        self.head = self.commit("head")
+
+    def git(self, *args):
+        config = ["-c", "core.hooksPath=/dev/null", "-c", "commit.gpgsign=false", "-c", "user.name=t", "-c", "user.email=t@example.com"]
+        return subprocess.run(["git", "-C", self.dir.name, *config, *args], check=True, capture_output=True, text=True).stdout.strip()
+
+    def commit(self, name):
+        with open(os.path.join(self.dir.name, name), "w") as f:
+            f.write(name + "\n")
+        self.git("add", "-A")
+        self.git("commit", "-q", "-m", name)
+        return self.git("rev-parse", "HEAD")
+
+    def gate(self, status):
+        path = os.path.join(self.dir.name, ".githooks-local", "pre-push-main")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as f:
+            f.write(f"#!/bin/sh\nexit {status}\n")
+        os.chmod(path, 0o755)
+        self.head = self.commit(f"gate-{status}")
+
+    def push(self, local=None, remote_ref="refs/heads/main", remote=None):
+        line = f"refs/heads/main {local or self.head} {remote_ref} {remote or self.base}\n"
+        return subprocess.run([self.GUARD], input=line, cwd=self.dir.name, capture_output=True, text=True)
+
+    def test_ignores_other_branches(self):
+        self.assertEqual(self.push(remote_ref="refs/heads/feat/x").returncode, 0)
+        self.assertEqual(self.push(remote_ref="refs/heads/next").returncode, 0)
+
+    def test_blocks_a_repository_without_a_gate(self):
+        result = self.push()
+        self.assertEqual(result.returncode, 1)
+        self.assertIn("open a PR", result.stderr)
+        self.assertEqual(self.push(remote_ref="refs/heads/master").returncode, 1)
+
+    def test_follows_the_repository_gate(self):
+        self.gate(0)
+        self.assertEqual(self.push().returncode, 0)
+        self.assertEqual(self.push(remote=self.ZERO).returncode, 0)
+        self.gate(1)
+        self.assertEqual(self.push().returncode, 1)
+
+    def test_blocks_deletion_and_non_fast_forward(self):
+        self.gate(0)
+        self.assertEqual(self.push(local=self.ZERO).returncode, 1)
+        self.git("checkout", "-q", "-b", "side", self.base)
+        side = self.commit("side")
+        self.git("checkout", "-q", "main")
+        self.assertIn("fast-forward", self.push(remote=side).stderr)
+
+    def test_blocks_a_commit_the_gate_would_not_test(self):
+        self.gate(0)
+        self.assertIn("checked-out HEAD", self.push(local=self.git("rev-parse", "HEAD~1")).stderr)
+        with open(os.path.join(self.dir.name, "base"), "w") as f:
+            f.write("changed\n")
+        self.assertIn("tracked files", self.push().stderr)
 
 
 class ReadAndSize(unittest.TestCase):
