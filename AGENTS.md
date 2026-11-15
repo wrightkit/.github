@@ -83,9 +83,16 @@ An agent that proposes a compatibility, public-contract, or architecture change 
 
 ## Delivery is part of completion
 
-Implementation requests are complete after relevant verification, a commit on a non-default branch, a push, and an open or updated PR. Never push implementation commits directly to the default branch unless the user explicitly authorizes that exception. Review-fix work also requires affected threads to be handled and follow-up review to be signaled as described in [`docs/pr-review.md`](docs/pr-review.md). Stop before delivery only for a local-only request or a concrete blocker, then give the [final report](#final-report).
+Implementation requests are complete after relevant verification, a commit, and a push by one of two routes. Review-fix work also requires affected threads to be handled and follow-up review to be signaled as described in [`docs/pr-review.md`](docs/pr-review.md). Stop before delivery only for a local-only request or a concrete blocker, then give the [final report](#final-report).
 
-Why: the PR, not an agent worktree, is the shared review surface. Leaving verified changes in local state, or pushing fixes without thread handling and re-review handoff, stalls the review lifecycle and leaves reviewers unaware that verification is needed.
+Choose the route for each change:
+
+- **PR from a non-default branch** when the change alters observable behavior, a public contract, compatibility, or architecture; needs the independent second pass described in [Tests and verification artifacts](#tests-and-verification-artifacts); changes CI, release, or guard definitions; belongs to a multi-repository change; or targets a repository whose GitHub rules require a PR.
+- **Direct push to the default branch** when the change is small, self-contained, verified locally, and needs no independent review, such as documentation, a comment, or a mechanical fix that existing tests already protect.
+
+When the route is unclear, open a PR. The default-branch gate in [`docs/mechanical-guards.md`](docs/mechanical-guards.md#default-branch-gate) runs before every direct push. When it blocks, fix the cause or open a PR. Never bypass it, and never force-push the default branch.
+
+Why: the PR is the shared review surface, so a change that needs review must not skip it, and a change that needs none pays a review cycle for nothing. Leaving verified changes in local state, or pushing fixes without thread handling and re-review handoff, stalls the review lifecycle and leaves reviewers unaware that verification is needed.
 
 ## When to stop
 
@@ -94,7 +101,7 @@ Continue authorized, reversible work without routine confirmation. Stop and ask 
 - missing information could materially change the outcome;
 - an owner decision is unresolved;
 - the Issue, documented contract, and current implementation materially conflict;
-- the next action is external or irreversible and the task did not authorize it, such as force-pushing, pushing to a default branch, deleting branches, tags, releases, or data, publishing a release or package, or closing or editing Issues and PRs outside the task; or
+- the next action is external or irreversible and the task did not authorize it, such as force-pushing, deleting branches, tags, releases, or data, publishing a release or package, or closing or editing Issues and PRs outside the task; or
 - a concrete blocker prevents progress.
 
 Before stopping, finish whatever does not depend on the answer.
@@ -105,7 +112,7 @@ Why: a text-only turn ends the work until someone replies. In unattended worktre
 
 ## Final report
 
-End a task with a report a reviewer can act on without reading the session. Lead with what needs the reader: an open decision, a blocker, or an action that needs their authority; say so when nothing does. Then give the delivered state (PR, pushed commits, review handoff) or the local state if delivery stopped, the independent reference used for verification, and anything you could not confirm, with where you looked. Leave out a step-by-step account of the session. For multi-step work, end with a `Principles Named or Used` section as defined in [`docs/principles/README.md`](docs/principles/README.md#using-principles).
+End a task with a report a reviewer can act on without reading the session. Lead with what needs the reader: an open decision, a blocker, or an action that needs their authority; say so when nothing does. Then give the delivered state (route taken, PR or pushed commits, review handoff) or the local state if delivery stopped, the independent reference used for verification, and anything you could not confirm, with where you looked. Leave out a step-by-step account of the session. For multi-step work, end with a `Principles Named or Used` section as defined in [`docs/principles/README.md`](docs/principles/README.md#using-principles).
 
 Why: the reader's first job is to unblock the work, and an unconfirmed claim listed among verified ones tends to be accepted as verified.
 
