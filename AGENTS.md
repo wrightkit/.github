@@ -19,7 +19,7 @@ Use this map to identify the likely owner, then confirm current ownership and re
 | Provider process/data protocol | `language-provider-protocol` |
 | User-facing tooling, orchestration, integration, analysis, agent surfaces | `wright` |
 | Product website | `wrightkit.dev` |
-| Experimental web editor for native Workshop; owns no Workshop semantics | `editor` (planned) |
+| Experimental web editor for native Workshop; owns no Workshop semantics | `editor` |
 | GitHub Action that installs and caches the Wright CLI | `setup-wright` |
 | Build, packaging, release artifacts | `wright` (`dist/`, `.github/workflows/release.yml`); `homebrew-tap` holds only the published Homebrew formula |
 | Shared policy, CI patterns, GitHub governance | `wrightkit/.github` |
