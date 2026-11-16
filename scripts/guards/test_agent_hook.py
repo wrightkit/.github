@@ -157,11 +157,33 @@ class MainPushGuard(unittest.TestCase):
         self.assertEqual(self.push(remote_ref="refs/heads/feat/x").returncode, 0)
         self.assertEqual(self.push(remote_ref="refs/heads/next").returncode, 0)
 
-    def test_blocks_a_repository_without_a_gate(self):
-        result = self.push()
-        self.assertEqual(result.returncode, 1)
-        self.assertIn("open a PR", result.stderr)
-        self.assertEqual(self.push(remote_ref="refs/heads/master").returncode, 1)
+    def test_allows_a_repository_without_a_gate(self):
+        self.assertEqual(self.push().returncode, 0)
+        self.assertEqual(self.push(remote_ref="refs/heads/master").returncode, 0)
+
+    def test_blocks_a_gate_that_cannot_run(self):
+        self.gate(0)
+        os.chmod(os.path.join(self.dir.name, ".githooks-local", "pre-push-main"), 0o644)
+        self.head = self.commit("mode")
+        self.assertIn("not executable", self.push().stderr)
+
+    def test_blocks_a_merge_commit(self):
+        self.git("checkout", "-q", "-b", "side", self.base)
+        self.commit("side")
+        self.git("checkout", "-q", "main")
+        self.git("merge", "-q", "--no-ff", "-m", "merge side", "side")
+        self.head = self.git("rev-parse", "HEAD")
+        self.assertIn("merge commit", self.push().stderr)
+
+    def test_blocks_unfinished_commits(self):
+        for subject in ("fixup! base", "squash! base", "amend! base", "WIP", "wip: parser"):
+            self.head = self.commit(subject)
+            result = self.push()
+            self.assertEqual(result.returncode, 1, subject)
+            self.assertIn("unfinished commit", result.stderr)
+            self.git("reset", "-q", "--hard", "HEAD~1")
+        self.head = self.commit("wipe the cache")
+        self.assertEqual(self.push().returncode, 0)
 
     def test_follows_the_repository_gate(self):
         self.gate(0)
@@ -171,15 +193,13 @@ class MainPushGuard(unittest.TestCase):
         self.assertEqual(self.push().returncode, 1)
 
     def test_blocks_deletion_and_non_fast_forward(self):
-        self.gate(0)
         self.assertEqual(self.push(local=self.ZERO).returncode, 1)
         self.git("checkout", "-q", "-b", "side", self.base)
         side = self.commit("side")
         self.git("checkout", "-q", "main")
         self.assertIn("fast-forward", self.push(remote=side).stderr)
 
-    def test_blocks_a_commit_the_gate_would_not_test(self):
-        self.gate(0)
+    def test_blocks_a_commit_that_is_not_the_verified_state(self):
         self.assertIn("checked-out HEAD", self.push(local=self.git("rev-parse", "HEAD~1")).stderr)
         with open(os.path.join(self.dir.name, "base"), "w") as f:
             f.write("changed\n")
