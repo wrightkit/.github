@@ -17,15 +17,17 @@ The git layer is the only one every agent and human passes through. The tool-cal
 
 ## Default-branch gate
 
-`scripts/guards/main-push-guard.sh` judges every push that updates `main` or `master`. The push passes only when all of these hold:
+`scripts/guards/main-push-guard.sh` judges every push that updates `main` or `master`. Its rules describe how an agent pushes, so they are the same in every repository. The push passes only when all of these hold:
 
 - it is a fast-forward and not a deletion;
-- the pushed commit is the checked-out `HEAD` and no tracked file differs from it;
-- the repository's executable `.githooks-local/pre-push-main` exits 0.
+- the pushed commit is the checked-out `HEAD` and no tracked file differs from it, so the pushed commit is the state that was verified;
+- the new commits hold no merge commit, so a task branch does not reach the default branch without its PR;
+- the new commits hold no `fixup!`, `squash!`, `amend!`, or `WIP` commit;
+- the repository's `.githooks-local/pre-push-main` exits 0, when the repository declares one.
 
-`.githooks-local/pre-push-main` runs the repository's full local gate, the same checks that its CI requires. A repository without that file accepts changes only through a PR. A GitHub rule that requires a PR still rejects the push after the gate passes.
+`.githooks-local/pre-push-main` is optional. A repository adds it to run its full local gate, the same checks that its CI requires. A GitHub rule that requires a PR still rejects the push after the gate passes.
 
-Why: a direct push skips PR CI and review, so the same checks must pass on the exact commit before it leaves the machine. Whether a change may skip review is a judgment, and stays in [`AGENTS.md`](../AGENTS.md#delivery-is-part-of-completion).
+Why: a direct push skips PR CI and review, so the mistakes that a PR would show must be stopped before the commit leaves the machine. Whether a change may skip review is a judgment, and stays in [`AGENTS.md`](../AGENTS.md#delivery-is-part-of-completion).
 
 ## Size limits
 

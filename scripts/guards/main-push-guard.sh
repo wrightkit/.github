@@ -1,11 +1,13 @@
 #!/bin/sh
 # Default-branch gate. Reads git's pre-push lines on stdin and judges every
-# update of main or master:
+# update of main or master. The rules are the same in every repository:
 #   - it is not a deletion and not a non-fast-forward update;
 #   - the pushed commit is the checked-out HEAD with no tracked changes, so the
-#     gate tests exactly what is pushed;
-#   - the repository's own gate, .githooks-local/pre-push-main, passes.
-# A repository without that gate accepts changes only through a pull request.
+#     pushed commit is the state that was verified;
+#   - the new commits hold no merge commit and no fixup!, squash!, amend!, or
+#     WIP commit;
+#   - the repository's own gate, .githooks-local/pre-push-main, passes when the
+#     repository declares one.
 set -u
 
 fail() {
@@ -27,14 +29,26 @@ while read -r _ local_sha remote_ref remote_sha; do
 
   root="$(git rev-parse --show-toplevel 2>/dev/null)" || fail "no working tree; the $branch gate cannot run."
   [ "$(git rev-parse HEAD)" = "$local_sha" ] ||
-    fail "the commit pushed to $branch is not the checked-out HEAD, so the gate cannot test it. Check it out, or push a task branch and open a PR."
+    fail "the commit pushed to $branch is not the checked-out HEAD, so it is not the state you verified. Check it out, or push a task branch and open a PR."
   git diff --quiet HEAD -- ||
-    fail "tracked files differ from HEAD, so the gate would not test the pushed commit. Commit or stash them first."
+    fail "tracked files differ from HEAD, so the pushed commit is not the state you verified. Commit or stash them first."
+
+  case "$remote_sha" in
+    *[!0]*)
+      range="$remote_sha..$local_sha"
+      [ -z "$(git rev-list --merges -n 1 "$range")" ] ||
+        fail "the push to $branch holds a merge commit. Rebase the commits onto origin/$branch, or push the task branch and open a PR."
+      unfinished="$(git log --format=%s "$range" | grep -iE '^(fixup!|squash!|amend!|wip([^[:alnum:]]|$))' | head -n 1)"
+      [ -z "$unfinished" ] ||
+        fail "the push to $branch holds an unfinished commit: \"$unfinished\". Squash or reword it first."
+      ;;
+  esac
 
   gate="$root/.githooks-local/pre-push-main"
-  [ -x "$gate" ] ||
-    fail "this repository declares no $branch gate (.githooks-local/pre-push-main). Push a task branch and open a PR."
-  (cd "$root" && "$gate" </dev/null) ||
-    fail "the $branch gate failed. Fix the cause, or push a task branch and open a PR."
+  if [ -e "$gate" ]; then
+    [ -x "$gate" ] || fail "$gate is not executable."
+    (cd "$root" && "$gate" </dev/null) ||
+      fail "the $branch gate failed. Fix the cause, or push a task branch and open a PR."
+  fi
 done
 exit 0
