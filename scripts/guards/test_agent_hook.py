@@ -167,13 +167,13 @@ class MainPushGuard(unittest.TestCase):
         self.head = self.commit("mode")
         self.assertIn("not executable", self.push().stderr)
 
-    def test_blocks_a_merge_commit(self):
+    def test_allows_a_merge_commit(self):
         self.git("checkout", "-q", "-b", "side", self.base)
         self.commit("side")
         self.git("checkout", "-q", "main")
         self.git("merge", "-q", "--no-ff", "-m", "merge side", "side")
         self.head = self.git("rev-parse", "HEAD")
-        self.assertIn("merge commit", self.push().stderr)
+        self.assertEqual(self.push().returncode, 0)
 
     def test_blocks_unfinished_commits(self):
         for subject in ("fixup! base", "squash! base", "amend! base", "WIP", "wip: parser"):

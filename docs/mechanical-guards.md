@@ -21,7 +21,6 @@ The git layer is the only one every agent and human passes through. The tool-cal
 
 - it is a fast-forward and not a deletion;
 - the pushed commit is the checked-out `HEAD` and no tracked file differs from it, so the pushed commit is the state that was verified;
-- the new commits hold no merge commit, so a task branch does not reach the default branch without its PR;
 - the new commits hold no `fixup!`, `squash!`, `amend!`, or `WIP` commit;
 - the repository's `.githooks-local/pre-push-main` exits 0, when the repository declares one.
 

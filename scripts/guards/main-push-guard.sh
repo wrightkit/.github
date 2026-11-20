@@ -4,8 +4,7 @@
 #   - it is not a deletion and not a non-fast-forward update;
 #   - the pushed commit is the checked-out HEAD with no tracked changes, so the
 #     pushed commit is the state that was verified;
-#   - the new commits hold no merge commit and no fixup!, squash!, amend!, or
-#     WIP commit;
+#   - the new commits hold no fixup!, squash!, amend!, or WIP commit;
 #   - the repository's own gate, .githooks-local/pre-push-main, passes when the
 #     repository declares one.
 set -u
@@ -36,8 +35,6 @@ while read -r _ local_sha remote_ref remote_sha; do
   case "$remote_sha" in
     *[!0]*)
       range="$remote_sha..$local_sha"
-      [ -z "$(git rev-list --merges -n 1 "$range")" ] ||
-        fail "the push to $branch holds a merge commit. Rebase the commits onto origin/$branch, or push the task branch and open a PR."
       unfinished="$(git log --format=%s "$range" | grep -iE '^(fixup!|squash!|amend!|wip([^[:alnum:]]|$))' | head -n 1)"
       [ -z "$unfinished" ] ||
         fail "the push to $branch holds an unfinished commit: \"$unfinished\". Squash or reword it first."
